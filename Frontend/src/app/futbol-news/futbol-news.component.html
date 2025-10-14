@@ -1,0 +1,11 @@
+<div class="news-container">
+    @for (noticia of noticias; track $index) {
+        <div class="news-card">
+            <img [src]="noticia.imagen" alt="Imagen de fútbol" />
+            <h3>{{ noticia.titulo }}</h3>
+            <p>{{ noticia.descripcion }}</p>
+            <button>Leer más</button>
+          </div>
+    }
+   
+</div>

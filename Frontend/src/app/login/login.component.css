@@ -1,0 +1,250 @@
+/* Contenedor principal: split screen */
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* Imagen lateral */
+.login-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eaeaea;
+}
+
+.login-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  transition: transform 0.3s ease;
+}
+
+.login-image img:hover {
+  transform: scale(1.02);
+}
+
+/* Contenedor del formulario */
+.login-form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* centra horizontal */
+  justify-content: center;   /* centra vertical */
+  width: 100%;               /* ocupa todo el ancho */
+  padding: 3rem;
+  background-color: #ffffff;
+}
+
+/* Mensaje arriba del formulario */
+.login-message {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-message h2 {
+  font-size: 1.8rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+.login-message p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Ventanita del formulario */
+.login-form {
+  background-color: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 auto; /* centra dentro del contenedor */
+}
+
+/* Inputs y botón */
+.login-form input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #888;
+  box-shadow: 0 0 5px rgba(136,136,136,0.3);
+}
+
+.login-form button {
+  padding: 0.75rem;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.login-form button:hover {
+  background-color: #333;
+  transform: scale(1.02);
+}
+
+.login-form .alert {
+  color: #b00020;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.login-form .forgot-password {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  text-align: right;
+}
+
+.login-form .forgot-password a {
+  text-decoration: none;
+  color: #666;
+}
+
+.login-form .forgot-password a:hover {
+  color: #444;
+}
+
+
+/* =====================
+   MEDIA QUERIES MOBILE FIRST
+===================== */
+
+/* 📱 Mobile S (<=320px) */
+@media (max-width: 320px) {
+  .login-container {
+    flex-direction: column-reverse;
+  }
+
+  .login-image {
+    height: 180px;
+    width: 100%;
+  }
+
+  .login-form-container {
+    width: 100%;
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-message h2 {
+    font-size: 1.2rem;
+  }
+
+  .login-form {
+    padding: 1.5rem 1rem;
+    max-width: 90%;
+  }
+
+  .login-form input,
+  .login-form button {
+    font-size: 0.85rem;
+  }
+}
+
+/* 📱 Mobile M (<=375px) */
+@media (max-width: 375px) {
+  .login-container {
+    flex-direction: column-reverse;
+  }
+
+  .login-image {
+    height: 220px;
+  }
+
+  .login-form-container {
+    width: 100%;
+    padding: 1.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-message h2 {
+    font-size: 1.4rem;
+  }
+
+  .login-form {
+    max-width: 90%;
+  }
+}
+
+/* 📱 Mobile L (<=425px) */
+@media (max-width: 425px) {
+  .login-container {
+    flex-direction: column-reverse;
+  }
+
+  .login-image {
+    height: 250px;
+  }
+
+  .login-form-container {
+    width: 100%;
+    padding: 2rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-message h2 {
+    font-size: 1.6rem;
+  }
+
+  .login-form {
+    max-width: 90%;
+  }
+}
+
+/* 📱 Tablet (<=768px) */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column-reverse;
+    background-color: white;
+  }
+
+  .login-image {
+    width: 100%;   /* ancho completo del viewport */
+    height: auto;   /* altura proporcional */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .login-image img {
+    width: 100vw;   /* ocupa todo el ancho de la pantalla */
+    height: auto;   /* mantiene proporción */
+    object-fit: cover;
+    display: block; /* elimina espacios extra */
+  }
+
+  .login-form-container {
+    width: 100%;
+    padding: 2.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-message h2 {
+    font-size: 1.8rem;
+  }
+
+  .login-form {
+    max-width: 300px;
+  }
+}

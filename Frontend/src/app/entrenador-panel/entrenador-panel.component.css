@@ -1,0 +1,121 @@
+.panel-entrenador {
+    padding: 2rem;
+    background-color: #f9f9f9;
+  }
+  
+  .equipo-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  
+  .equipo-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #333;
+  }
+  
+  .equipo-header p {
+    margin: 0.5rem 0 1rem;
+    color: #666;
+    font-size: 0.95rem;
+  }
+  
+  .jugadores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .jugadores-table th,
+  .jugadores-table td {
+    border: 1px solid #ddd;
+    padding: 0.6rem;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  
+  .jugadores-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  
+  .ver-todos-btn {
+    margin-top: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .ver-todos-btn:hover {
+    background-color: #0056b3;
+  }
+
+  @media (max-width: 768px) {
+    .panel-entrenador {
+    
+            padding: 1rem;
+          }
+        
+          .equipo-card {
+            padding: 1rem;
+          }
+        
+          .jugadores-table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: separate;
+            border-spacing: 0;
+          }
+        
+          .jugadores-table thead {
+            display: none; 
+          }
+        
+          .jugadores-table tr {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+          }
+        
+          .jugadores-table td {
+            flex: 1 1 auto;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.85rem;
+            text-align: left;
+            border: none;
+          }
+        
+          .jugadores-table td::before {
+            display: none; 
+          }
+        
+          /* Opcional: mejora visual si hay muchos campos */
+          .jugadores-table td:nth-child(1) {
+            font-weight: bold;
+            color: #333;
+            flex: 2 1 150px;
+          }
+        
+          .jugadores-table td:nth-child(2),
+          .jugadores-table td:nth-child(3),
+          .jugadores-table td:nth-child(4),
+          .jugadores-table td:nth-child(5),
+          .jugadores-table td:nth-child(6) {
+            color: #555;
+          }
+  }

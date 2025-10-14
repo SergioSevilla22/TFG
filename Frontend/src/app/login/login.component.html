@@ -1,0 +1,58 @@
+
+<div class=" login-container">
+    
+    <div class="login-image">
+        <img src="imagen-login.jpg" alt="Imagen Login">
+    </div>
+
+
+    <div class="login-form-container">
+
+        <div class="login-message">
+            <h2>¡Tu Club de Fútbol, Siempre Bajo Control!</h2>
+            <p>Organiza entrenamientos, partidos y plantillas de tu club de manera sencilla y eficiente.</p>
+            <p>Lleva el control de jugadores, estadísticas y comunicación interna en un solo lugar.</p>
+        </div>
+        
+        <form [formGroup]="UserForm" (ngSubmit)="onSubmit()" class="login-form">
+    
+            <label for="email"> Email: </label>
+            <input id="email" type="text" class="form-control" formControlName="email" required>
+          
+            @if (email?.invalid && (email?.dirty || email?.touched)) {
+              <div class="alert alert-danger">
+                @if (email?.hasError('required')) {
+                  <div>
+                    El Email es obligatorio.
+                  </div>
+                }
+                @if (email?.hasError('email')) {
+                  <div>
+                    Introduce un correo válido.
+                  </div>
+                }
+        
+              </div>
+            }
+          
+            <label for="password"> Contraseña: </label>
+            <input id="password" type="text" class="form-control" formControlName="password" required>
+        
+            @if (password?.invalid && (password?.dirty || password?.touched)) {
+                <div class="alert alert-danger">
+                  @if (password?.hasError('required')) {
+                    <div>
+                      La Contraseña es obligatoria.
+                    </div>
+                  }
+                </div>
+              }
+        
+              <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+          
+            
+          </form>
+        
+
+    </div>
+</div>
