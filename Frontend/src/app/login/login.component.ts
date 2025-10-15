@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginComponent {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,  private router: Router) {}
 
   UserForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -23,6 +24,7 @@ export class LoginComponent {
   get password() { return this.UserForm.get('password'); }
 
   onSubmit() {
+    
     if (this.UserForm.invalid) {
       this.UserForm.markAllAsTouched();
       return;
@@ -34,7 +36,7 @@ export class LoginComponent {
       next: (res) => {
         console.log('Login correcto:', res);
         alert(`Bienvenido ${res.user.email}`);
-        // Aquí podrías redirigir a otra página: por ejemplo /dashboard
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error('Error en login:', err);
