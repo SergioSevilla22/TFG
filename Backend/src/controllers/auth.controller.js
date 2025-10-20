@@ -1,5 +1,7 @@
 import { db } from "../db.js";
 import bcrypt from "bcrypt";
+import fs from "fs";
+import csv from "csv-parser";
 
 // Login de usuario
 export const loginUsuario = (req, res) => {
@@ -57,8 +59,80 @@ export const registerUsuario = (req, res) => {
         }
       );
     } catch (error) {
-      console.log("HOLAAAAAA");
       res.status(500).json({ error: error.message });
     }
   });
+};
+
+export const registerUsuariosMasivo = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No se subió ningún archivo" });
+  }
+
+  const filePath = req.file.path;
+  const usuarios = [];
+  const skippedUsers = [];
+  const registeredUsers = [];
+
+  fs.createReadStream(filePath)
+    .pipe(csv())
+    .on("data", (row) => {
+      usuarios.push(row);
+    })
+    .on("end", async () => {
+      try {
+        for (const u of usuarios) {
+          const { DNI, email, telefono, password, Rol } = u;
+
+          if (!DNI || !email || !telefono || !password) {
+            console.log("Fila incompleta:", u);
+            skippedUsers.push({ ...u, reason: "Fila incompleta" });
+            continue;
+          }
+
+          // Verificar si el usuario ya existe
+          const exists = await new Promise((resolve, reject) => {
+            db.query(
+              "SELECT * FROM Usuarios WHERE email = ? OR DNI = ?",
+              [email, DNI],
+              (err, results) => {
+                if (err) reject(err);
+                resolve(results.length > 0);
+              }
+            );
+          });
+
+          if (exists) {
+            skippedUsers.push({ ...u, reason: "Usuario existente" });
+            continue;
+          }
+
+          // Insertar usuario
+          const hashedPassword = await bcrypt.hash(password, 10);
+          await new Promise((resolve, reject) => {
+            db.query(
+              "INSERT INTO Usuarios (DNI, Rol, email, telefono, password) VALUES (?, ?, ?, ?, ?)",
+              [DNI, Rol || "usuario", email, telefono, hashedPassword],
+              (err) => {
+                if (err) reject(err);
+                else resolve();
+              }
+            );
+          });
+
+          registeredUsers.push(email);
+        }
+
+        fs.unlinkSync(filePath); // eliminar archivo temporal
+
+        res.status(201).json({
+          message: `Usuarios registrados correctamente: ${registeredUsers.length}`,
+          registeredUsers,
+          skippedUsers, // incluye email y razón
+        });
+      } catch (error) {
+        console.error("Error procesando CSV:", error);
+        res.status(500).json({ message: "Error al procesar el archivo", error });
+      }
+    });
 };

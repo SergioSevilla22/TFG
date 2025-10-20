@@ -1,8 +1,8 @@
 <div class="register-container">
     <!-- Imagen lateral -->
-    <div class="register-image">
-      <img src="imagen-login.jpg" alt="Imagen de registro" />
-    </div>
+  <div class="register-image">
+    <img src="imagen-login.jpg" alt="Imagen de registro" />
+  </div>
   
     <!-- Contenedor del formulario -->
     <div class="register-form-container">
@@ -34,6 +34,15 @@
   
         <button type="submit">Registrar</button>
       </form>
+    
+      <hr />
+
+    <div class="register-massive-container">
+      <h3>Registro Masivo (CSV)</h3>
+      <label for="csvFile">Selecciona archivo CSV</label>
+      <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" />
+      <button type="button" (click)="uploadCSV()">Subir CSV</button>
     </div>
   </div>
+</div>
   

@@ -21,6 +21,8 @@ export class RegisterComponent {
   Rol: new FormControl('usuario')
   });
 
+  selectedFile: File | null = null;
+
   get DNI() { return this.RegisterForm.get('DNI'); }
   get email() { return this.RegisterForm.get('email'); }
   get password() { return this.RegisterForm.get('password'); }
@@ -50,4 +52,33 @@ export class RegisterComponent {
       }
     });
   }
+
+
+onFileSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.selectedFile = input.files[0];
+  }
+}
+
+uploadCSV() {
+  if (!this.selectedFile) {
+    alert("Por favor selecciona un archivo CSV.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', this.selectedFile);
+
+  this.authService.registerMassive(formData).subscribe({
+    next: (res: any) => {
+      alert(res.message);
+      console.log(res);
+    },
+    error: (err) => {
+      console.error('Error en registro masivo:', err);
+      alert(err.error.message || 'Error al registrar usuarios');
+    }
+  });
+}
 }
