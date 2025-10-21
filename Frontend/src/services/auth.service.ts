@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 export class AuthService {
   private apiUrlLogin = 'http://localhost:3000/api/login';
   private apiUrlRegister = 'http://localhost:3000/api/register';
+  private apiUrlRegisterCSV = 'http://localhost:3000/api/register-massive';
 
   constructor(private http: HttpClient) {}
 
@@ -19,6 +20,11 @@ export class AuthService {
   register(userData: { DNI: string; email: string; password: string; Rol?: string }): Observable<any> {
     return this.http.post(this.apiUrlRegister, userData);
   }
+
+  registerMassive(formData: FormData) {
+  return this.http.post(this.apiUrlRegisterCSV, formData);
+}
+
 
   
 }

@@ -17,6 +17,7 @@ app.use(express.json());
 // Rutas
 app.use("/api", authRoutes);
 
+
 // Arranque del servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
