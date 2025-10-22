@@ -1,44 +1,5 @@
 
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
 
-/* Botón Equipos */
-.btn-equipos {
-  padding: 0.4rem 0.8rem;     /* más pequeño y compacto */
-  background-color: #444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.btn-equipos:hover {
-  background-color: #333;
-  transform: scale(1.05);
-}
-
-/* Logo de perfil */
-.profile img {
-  height: 35px;           /* tamaño fijo */
-  width: 35px;
-  border-radius: 50%;
-  border: 1px solid #ddd;
-  padding: 2px;           /* borde interno */
-  background-color: white;
-  object-fit: cover;
-  cursor: pointer;
-  transition: transform 0.2s, border-color 0.2s;
-}
-
-.profile img:hover {
-  transform: scale(1.1);
-  border-color: #bbb;
-}
 
 /* Contenido principal */
 .content {

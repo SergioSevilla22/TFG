@@ -3,6 +3,9 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { EntrenadorPanelComponent } from './entrenador-panel/entrenador-panel.component';
 import { RegisterComponent } from './register/register.component'; 
+import { PerfilUsuarioComponent } from './perfil-usuario/perfil-usuario.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },  
@@ -10,6 +13,9 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent, title: 'Registro'}, 
   { path: 'home', component: HomeComponent, title: 'Home Page' },
   { path: 'entrenador', component: EntrenadorPanelComponent },
+  { path: 'perfil', component: PerfilUsuarioComponent , title: 'Perfil' },
+  { path: 'forgot-password', component: ForgotPasswordComponent , title: 'ForgotPassword'},
+  { path: 'reset-password', component: ResetPasswordComponent, title: 'resetPassword'},
 ];
 
 export default routes;
