@@ -1,0 +1,20 @@
+<div class="perfil-container">
+    <h2>Mi Perfil</h2>
+  
+    
+    @if(user){
+        <div><div class="perfil-card">
+            <img src="perfil.png" alt="Foto de perfil" class="foto-perfil" />
+      
+            <p><strong>DNI:</strong> {{ user.DNI }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Rol:</strong> {{ user.Rol }}</p>
+          </div>
+      
+          <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+        </div>
+    }@else {
+        <p>No hay usuario logueado.</p>
+    }
+</div>
+  

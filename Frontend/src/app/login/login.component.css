@@ -121,6 +121,20 @@
   color: #444;
 }
 
+.forgot-link {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.forgot-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.forgot-link a:hover {
+  text-decoration: underline;
+}
+
 
 /* =====================
    MEDIA QUERIES MOBILE FIRST
