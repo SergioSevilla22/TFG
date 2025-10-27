@@ -1,0 +1,14 @@
+<div class="invitation-container">
+    <h2>Activar cuenta</h2>
+    <p>Crea tu contraseña para acceder al sistema</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <label>Nueva contraseña</label>
+      <input type="password" formControlName="password" />
+
+      <label>Confirmar contraseña</label>
+      <input type="password" formControlName="confirm" />
+
+      <button type="submit">Guardar contraseña</button>
+    </form>
+  </div>
