@@ -12,6 +12,7 @@ export class AuthService {
   private apiUrlRegisterCSV = 'http://localhost:3000/api/register-massive';
   private apiUrlForgotPassword = 'http://localhost:3000/api/forgot-password';
   private apiUrlResetPassword = 'http://localhost:3000/api/reset-password';
+  private apiUrlAccept = 'http://localhost:3000/api/accept-invitation';
 
   constructor(private http: HttpClient) {}
 
@@ -39,9 +40,10 @@ export class AuthService {
   }
  
  
-  register(userData: { DNI: string; email: string; password: string; Rol?: string }): Observable<any> {
+  register(userData: { DNI: string; email: string; telefono: string; Rol?: string }): Observable<any> {
     return this.http.post(this.apiUrlRegister, userData);
   }
+  
 
   registerMassive(formData: FormData) {
   return this.http.post(this.apiUrlRegisterCSV, formData);
@@ -54,6 +56,11 @@ forgotPassword(email: string) {
 resetPassword(data: { token: string; nuevaPassword: string }) {
   return this.http.post(this.apiUrlResetPassword, data);
 }
+
+acceptInvitation(data: { token: string, password: string }) {
+  return this.http.post(this.apiUrlAccept, data);
+}
+
 
   
 }

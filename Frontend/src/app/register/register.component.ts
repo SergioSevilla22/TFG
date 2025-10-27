@@ -15,17 +15,16 @@ export class RegisterComponent {
 
   RegisterForm = new FormGroup({
     DNI: new FormControl('', Validators.required),
-  email: new FormControl('', [Validators.required, Validators.email]),
-  telefono: new FormControl('', [Validators.required]),
-  password: new FormControl('', Validators.required),
-  Rol: new FormControl('usuario')
+    email: new FormControl('', [Validators.required, Validators.email]),
+    telefono: new FormControl('', [Validators.required]),
+    Rol: new FormControl('usuario')
   });
+  
 
   selectedFile: File | null = null;
 
   get DNI() { return this.RegisterForm.get('DNI'); }
   get email() { return this.RegisterForm.get('email'); }
-  get password() { return this.RegisterForm.get('password'); }
 
   onSubmit() {
     if (this.RegisterForm.invalid) {
@@ -37,7 +36,6 @@ export class RegisterComponent {
       DNI: string;
       email: string;
       telefono: string;
-      password: string;
       Rol?: string;
     };
 
