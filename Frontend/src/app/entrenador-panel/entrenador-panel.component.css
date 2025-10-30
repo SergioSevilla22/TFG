@@ -104,7 +104,7 @@
             display: none; 
           }
         
-          /* Opcional: mejora visual si hay muchos campos */
+          
           .jugadores-table td:nth-child(1) {
             font-weight: bold;
             color: #333;
