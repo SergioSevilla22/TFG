@@ -1,6 +1,3 @@
-/* ============================
-   ESTRUCTURA GENERAL
-============================ */
 .invitation-container {
     display: flex;
     flex-direction: column;
@@ -11,9 +8,6 @@
     padding: 2rem;
   }
   
-  /* ============================
-     TÍTULOS Y TEXTOS
-  ============================ */
   .invitation-container h2 {
     font-size: 1.8rem;
     color: #444;
@@ -28,9 +22,6 @@
     margin-bottom: 2rem;
   }
   
-  /* ============================
-     FORMULARIO
-  ============================ */
   .invitation-container form {
     background-color: #ffffff;
     padding: 2.5rem 2rem;
@@ -43,14 +34,14 @@
     gap: 1rem;
   }
   
-  /* Labels */
+
   .invitation-container label {
     font-weight: 500;
     color: #444;
     text-align: left;
   }
   
-  /* Inputs */
+ 
   .invitation-container input {
     padding: 0.5rem 0.75rem;
     border: 1px solid #ccc;
@@ -65,9 +56,6 @@
     box-shadow: 0 0 5px rgba(136,136,136,0.3);
   }
   
-  /* ============================
-     BOTÓN
-  ============================ */
   .invitation-container button {
     padding: 0.75rem;
     background-color: #444;
@@ -84,11 +72,7 @@
     transform: scale(1.02);
   }
   
-  /* ============================
-     MEDIA QUERIES
-  ============================ */
-  
-  /* 📱 Mobile S (<=320px) */
+
   @media (max-width: 320px) {
     .invitation-container {
       padding: 1rem;
@@ -109,7 +93,6 @@
     }
   }
   
-  /* 📱 Mobile M (<=375px) */
   @media (max-width: 375px) {
     .invitation-container form {
       max-width: 90%;
@@ -120,7 +103,6 @@
     }
   }
   
-  /* 📱 Mobile L (<=425px) */
   @media (max-width: 425px) {
     .invitation-container form {
       max-width: 90%;
@@ -132,7 +114,6 @@
     }
   }
   
-  /* 📱 Tablet (<=768px) */
   @media (max-width: 768px) {
     .invitation-container form {
       max-width: 320px;

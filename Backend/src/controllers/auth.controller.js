@@ -6,7 +6,6 @@ import { generateToken } from "../utils/jwt.js";
 import { v4 as uuidv4 } from "uuid";
 import { transporter } from "../utils/mailer.js";
 
-// 🔐 Login de usuario
 export const loginUsuario = (req, res) => {
   const { email, password } = req.body;
 
@@ -61,7 +60,6 @@ export const registerUsuario = (req, res) => {
         async (err) => {
           if (err) return res.status(500).json({ error: err.message });
 
-          // 🔹 Enviar correo con enlace de invitación
           const invitationUrl = `http://localhost:4200/accept-invitation?token=${invitationToken}`;
           const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -145,7 +143,6 @@ export const registerUsuariosMasivo = async (req, res) => {
             continue;
           }
 
-          // Verificar si el usuario ya existe
           const exists = await new Promise((resolve, reject) => {
             db.query(
               "SELECT * FROM usuarios WHERE email = ? OR DNI = ?",
@@ -162,11 +159,10 @@ export const registerUsuariosMasivo = async (req, res) => {
             continue;
           }
 
-          // Crear token de invitación (válido 48h)
+          
           const invitationToken = uuidv4();
-          const invitationExp = Date.now() + 1000 * 60 * 60 * 48;
+          const invitationExp = Date.now() + 1000 * 60 * 60 * 48; // 48h
 
-          // Insertar usuario sin contraseña
           await new Promise((resolve, reject) => {
             db.query(
               "INSERT INTO usuarios (DNI, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?)",
@@ -178,7 +174,6 @@ export const registerUsuariosMasivo = async (req, res) => {
             );
           });
 
-          // Enviar correo de invitación
           const invitationUrl = `http://localhost:4200/accept-invitation?token=${invitationToken}`;
           const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -196,12 +191,11 @@ export const registerUsuariosMasivo = async (req, res) => {
             await transporter.sendMail(mailOptions);
             invitedUsers.push(email);
           } catch (mailError) {
-            console.error("❌ Error al enviar correo a:", email, mailError);
+            console.error("Error al enviar correo a:", email, mailError);
             skippedUsers.push({ ...u, reason: "Error al enviar correo" });
           }
         }
 
-        // Eliminar el archivo temporal CSV
         fs.unlinkSync(filePath);
 
         res.status(201).json({
@@ -251,10 +245,10 @@ export const solicitarRecuperacion = (req, res) => {
 
         try {
           await transporter.sendMail(mailOptions);
-          console.log("✅ Correo enviado correctamente a", email);
+          console.log("Correo enviado correctamente a", email);
           res.json({ message: "Correo de recuperación enviado correctamente" });
         } catch (mailError) {
-          console.error("❌ Error detallado al enviar correo:", mailError);
+          console.error("Error detallado al enviar correo:", mailError);
           res.status(500).json({ error: "Error al enviar el correo", mailError });
         }
       }

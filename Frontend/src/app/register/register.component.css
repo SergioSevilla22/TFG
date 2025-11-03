@@ -1,11 +1,9 @@
-/* Estructura general */
 .register-container {
     display: flex;
     min-height: 100vh;
     background-color: #f5f5f5;
   }
   
-  /* Imagen lateral */
   .register-image {
     flex: 1;
     display: flex;
@@ -26,7 +24,6 @@
     transform: scale(1.02);
   }
   
-  /* Zona del formulario */
   .register-form-container {
     flex: 1;
     display: flex;
@@ -38,7 +35,6 @@
     background-color: #ffffff;
   }
   
-  /* Título */
   .register-message {
     text-align: center;
     margin-bottom: 2rem;
@@ -55,7 +51,6 @@
     color: #666;
   }
   
-  /* Caja del formulario */
   .register-form {
     background-color: #ffffff;
     padding: 2.5rem 2rem;
@@ -69,7 +64,6 @@
     margin: 0 auto;
   }
   
-  /* Labels e inputs */
   .register-form label {
     font-weight: 500;
     color: #444;
@@ -91,7 +85,6 @@
     box-shadow: 0 0 5px rgba(136,136,136,0.3);
   }
   
-  /* Botón */
   .register-form button {
     padding: 0.75rem;
     background-color: #444;
@@ -108,11 +101,6 @@
     transform: scale(1.02);
   }
   
-  /* =====================
-     MEDIA QUERIES MOBILE FIRST
-  ===================== */
-  
-  /* 📱 Mobile S (<=320px) */
   @media (max-width: 320px) {
     .register-container {
       flex-direction: column-reverse;
@@ -145,7 +133,6 @@
     }
   }
   
-  /* 📱 Mobile M (<=375px) */
   @media (max-width: 375px) {
     .register-container {
       flex-direction: column-reverse;
@@ -169,7 +156,6 @@
     }
   }
   
-  /* 📱 Mobile L (<=425px) */
   @media (max-width: 425px) {
     .register-container {
       flex-direction: column-reverse;
@@ -193,7 +179,6 @@
     }
   }
   
-  /* 📱 Tablet (<=768px) */
   @media (max-width: 768px) {
     .register-container {
       flex-direction: column-reverse;
@@ -229,9 +214,6 @@
     }
   }
 
-  /* =====================
-   Registro masivo (CSV)
-===================== */
 .register-massive-container {
     background-color: #ffffff;
     padding: 2.5rem 2rem;
@@ -242,10 +224,9 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin: 2rem auto 0 auto; /* un poco de separación con el formulario individual */
+    margin: 2rem auto 0 auto; 
 }
 
-/* Labels e inputs CSV */
 .register-massive-container label {
     font-weight: 500;
     color: #444;
@@ -266,7 +247,6 @@
     box-shadow: 0 0 5px rgba(136,136,136,0.3);
 }
 
-/* Botón CSV */
 .register-massive-container button {
     padding: 0.75rem;
     background-color: #444;
@@ -283,7 +263,6 @@
     transform: scale(1.02);
 }
 
-/* Título CSV */
 .register-massive-container h3 {
     font-size: 1.5rem;
     color: #444;
@@ -291,11 +270,6 @@
     margin-bottom: 1rem;
 }
 
-/* =====================
-   Media Queries para registro masivo
-===================== */
-
-/* 📱 Mobile S (<=320px) */
 @media (max-width: 320px) {
     .register-massive-container {
         padding: 1.5rem 1rem;
@@ -312,7 +286,6 @@
     }
 }
 
-/* 📱 Mobile M (<=375px) */
 @media (max-width: 375px) {
     .register-massive-container {
         max-width: 90%;
@@ -323,7 +296,6 @@
     }
 }
 
-/* 📱 Mobile L (<=425px) */
 @media (max-width: 425px) {
     .register-massive-container {
         max-width: 90%;
@@ -335,7 +307,6 @@
     }
 }
 
-/* 📱 Tablet (<=768px) */
 @media (max-width: 768px) {
     .register-massive-container {
         max-width: 300px;

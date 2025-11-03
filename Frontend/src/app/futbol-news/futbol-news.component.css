@@ -50,12 +50,9 @@
     background-color: #0056b3;
   }
 
-/* Estilos base (mobile first) */
-
-/* 📱 Mobile S (máx. 320px) */
 @media (max-width: 320px) {
   .news-card {
-    width: 100%; /* ocupa todo el ancho */
+    width: 100%; 
     margin: 8px auto;
   }
 
@@ -73,7 +70,6 @@
   }
 }
 
-/* 📱 Mobile M (321px - 375px) */
 @media (min-width: 321px) and (max-width: 375px) {
   .news-card {
     width: 95%;
@@ -85,18 +81,16 @@
   }
 }
 
-/* 📱 Mobile L (376px - 425px) */
 @media (min-width: 376px) and (max-width: 425px) {
   .news-card {
-    width: 90%; /* un poco más de aire */
+    width: 90%;
     margin: 12px auto;
   }
 }
 
-/* 📱 Tablet (426px - 768px) */
 @media (min-width: 426px) and (max-width: 768px) {
   .news-card {
-    width: 45%; /* 2 columnas */
+    width: 45%; 
     margin: 15px;
   }
 
