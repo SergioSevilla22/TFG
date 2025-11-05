@@ -15,6 +15,7 @@ export class RegisterComponent {
 
   RegisterForm = new FormGroup({
     DNI: new FormControl('', Validators.required),
+    nombre: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
     telefono: new FormControl('', [Validators.required]),
     Rol: new FormControl('usuario')
@@ -34,6 +35,7 @@ export class RegisterComponent {
 
     const userData = this.RegisterForm.value as {
       DNI: string;
+      nombre: string;
       email: string;
       telefono: string;
       Rol?: string;

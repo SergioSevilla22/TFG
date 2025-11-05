@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import {FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 
@@ -12,9 +12,18 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent {
+  
+  passwordsIguales: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const nueva = control.get('nuevaPassword')?.value;
+    const confirmar = control.get('confirmarPassword')?.value;
+    return nueva && confirmar && nueva !== confirmar ? { noCoinciden: true } : null;
+  };
+
+  
   form = new FormGroup({
-    nuevaPassword: new FormControl('', [Validators.required, Validators.minLength(6)])
-  });
+    nuevaPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    confirmarPassword: new FormControl('', [Validators.required])
+  }, { validators: [this.passwordsIguales] });
 
   token = '';
   message = '';
@@ -45,5 +54,10 @@ export class ResetPasswordComponent {
         this.loading = false;
       }
     });
+  }
+
+  get passwordsNoCoinciden(): boolean {
+    return this.form.hasError('noCoinciden') &&
+           this.form.get('confirmarPassword')?.touched!;
   }
 }
