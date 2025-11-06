@@ -29,7 +29,7 @@ export const loginUsuario = (req, res) => {
       res.status(200).json({
         message: "Login correcto",
         token,
-        user: { DNI: user.DNI, email: user.email, Rol: user.Rol },
+        user: { DNI: user.DNI, nombre: user.nombre, email: user.email, Rol: user.Rol },
       });
     } catch (error) {
       res.status(500).json({ error: "Error al validar contraseña" });
@@ -38,10 +38,10 @@ export const loginUsuario = (req, res) => {
 };
 
 export const registerUsuario = (req, res) => {
-  const { DNI, email, Rol, telefono } = req.body;
+  const { DNI, nombre, email, Rol, telefono } = req.body;
 
-  if (!email || !DNI || !telefono) {
-    return res.status(400).json({ message: "DNI, email y teléfono son obligatorios" });
+  if (!email || !DNI || !telefono || !nombre) {
+    return res.status(400).json({ message: "DNI, nombre, email y teléfono son obligatorios" });
   }
 
   db.query("SELECT * FROM usuarios WHERE email = ?", [email], async (err, results) => {
@@ -55,8 +55,8 @@ export const registerUsuario = (req, res) => {
       const invitationExp = Date.now() + 1000 * 60 * 60 * 48; // 48h
 
       db.query(
-        "INSERT INTO usuarios (DNI, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?)",
-        [DNI, Rol || "usuario", email, telefono, invitationToken, invitationExp],
+        "INSERT INTO usuarios (DNI, nombre, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [DNI, nombre, Rol || "usuario", email, telefono, invitationToken, invitationExp],
         async (err) => {
           if (err) return res.status(500).json({ error: err.message });
 
@@ -135,9 +135,9 @@ export const registerUsuariosMasivo = async (req, res) => {
     .on("end", async () => {
       try {
         for (const u of usuarios) {
-          const { DNI, email, telefono, Rol } = u;
+          const { DNI, nombre, email, telefono, Rol } = u;
 
-          if (!DNI || !email || !telefono) {
+          if (!DNI || !email || !telefono || !nombre) {
             console.log("Fila incompleta:", u);
             skippedUsers.push({ ...u, reason: "Fila incompleta" });
             continue;
@@ -165,8 +165,8 @@ export const registerUsuariosMasivo = async (req, res) => {
 
           await new Promise((resolve, reject) => {
             db.query(
-              "INSERT INTO usuarios (DNI, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?)",
-              [DNI, Rol || "usuario", email, telefono, invitationToken, invitationExp],
+              "INSERT INTO usuarios (DNI, nombre, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              [DNI, nombre, Rol || "usuario", email, telefono, invitationToken, invitationExp],
               (err) => {
                 if (err) reject(err);
                 else resolve();

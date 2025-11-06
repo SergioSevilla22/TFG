@@ -40,7 +40,7 @@ export class AuthService {
   }
  
  
-  register(userData: { DNI: string; email: string; telefono: string; Rol?: string }): Observable<any> {
+  register(userData: { DNI: string; nombre: string; email: string; telefono: string; Rol?: string }): Observable<any> {
     return this.http.post(this.apiUrlRegister, userData);
   }
   
