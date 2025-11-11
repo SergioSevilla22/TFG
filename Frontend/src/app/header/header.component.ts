@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +10,20 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class HeaderComponent {
 
-  constructor(private router: Router) {}
+  profileImage: string = 'perfil.png';
+  user: any = null;
+
+  constructor(private router: Router, private authService: AuthService) {}
+  
+  ngOnInit(): void {
+    this.user = this.authService.getUser();
+
+    if (this.user?.foto) {
+      this.profileImage = 'http://localhost:3000' + this.user.foto;
+    } else {
+      this.profileImage = 'perfil.png';
+    }
+  }
  
 
   goToLogin(){

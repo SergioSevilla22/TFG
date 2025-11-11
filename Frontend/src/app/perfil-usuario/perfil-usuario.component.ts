@@ -18,12 +18,22 @@ export class PerfilUsuarioComponent {
   previewImage: string | ArrayBuffer | null = null;
   errorMsg = '';
   loading = false;
+  private baseUrl = 'http://localhost:3000';
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
     this.user = this.authService.getUser();
-    if (this.user?.foto) {
-      this.previewImage = 'http://localhost:3000' + this.user.foto;
+  }
+
+  getProfileImage(): string {
+    if (typeof this.previewImage === 'string' && this.previewImage) {
+      return this.previewImage;
     }
+    if (this.user?.foto) {
+      return this.baseUrl + this.user.foto;
+    }
+    return 'assets/default-avatar.png';
   }
 
   toggleEdit() {
@@ -47,8 +57,29 @@ export class PerfilUsuarioComponent {
     this.selectedFile = file;
     const reader = new FileReader();
     reader.onload = e => this.previewImage = (e.target as FileReader).result as string | ArrayBuffer;
-
     reader.readAsDataURL(file);
+  }
+
+  guardarSoloFoto() {
+    if (!this.selectedFile || !this.user) return;
+
+    const formData = new FormData();
+    formData.append('DNI', this.user.DNI);
+    formData.append('fotoPerfil', this.selectedFile);
+
+    this.loading = true;
+    this.authService.updateUser(formData).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.user = res.user;
+        this.previewImage = this.user.foto ? 'http://localhost:3000' + this.user.foto : null;
+        this.selectedFile = null; // limpia selección
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = err?.error?.message || 'Error al actualizar la foto.';
+      },
+    });
   }
 
   guardarCambios() {
@@ -60,10 +91,6 @@ export class PerfilUsuarioComponent {
     formData.append('telefono', this.user.telefono);
     formData.append('email', this.user.email);
     formData.append('Rol', this.user.Rol);
-
-    if (this.selectedFile) {
-      formData.append('fotoPerfil', this.selectedFile); // debe coincidir con upload.single("fotoPerfil")
-    }
 
     this.loading = true;
     this.authService.updateUser(formData).subscribe({
