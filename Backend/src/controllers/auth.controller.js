@@ -29,7 +29,7 @@ export const loginUsuario = (req, res) => {
       res.status(200).json({
         message: "Login correcto",
         token,
-        user: { DNI: user.DNI, nombre: user.nombre, email: user.email, Rol: user.Rol },
+        user: { DNI: user.DNI, nombre: user.nombre, email: user.email, telefono: user.telefono, Rol: user.Rol, foto: user.foto ? user.foto : null },
       });
     } catch (error) {
       res.status(500).json({ error: "Error al validar contraseña" });
@@ -283,3 +283,47 @@ export const restablecerPassword = (req, res) => {
     );
   });
 };
+
+export const actualizarUsuario = (req, res) => {
+  const { DNI, nombre, telefono, email, Rol } = req.body;
+
+  if (!DNI) {
+    return res.status(400).json({ message: 'El DNI es obligatorio para actualizar el usuario' });
+  }
+
+  // Si se subió una nueva foto
+  let fotoPath = null;
+  if (req.file) {
+    fotoPath = `/uploads/${req.file.filename}`;
+  }
+
+  // Construir partes dinámicas
+  const updates = [];
+  const params = [];
+
+  if (nombre) { updates.push('nombre = ?'); params.push(nombre); }
+  if (telefono) { updates.push('telefono = ?'); params.push(telefono); }
+  if (email) { updates.push('email = ?'); params.push(email); }
+  if (Rol) { updates.push('Rol = ?'); params.push(Rol); }
+  if (fotoPath) { updates.push('foto = ?'); params.push(fotoPath); }
+
+  if (updates.length === 0) {
+    return res.status(400).json({ message: 'No hay campos para actualizar' });
+  }
+
+  params.push(DNI);
+
+  const sql = `UPDATE usuarios SET ${updates.join(', ')} WHERE DNI = ?`;
+
+  db.query(sql, params, (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    // Devolver usuario actualizado
+    db.query('SELECT DNI, nombre, telefono, email, Rol, foto FROM usuarios WHERE DNI = ?', [DNI], (err2, results) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+      if (results.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
+      res.json({ message: 'Usuario actualizado correctamente', user: results[0] });
+    });
+  });
+};
+

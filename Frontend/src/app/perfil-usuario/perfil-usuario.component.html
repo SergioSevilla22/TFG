@@ -1,21 +1,59 @@
 <div class="perfil-container">
-    <h2>Mi Perfil</h2>
-  
-    
-    @if(user){
-        <div><div class="perfil-card">
-            <img src="perfil.png" alt="Foto de perfil" class="foto-perfil" />
-      
-            <p><strong>DNI:</strong> {{ user.DNI }}</p>
-            <p><strong>Nombre:</strong> {{ user.nombre }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Rol:</strong> {{ user.Rol }}</p>
-          </div>
-      
-          <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+  <h2>Mi Perfil</h2>
+
+  <div *ngIf="user; else noUser">
+    <div class="perfil-card">
+
+      <div class="foto-area">
+        <img *ngIf="previewImage; else defaultAvatar" [src]="previewImage" class="foto-perfil" />
+        <ng-template #defaultAvatar>
+          <img src="assets/default-avatar.png" class="foto-perfil" />
+        </ng-template>
+
+        <div *ngIf="editMode" class="foto-input">
+          <input type="file" (change)="onFileChange($event)" accept="image/*" />
         </div>
-    }@else {
-        <p>No hay usuario logueado.</p>
-    }
+      </div>
+
+      <div class="info">
+        <ng-container *ngIf="!editMode; else editForm">
+          <p><strong>DNI:</strong> {{ user.DNI }}</p>
+          <p><strong>Nombre:</strong> {{ user.nombre }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Teléfono:</strong> {{ user.telefono }}</p>
+          <p><strong>Rol:</strong> {{ user.Rol }}</p>
+          <button (click)="toggleEdit()">Editar</button>
+          <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+        </ng-container>
+
+        <ng-template #editForm>
+          <label>Nombre:
+            <input [(ngModel)]="user.nombre" />
+          </label>
+          <label>Email:
+            <input [(ngModel)]="user.email" />
+          </label>
+          <label>Teléfono:
+            <input [(ngModel)]="user.telefono" />
+          </label>
+          <label>Rol:
+            <select [(ngModel)]="user.Rol">
+              <option value="usuario">Usuario</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+
+          <div class="actions">
+            <button (click)="guardarCambios()" [disabled]="loading">Guardar</button>
+            <button (click)="toggleEdit()">Cancelar</button>
+          </div>
+          <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noUser>
+    <p>No hay usuario logueado.</p>
+  </ng-template>
 </div>
-  
