@@ -5,6 +5,7 @@ import csv from "csv-parser";
 import { generateToken } from "../utils/jwt.js";
 import { v4 as uuidv4 } from "uuid";
 import { transporter } from "../utils/mailer.js";
+import path from "path";
 
 export const loginUsuario = (req, res) => {
   const { email, password } = req.body;
@@ -291,38 +292,74 @@ export const actualizarUsuario = (req, res) => {
     return res.status(400).json({ message: 'El DNI es obligatorio para actualizar el usuario' });
   }
 
-  // Si se subió una nueva foto
-  let fotoPath = null;
-  if (req.file) {
-    fotoPath = `/uploads/${req.file.filename}`;
-  }
-
-  // Construir partes dinámicas
-  const updates = [];
-  const params = [];
-
-  if (nombre) { updates.push('nombre = ?'); params.push(nombre); }
-  if (telefono) { updates.push('telefono = ?'); params.push(telefono); }
-  if (email) { updates.push('email = ?'); params.push(email); }
-  if (Rol) { updates.push('Rol = ?'); params.push(Rol); }
-  if (fotoPath) { updates.push('foto = ?'); params.push(fotoPath); }
-
-  if (updates.length === 0) {
-    return res.status(400).json({ message: 'No hay campos para actualizar' });
-  }
-
-  params.push(DNI);
-
-  const sql = `UPDATE usuarios SET ${updates.join(', ')} WHERE DNI = ?`;
-
-  db.query(sql, params, (err) => {
+  // Primero, buscar el usuario actual para ver si tiene foto anterior
+  db.query('SELECT * FROM usuarios WHERE DNI = ?', [DNI], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-    // Devolver usuario actualizado
-    db.query('SELECT DNI, nombre, telefono, email, Rol, foto FROM usuarios WHERE DNI = ?', [DNI], (err2, results) => {
-      if (err2) return res.status(500).json({ error: err2.message });
-      if (results.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
-      res.json({ message: 'Usuario actualizado correctamente', user: results[0] });
+    const user = results[0];
+
+    // Nueva ruta de imagen si se subió una nueva
+    let fotoPath = null;
+    if (req.file) {
+      fotoPath = `/uploads/${req.file.filename}`;
+
+      if (user.foto) {
+        // user.foto en BD: "/uploads/1762881201370-ipTables.png"
+        // Carpeta real: "src/public/uploads/..."
+        const oldPath = path.join(process.cwd(), "public", user.foto.replace(/^\//, ""));
+      
+        fs.access(oldPath, fs.constants.F_OK, (err) => {
+          if (err) {
+            console.log("⚠️ La foto anterior no existe físicamente en:", oldPath);
+          } else {
+            fs.unlink(oldPath, (unlinkErr) => {
+              if (unlinkErr) {
+                console.log("⚠️ Error al eliminar la foto anterior:", unlinkErr.message);
+              } else {
+                console.log("🗑️ Foto anterior eliminada correctamente:", oldPath);
+              }
+            });
+          }
+        });
+      }
+    }
+
+    // Construir actualización dinámica
+    const updates = [];
+    const params = [];
+
+    if (nombre) { updates.push('nombre = ?'); params.push(nombre); }
+    if (telefono) { updates.push('telefono = ?'); params.push(telefono); }
+    if (email) { updates.push('email = ?'); params.push(email); }
+    if (Rol) { updates.push('Rol = ?'); params.push(Rol); }
+    if (fotoPath) { updates.push('foto = ?'); params.push(fotoPath); }
+
+    if (updates.length === 0 && !req.file) {
+      return res.status(400).json({ message: 'No hay campos para actualizar' });
+    }
+
+    params.push(DNI);
+
+    const sql = `UPDATE usuarios SET ${updates.join(', ')} WHERE DNI = ?`;
+
+    db.query(sql, params, (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      // Devolver usuario actualizado
+      db.query(
+        'SELECT DNI, nombre, telefono, email, Rol, foto FROM usuarios WHERE DNI = ?',
+        [DNI],
+        (err2, results2) => {
+          if (err2) return res.status(500).json({ error: err2.message });
+          if (results2.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
+
+          res.json({
+            message: 'Usuario actualizado correctamente',
+            user: results2[0],
+          });
+        }
+      );
     });
   });
 };

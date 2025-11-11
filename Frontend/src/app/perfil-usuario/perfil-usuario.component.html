@@ -1,19 +1,41 @@
 <div class="perfil-container">
-  <h2>Mi Perfil</h2>
-
-  <div *ngIf="user; else noUser">
-    <div class="perfil-card">
-
-      <div class="foto-area">
-        <img *ngIf="previewImage; else defaultAvatar" [src]="previewImage" class="foto-perfil" />
-        <ng-template #defaultAvatar>
-          <img src="assets/default-avatar.png" class="foto-perfil" />
-        </ng-template>
-
-        <div *ngIf="editMode" class="foto-input">
-          <input type="file" (change)="onFileChange($event)" accept="image/*" />
-        </div>
+  <div class="perfil-image">
+    <div class="foto-area">
+      <img [src]="getProfileImage()" alt="Foto de perfil" class="foto-perfil-redonda" />
+  
+      <!-- Botones para editar/guardar la foto -->
+      <div class="acciones-foto">
+        <button class="btn-editar-foto" (click)="fileInput.click()">Editar foto</button>
+  
+        <!-- Solo aparece el botón "Guardar foto" si se ha seleccionado una nueva -->
+        <button
+          *ngIf="selectedFile"
+          class="btn-guardar-foto"
+          (click)="guardarSoloFoto()"
+          [disabled]="loading"
+        >
+          Guardar foto
+        </button>
       </div>
+  
+      <input
+        type="file"
+        #fileInput
+        style="display: none"
+        (change)="onFileChange($event)"
+        accept="image/*"
+      />
+    </div>
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="perfil-form-container">
+    <div class="perfil-message">
+      <h2>Mi Perfil</h2>
+      <p>Consulta y edita tu información personal</p>
+    </div>
+
+    <div *ngIf="user; else noUser" class="perfil-card">
 
       <div class="info">
         <ng-container *ngIf="!editMode; else editForm">
@@ -22,8 +44,10 @@
           <p><strong>Email:</strong> {{ user.email }}</p>
           <p><strong>Teléfono:</strong> {{ user.telefono }}</p>
           <p><strong>Rol:</strong> {{ user.Rol }}</p>
-          <button (click)="toggleEdit()">Editar</button>
-          <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+          <div class="actions">
+            <button (click)="toggleEdit()">Editar</button>
+            <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+          </div>
         </ng-container>
 
         <ng-template #editForm>
@@ -37,9 +61,10 @@
             <input [(ngModel)]="user.telefono" />
           </label>
           <label>Rol:
-            <select [(ngModel)]="user.Rol">
-              <option value="usuario">Usuario</option>
-              <option value="admin">Admin</option>
+            <select>
+              <option value="jugador">Jugador</option>
+              <option value="entrenador">Entrenador</option>
+              <option value="admin">Administrador</option>
             </select>
           </label>
 
@@ -51,9 +76,9 @@
         </ng-template>
       </div>
     </div>
-  </div>
 
-  <ng-template #noUser>
-    <p>No hay usuario logueado.</p>
-  </ng-template>
+    <ng-template #noUser>
+      <p>No hay usuario logueado.</p>
+    </ng-template>
+  </div>
 </div>
