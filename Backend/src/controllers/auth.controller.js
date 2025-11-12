@@ -30,7 +30,14 @@ export const loginUsuario = (req, res) => {
       res.status(200).json({
         message: "Login correcto",
         token,
-        user: { DNI: user.DNI, nombre: user.nombre, email: user.email, telefono: user.telefono, Rol: user.Rol, foto: user.foto ? user.foto : null },
+        user: {
+          DNI: user.DNI,
+          nombre: user.nombre,
+          email: user.email,
+          telefono: user.telefono,
+          Rol: user.Rol,
+          foto: user.foto ? user.foto : null
+        },
       });
     } catch (error) {
       res.status(500).json({ error: "Error al validar contraseña" });
@@ -139,7 +146,6 @@ export const registerUsuariosMasivo = async (req, res) => {
           const { DNI, nombre, email, telefono, Rol } = u;
 
           if (!DNI || !email || !telefono || !nombre) {
-            console.log("Fila incompleta:", u);
             skippedUsers.push({ ...u, reason: "Fila incompleta" });
             continue;
           }
@@ -160,7 +166,6 @@ export const registerUsuariosMasivo = async (req, res) => {
             continue;
           }
 
-          
           const invitationToken = uuidv4();
           const invitationExp = Date.now() + 1000 * 60 * 60 * 48; // 48h
 
@@ -168,10 +173,7 @@ export const registerUsuariosMasivo = async (req, res) => {
             db.query(
               "INSERT INTO usuarios (DNI, nombre, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?, ?)",
               [DNI, nombre, Rol || "usuario", email, telefono, invitationToken, invitationExp],
-              (err) => {
-                if (err) reject(err);
-                else resolve();
-              }
+              (err) => (err ? reject(err) : resolve())
             );
           });
 
@@ -191,27 +193,22 @@ export const registerUsuariosMasivo = async (req, res) => {
           try {
             await transporter.sendMail(mailOptions);
             invitedUsers.push(email);
-          } catch (mailError) {
-            console.error("Error al enviar correo a:", email, mailError);
+          } catch {
             skippedUsers.push({ ...u, reason: "Error al enviar correo" });
           }
         }
 
         fs.unlinkSync(filePath);
-
         res.status(201).json({
           message: `Invitaciones enviadas: ${invitedUsers.length}, Omitidos: ${skippedUsers.length}`,
           invitedUsers,
           skippedUsers
         });
       } catch (error) {
-        console.error("Error procesando CSV:", error);
         res.status(500).json({ message: "Error al procesar el archivo", error });
       }
     });
 };
-
-
 
 export const solicitarRecuperacion = (req, res) => {
   const { email } = req.body;
@@ -232,7 +229,6 @@ export const solicitarRecuperacion = (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
 
         const resetUrl = `http://localhost:4200/reset-password?token=${token}`;
-
         const mailOptions = {
           from: process.env.EMAIL_USER,
           to: email,
@@ -246,17 +242,14 @@ export const solicitarRecuperacion = (req, res) => {
 
         try {
           await transporter.sendMail(mailOptions);
-          console.log("Correo enviado correctamente a", email);
           res.json({ message: "Correo de recuperación enviado correctamente" });
         } catch (mailError) {
-          console.error("Error detallado al enviar correo:", mailError);
           res.status(500).json({ error: "Error al enviar el correo", mailError });
         }
       }
     );
   });
 };
-
 
 export const restablecerPassword = (req, res) => {
   const { token, nuevaPassword } = req.body;
@@ -285,6 +278,32 @@ export const restablecerPassword = (req, res) => {
   });
 };
 
+export const cambiarPassword = (req, res) => {
+  const { email, actualPassword, nuevaPassword } = req.body;
+  if (!email || !actualPassword || !nuevaPassword)
+    return res.status(400).json({ message: "Todos los campos son obligatorios" });
+
+  db.query("SELECT * FROM Usuarios WHERE email = ?", [email], async (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ message: "Usuario no encontrado" });
+
+    const user = results[0];
+    const validPassword = await bcrypt.compare(actualPassword, user.password);
+    if (!validPassword)
+      return res.status(401).json({ message: "La contraseña actual no es correcta" });
+
+    const hashedPassword = await bcrypt.hash(nuevaPassword, 10);
+    db.query(
+      "UPDATE Usuarios SET password = ? WHERE email = ?",
+      [hashedPassword, email],
+      (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: "Contraseña actualizada correctamente" });
+      }
+    );
+  });
+};
+
 export const actualizarUsuario = (req, res) => {
   const { DNI, nombre, telefono, email, Rol } = req.body;
 
@@ -292,43 +311,29 @@ export const actualizarUsuario = (req, res) => {
     return res.status(400).json({ message: 'El DNI es obligatorio para actualizar el usuario' });
   }
 
-  // Primero, buscar el usuario actual para ver si tiene foto anterior
   db.query('SELECT * FROM usuarios WHERE DNI = ?', [DNI], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
 
     const user = results[0];
 
-    // Nueva ruta de imagen si se subió una nueva
     let fotoPath = null;
     if (req.file) {
       fotoPath = `/uploads/${req.file.filename}`;
-
       if (user.foto) {
-        // user.foto en BD: "/uploads/1762881201370-ipTables.png"
-        // Carpeta real: "src/public/uploads/..."
         const oldPath = path.join(process.cwd(), "public", user.foto.replace(/^\//, ""));
-      
         fs.access(oldPath, fs.constants.F_OK, (err) => {
-          if (err) {
-            console.log("⚠️ La foto anterior no existe físicamente en:", oldPath);
-          } else {
+          if (!err) {
             fs.unlink(oldPath, (unlinkErr) => {
-              if (unlinkErr) {
-                console.log("⚠️ Error al eliminar la foto anterior:", unlinkErr.message);
-              } else {
-                console.log("🗑️ Foto anterior eliminada correctamente:", oldPath);
-              }
+              if (unlinkErr) console.log("⚠️ Error al eliminar la foto anterior:", unlinkErr.message);
             });
           }
         });
       }
     }
 
-    // Construir actualización dinámica
     const updates = [];
     const params = [];
-
     if (nombre) { updates.push('nombre = ?'); params.push(nombre); }
     if (telefono) { updates.push('telefono = ?'); params.push(telefono); }
     if (email) { updates.push('email = ?'); params.push(email); }
@@ -340,13 +345,11 @@ export const actualizarUsuario = (req, res) => {
     }
 
     params.push(DNI);
-
     const sql = `UPDATE usuarios SET ${updates.join(', ')} WHERE DNI = ?`;
 
     db.query(sql, params, (err) => {
       if (err) return res.status(500).json({ error: err.message });
 
-      // Devolver usuario actualizado
       db.query(
         'SELECT DNI, nombre, telefono, email, Rol, foto FROM usuarios WHERE DNI = ?',
         [DNI],
@@ -363,4 +366,3 @@ export const actualizarUsuario = (req, res) => {
     });
   });
 };
-

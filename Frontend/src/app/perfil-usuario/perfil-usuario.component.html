@@ -1,23 +1,23 @@
+<app-header></app-header>
 <div class="perfil-container">
+  <!-- 📸 Columna izquierda: Foto de perfil -->
   <div class="perfil-image">
     <div class="foto-area">
       <img [src]="getProfileImage()" alt="Foto de perfil" class="foto-perfil-redonda" />
-  
-      <!-- Botones para editar/guardar la foto -->
+
       <div class="acciones-foto">
         <button class="btn-editar-foto" (click)="fileInput.click()">Editar foto</button>
-  
-        <!-- Solo aparece el botón "Guardar foto" si se ha seleccionado una nueva -->
-        <button
-          *ngIf="selectedFile"
+
+        <button *ngIf="selectedFile"
           class="btn-guardar-foto"
           (click)="guardarSoloFoto()"
-          [disabled]="loading"
-        >
+          [disabled]="loading">
           Guardar foto
         </button>
+
+        <button class="btn-cambiar-pass" (click)="toggleChangePass()">Cambiar contraseña</button>
       </div>
-  
+
       <input
         type="file"
         #fileInput
@@ -26,9 +26,36 @@
         accept="image/*"
       />
     </div>
+
+    <div class="change-pass-card" *ngIf="showChangePass">
+      <h2>Cambiar contraseña</h2>
+      <form class="perfil-form">
+        <label>Contraseña actual</label>
+        <input type="password" [(ngModel)]="actualPassword" name="actualPassword" placeholder="********" />
+        
+        <label>Nueva contraseña</label>
+        <input type="password" [(ngModel)]="nuevaPassword" name="nuevaPassword" placeholder="********" />
+        
+        <label>Confirmar nueva contraseña</label>
+        <input type="password" [(ngModel)]="confirmarPassword" name="confirmarPassword" placeholder="********" />
+    
+        <p *ngIf="passwordsNoCoinciden" class="error">Las contraseñas no coinciden</p>
+    
+        <div class="actions">
+          <button class="btn-changepassword" type="button" (click)="onChangePassword()" [disabled]="loading || passwordsNoCoinciden">
+            Guardar Contraseña
+          </button>
+    
+          <button type="button" (click)="toggleChangePass()">Cancelar</button>
+        </div>
+    
+        <p *ngIf="passMessage" [class.success]="passSuccess" [class.error]="!passSuccess">
+          {{ passMessage }}
+        </p>
+      </form>
+    </div>
   </div>
 
-  <!-- Contenedor principal -->
   <div class="perfil-form-container">
     <div class="perfil-message">
       <h2>Mi Perfil</h2>
@@ -36,45 +63,46 @@
     </div>
 
     <div *ngIf="user; else noUser" class="perfil-card">
-
-      <div class="info">
-        <ng-container *ngIf="!editMode; else editForm">
-          <p><strong>DNI:</strong> {{ user.DNI }}</p>
-          <p><strong>Nombre:</strong> {{ user.nombre }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
-          <p><strong>Teléfono:</strong> {{ user.telefono }}</p>
-          <p><strong>Rol:</strong> {{ user.Rol }}</p>
-          <div class="actions">
-            <button (click)="toggleEdit()">Editar</button>
-            <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
-          </div>
-        </ng-container>
-
-        <ng-template #editForm>
-          <label>Nombre:
-            <input [(ngModel)]="user.nombre" />
-          </label>
-          <label>Email:
-            <input [(ngModel)]="user.email" />
-          </label>
-          <label>Teléfono:
-            <input [(ngModel)]="user.telefono" />
-          </label>
-          <label>Rol:
-            <select>
-              <option value="jugador">Jugador</option>
-              <option value="entrenador">Entrenador</option>
-              <option value="admin">Administrador</option>
-            </select>
-          </label>
-
-          <div class="actions">
-            <button (click)="guardarCambios()" [disabled]="loading">Guardar</button>
-            <button (click)="toggleEdit()">Cancelar</button>
-          </div>
-          <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
-        </ng-template>
+      <div class="info" *ngIf="!editMode; else editForm">
+        <p><strong>DNI:</strong> {{ user.DNI }}</p>
+        <p><strong>Nombre:</strong> {{ user.nombre }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Teléfono:</strong> {{ user.telefono }}</p>
+        <p><strong>Rol:</strong> {{ user.Rol }}</p>
+        <div class="actions">
+          <button (click)="toggleEdit()">Editar perfil</button>
+          <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+        </div>
       </div>
+
+      <ng-template #editForm>
+        <form class="perfil-form">
+          <label>Nombre</label>
+          <input [(ngModel)]="user.nombre" name="nombre" />
+
+          <label>Email</label>
+          <input [(ngModel)]="user.email" name="email" />
+
+          <label>Teléfono</label>
+          <input [(ngModel)]="user.telefono" name="telefono" />
+
+          <label>Rol</label>
+          <select [(ngModel)]="user.Rol" name="Rol">
+            <option value="jugador">Jugador</option>
+            <option value="entrenador">Entrenador</option>
+            <option value="admin">Administrador</option>
+          </select>
+
+          <div class="actions">
+            <button type="button" (click)="guardarCambios()" [disabled]="loading">
+              {{ loading ? 'Guardando...' : 'Guardar cambios' }}
+            </button>
+            <button type="button" (click)="toggleEdit()">Cancelar</button>
+          </div>
+
+          <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
+        </form>
+      </ng-template>
     </div>
 
     <ng-template #noUser>

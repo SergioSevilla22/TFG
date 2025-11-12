@@ -1,40 +1,268 @@
 .perfil-container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 16px;
-}
-.perfil-card {
   display: flex;
-  gap: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
+  min-height: 100vh;
+  background-color: #f5f5f5;
 }
-.foto-perfil {
-  width: 150px;
-  height: 150px;
-  border-radius: 8px;
+
+
+.perfil-image {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 3rem;
+}
+
+.foto-perfil-redonda {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #ccc;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
 }
-.foto-input {
-  margin-top: 10px;
+
+.foto-perfil-redonda:hover {
+  transform: scale(1.02);
 }
-.info p {
-  margin: 6px 0;
+
+.acciones-foto {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 220px;
 }
-button {
-  margin-right: 10px;
-  padding: 6px 12px;
+
+.acciones-foto button {
+  padding: 0.75rem;
+  background-color: #444;
+  color: white;
   border: none;
   border-radius: 6px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
 }
-.btn-logout {
-  background-color: #d9534f;
+
+.acciones-foto button:hover {
+  background-color: #333;
+  transform: scale(1.02);
+}
+
+.btn-changepassword {
+  background-color: #444  !important;
+  color: white  !important;
+  border: none  !important;
+  border-radius: 6px  !important;
+  font-size: 1rem  !important;
+  cursor: pointer  !important;
+  transition: background-color 0.2s, transform 0.2s  !important;
+  padding: 0.75rem 1rem  !important;
+  width: auto  !important;       
+  align-self: center  !important;      
+  height: 45px !important;
+  margin-top: 0.5rem !important;
+}
+
+.btn-changepassword:hover {
+  background-color: #333;
+  transform: scale(1.02);
+}
+
+.change-pass-card {
+  background-color: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 400px;
+  margin-top: 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.change-pass-card h2 {
+  text-align: center;
+  color: #444;
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.perfil-form label {
+  font-weight: 500;
+  color: #444;
+}
+
+.perfil-form input,
+.perfil-form select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.perfil-form input:focus,
+.perfil-form select:focus {
+  outline: none;
+  border-color: #888;
+  box-shadow: 0 0 5px rgba(136,136,136,0.3);
+}
+
+.perfil-form button {
+  padding: 0.75rem;
+  background-color: #444;
   color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
 }
+
+.perfil-form button:hover {
+  background-color: #333;
+  transform: scale(1.02);
+}
+
+.perfil-form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 3rem;
+  background-color: #ffffff;
+}
+
+.perfil-message {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.perfil-message h2 {
+  font-size: 1.8rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+}
+
+.perfil-message p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.perfil-card {
+  background-color: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0 auto;
+}
+
+.info p {
+  margin: 0.3rem 0;
+  color: #333;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.actions button {
+  flex: 1;
+  margin: 0 0.3rem;
+  background-color: #444;
+  color: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  border: none;
+}
+
+.btn-logout {
+  background-color: #d9534f !important;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.btn-logout:hover {
+  background-color: #c9302c;
+}
+
 .error {
   color: #d9534f;
-  margin-top: 10px;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+.success {
+  color: #28a745;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .perfil-container {
+    flex-direction: column-reverse;
+    background-color: white;
+  }
+
+  .perfil-image {
+    width: 100%;
+    padding: 2rem;
+  }
+
+  .perfil-form-container {
+    width: 100%;
+    padding: 2rem;
+  }
+
+  .perfil-card,
+  .change-pass-card {
+    max-width: 90%;
+  }
+
+  .foto-perfil-redonda {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+@media (max-width: 425px) {
+  .perfil-container {
+    flex-direction: column-reverse;
+  }
+
+  .perfil-image {
+    height: auto;
+    padding: 1.5rem;
+  }
+
+  .perfil-card {
+    padding: 1.5rem 1rem;
+    max-width: 90%;
+  }
+
+  .perfil-form button {
+    font-size: 0.9rem;
+  }
 }
