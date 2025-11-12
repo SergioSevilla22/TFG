@@ -13,6 +13,7 @@ export class AuthService {
   private apiUrlResetPassword = 'http://localhost:3000/api/reset-password';
   private apiUrlAccept = 'http://localhost:3000/api/accept-invitation';
   private apiUrlUpdateUser = 'http://localhost:3000/api/update-user';
+  private apiUrlChangePassword = 'http://localhost:3000/api/change-password';
 
   constructor(private http: HttpClient) {}
 
@@ -61,7 +62,7 @@ export class AuthService {
     return this.http.post(this.apiUrlResetPassword, data);
   }
 
-  acceptInvitation(data: { token: string, password: string }): Observable<any> {
+  acceptInvitation(data: { token: string; password: string }): Observable<any> {
     return this.http.post(this.apiUrlAccept, data);
   }
 
@@ -73,5 +74,9 @@ export class AuthService {
         }
       })
     );
+  }
+
+  changePassword(data: { email: string; actualPassword: string; nuevaPassword: string }): Observable<any> {
+    return this.http.post(this.apiUrlChangePassword, data);
   }
 }

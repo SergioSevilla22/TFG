@@ -1,17 +1,19 @@
-<div class ="header">
-    <div class="logo">
-        <img src="logo.png" alt="Logo Club" /> 
-        <span>ClubFútbol Control</span>
-      </div>
-    
-      <div class="nav-actions">
-        <button class="btn-equipos" [routerLink]="['/entrenador']">Equipos</button>
-    
-        <button class="btn-registrar" [routerLink]="['/register']">Registrar</button>
-    
-        <a class="profile" [routerLink]="['/perfil']">
-          <img [src]="profileImage" alt="Perfil" />
-        </a>
-      </div>
-</div>
+<div class="header">
+  <div class="logo">
+    <img src="logo.png" alt="Logo Club" /> 
+    <span>ClubFútbol Control</span>
+  </div>
 
+  <div class="nav-actions">
+   
+    <button class="btn-inicio" [routerLink]="['/home']">Inicio</button>
+
+    <button class="btn-equipos" [routerLink]="['/entrenador']">Equipos</button>
+
+    <button class="btn-registrar" [routerLink]="['/register']">Registrar</button>
+
+    <a class="profile" [routerLink]="['/perfil']">
+      <img [src]="profileImage" alt="Perfil" />
+    </a>
+  </div>
+</div>

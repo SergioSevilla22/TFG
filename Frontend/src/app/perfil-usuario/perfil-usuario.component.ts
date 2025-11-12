@@ -3,15 +3,15 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { HeaderComponent } from "../header/header.component";
 
 @Component({
   selector: 'app-perfil-usuario',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeaderComponent],
   templateUrl: './perfil-usuario.component.html',
   styleUrls: ['./perfil-usuario.component.css']
 })
 export class PerfilUsuarioComponent {
-
   user: any = null;
   editMode = false;
   selectedFile: File | null = null;
@@ -20,6 +20,14 @@ export class PerfilUsuarioComponent {
   loading = false;
   private baseUrl = 'http://localhost:3000';
 
+ 
+  showChangePass = false;
+  actualPassword = '';
+  nuevaPassword = '';
+  confirmarPassword = '';
+  passMessage = '';
+  passSuccess = false; 
+
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
@@ -27,12 +35,8 @@ export class PerfilUsuarioComponent {
   }
 
   getProfileImage(): string {
-    if (typeof this.previewImage === 'string' && this.previewImage) {
-      return this.previewImage;
-    }
-    if (this.user?.foto) {
-      return this.baseUrl + this.user.foto;
-    }
+    if (typeof this.previewImage === 'string' && this.previewImage) return this.previewImage;
+    if (this.user?.foto) return this.baseUrl + this.user.foto;
     return 'assets/default-avatar.png';
   }
 
@@ -56,13 +60,12 @@ export class PerfilUsuarioComponent {
 
     this.selectedFile = file;
     const reader = new FileReader();
-    reader.onload = e => this.previewImage = (e.target as FileReader).result as string | ArrayBuffer;
+    reader.onload = e => this.previewImage = (e.target as FileReader).result;
     reader.readAsDataURL(file);
   }
 
   guardarSoloFoto() {
     if (!this.selectedFile || !this.user) return;
-
     const formData = new FormData();
     formData.append('DNI', this.user.DNI);
     formData.append('fotoPerfil', this.selectedFile);
@@ -72,8 +75,8 @@ export class PerfilUsuarioComponent {
       next: (res) => {
         this.loading = false;
         this.user = res.user;
-        this.previewImage = this.user.foto ? 'http://localhost:3000' + this.user.foto : null;
-        this.selectedFile = null; // limpia selección
+        this.previewImage = this.user.foto ? this.baseUrl + this.user.foto : null;
+        this.selectedFile = null;
       },
       error: (err) => {
         this.loading = false;
@@ -84,7 +87,6 @@ export class PerfilUsuarioComponent {
 
   guardarCambios() {
     if (!this.user) return;
-
     const formData = new FormData();
     formData.append('DNI', this.user.DNI);
     formData.append('nombre', this.user.nombre);
@@ -97,7 +99,7 @@ export class PerfilUsuarioComponent {
       next: (res) => {
         this.loading = false;
         this.user = res.user;
-        this.previewImage = this.user.foto ? 'http://localhost:3000' + this.user.foto : null;
+        this.previewImage = this.user.foto ? this.baseUrl + this.user.foto : null;
         this.editMode = false;
       },
       error: (err) => {
@@ -110,5 +112,65 @@ export class PerfilUsuarioComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  toggleChangePass() {
+    this.showChangePass = !this.showChangePass;
+    this.passMessage = '';
+    this.passSuccess = false;
+    this.actualPassword = '';
+    this.nuevaPassword = '';
+    this.confirmarPassword = '';
+  }
+  
+
+  get passwordsNoCoinciden(): boolean {
+    return (
+      this.confirmarPassword.trim().length > 0 &&
+      this.nuevaPassword.trim().length > 0 &&
+      this.nuevaPassword !== this.confirmarPassword
+    );
+  }
+  
+
+  onChangePassword() {
+    if (!this.user) return;
+    if (this.passwordsNoCoinciden) {
+      this.passMessage = 'Las contraseñas no coinciden.';
+      this.passSuccess = false;
+      return;
+    }
+  
+    const data = {
+      email: this.user.email,
+      actualPassword: this.actualPassword,
+      nuevaPassword: this.nuevaPassword
+    };
+  
+    this.loading = true;
+    this.authService.changePassword(data).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.passMessage = res.message;
+        this.passSuccess = true;
+  
+        // 🔹 Limpia los campos
+        this.actualPassword = '';
+        this.nuevaPassword = '';
+        this.confirmarPassword = '';
+  
+        // 🔹 Espera un poco y oculta la tarjeta
+        setTimeout(() => {
+          this.showChangePass = false;
+          this.passMessage = '';
+          this.passSuccess = false;
+        }, 900); // 1.5 segundos para mostrar mensaje antes de cerrar
+      },
+      error: (err) => {
+        this.loading = false;
+        this.passSuccess = false;
+        this.passMessage = err.error.message || 'Error al cambiar la contraseña.';
+      }
+    });
   }
 }
