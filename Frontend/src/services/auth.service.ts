@@ -14,6 +14,8 @@ export class AuthService {
   private apiUrlAccept = 'http://localhost:3000/api/accept-invitation';
   private apiUrlUpdateUser = 'http://localhost:3000/api/update-user';
   private apiUrlChangePassword = 'http://localhost:3000/api/change-password';
+  private apiUrlDeleteUser = 'http://localhost:3000/api/delete-user';
+
 
   constructor(private http: HttpClient) {}
 
@@ -79,4 +81,10 @@ export class AuthService {
   changePassword(data: { email: string; actualPassword: string; nuevaPassword: string }): Observable<any> {
     return this.http.post(this.apiUrlChangePassword, data);
   }
+
+  deleteUser(dni: string): Observable<any> {
+    return this.http.request('delete', this.apiUrlDeleteUser, {body: { dni }});
+  }
+
+
 }

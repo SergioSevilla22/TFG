@@ -9,7 +9,8 @@ import {
   restablecerPassword,
   aceptarInvitacion,
   actualizarUsuario,
-  cambiarPassword, 
+  cambiarPassword,
+  deleteUsuario, 
 } from "../controllers/auth.controller.js";
 
 const router = express.Router();
@@ -35,5 +36,6 @@ router.post("/reset-password", restablecerPassword);
 router.post("/accept-invitation", aceptarInvitacion);
 router.put("/update-user", upload.single("fotoPerfil"), actualizarUsuario);
 router.post("/change-password", cambiarPassword);
+router.delete("/delete-user", deleteUsuario);
 
 export default router;
