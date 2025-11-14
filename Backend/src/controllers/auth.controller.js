@@ -366,3 +366,45 @@ export const actualizarUsuario = (req, res) => {
     });
   });
 };
+
+export const deleteUsuario = (req, res) => {
+  const { dni } = req.body;
+
+  if (!dni) {
+    return res.status(400).json({ message: "El DNI es obligatorio" });
+  }
+
+  // Verificar si existe el usuario
+  db.query("SELECT * FROM usuarios WHERE DNI = ?", [dni], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const user = results[0];
+
+    // Eliminar la foto si existe
+    if (user.foto) {
+      const fotoPath = path.join(process.cwd(), "public", user.foto.replace(/^\//, ""));
+
+      fs.access(fotoPath, fs.constants.F_OK, (err) => {
+        if (!err) {
+          fs.unlink(fotoPath, (unlinkErr) => {
+            if (unlinkErr) console.log("⚠️ Error al eliminar la foto:", unlinkErr.message);
+          });
+        }
+      });
+    }
+
+    // Eliminar el usuario
+    db.query("DELETE FROM usuarios WHERE DNI = ?", [dni], (delErr) => {
+      if (delErr) return res.status(500).json({ error: delErr.message });
+
+      res.json({
+        message: `Usuario con DNI ${dni} eliminado correctamente`,
+      });
+    });
+  });
+};
+

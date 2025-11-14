@@ -1,0 +1,16 @@
+<app-header></app-header>
+
+<div class="admin-container">
+  <h2>Panel de Administración</h2>
+
+  <div class="tabs">
+    <button class="active">Eliminar Usuario</button>
+  </div>
+
+  <div class="tab-content">
+    <h3>Eliminar Usuario</h3>
+    <input type="text" [(ngModel)]="dniToDelete" placeholder="Introduce DNI">
+    <button (click)="eliminarUsuario()">Eliminar</button>
+    <p class="resultado">{{ resultado }}</p>
+  </div>
+</div>
