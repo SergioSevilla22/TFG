@@ -408,3 +408,49 @@ export const deleteUsuario = (req, res) => {
   });
 };
 
+export const getUsuario = (req, res) => {
+  const { dni } = req.query;
+
+  if (!dni) {
+    return res.status(400).json({ message: "Debes proporcionar un DNI" });
+  }
+
+  db.query(
+    "SELECT DNI, nombre, email, telefono, Rol, foto FROM usuarios WHERE DNI = ?",
+    [dni],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      res.json(results[0]);
+    }
+  );
+};
+
+export const updateRolUsuario = (req, res) => {
+  const { dni, nuevoRol } = req.body;
+
+  if (!dni || !nuevoRol) {
+    return res.status(400).json({ message: "DNI y nuevo rol son obligatorios" });
+  }
+
+  db.query(
+    "UPDATE usuarios SET Rol = ? WHERE DNI = ?",
+    [nuevoRol, dni],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      res.json({ message: "Rol actualizado correctamente" });
+    }
+  );
+};
+
+
+
