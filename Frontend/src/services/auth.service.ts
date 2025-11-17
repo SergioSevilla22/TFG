@@ -86,5 +86,11 @@ export class AuthService {
     return this.http.request('delete', this.apiUrlDeleteUser, {body: { dni }});
   }
 
+  getUserByDni(dni: string) {
+  return this.http.get(`http://localhost:3000/api/get-user?dni=${dni}`);
+  }
 
+  updateUserRole(data: { dni: string; nuevoRol: string }): Observable<any> {
+    return this.http.put('http://localhost:3000/api/update-role', data);
+  }
 }

@@ -10,7 +10,9 @@ import {
   aceptarInvitacion,
   actualizarUsuario,
   cambiarPassword,
-  deleteUsuario, 
+  deleteUsuario,
+  getUsuario,
+  updateRolUsuario,
 } from "../controllers/auth.controller.js";
 
 const router = express.Router();
@@ -37,5 +39,7 @@ router.post("/accept-invitation", aceptarInvitacion);
 router.put("/update-user", upload.single("fotoPerfil"), actualizarUsuario);
 router.post("/change-password", cambiarPassword);
 router.delete("/delete-user", deleteUsuario);
+router.get("/get-user", getUsuario);
+router.put("/update-role", updateRolUsuario)
 
 export default router;

@@ -1,16 +1,77 @@
 <app-header></app-header>
 
-<div class="admin-container">
-  <h2>Panel de Administración</h2>
+<div class="admin-wrapper">
+  <div class="admin-container">
 
-  <div class="tabs">
-    <button class="active">Eliminar Usuario</button>
-  </div>
+    <h2>Panel de Administración</h2>
 
-  <div class="tab-content">
-    <h3>Eliminar Usuario</h3>
-    <input type="text" [(ngModel)]="dniToDelete" placeholder="Introduce DNI">
-    <button (click)="eliminarUsuario()">Eliminar</button>
-    <p class="resultado">{{ resultado }}</p>
+    <!-- TABS -->
+    <div class="tabs">
+      <button type="button"
+              [class.active]="activeTab === 'eliminar'"
+              (click)="activeTab = 'eliminar'">
+        Eliminar Usuario
+      </button>
+
+      <button type="button"
+              [class.active]="activeTab === 'roles'"
+              (click)="activeTab = 'roles'">
+        Gestión de Roles
+      </button>
+    </div>
+
+    <!-- TAB: Eliminar Usuario -->
+    <div class="tab-content" *ngIf="activeTab === 'eliminar'">
+      <h3>Eliminar Usuario</h3>
+
+      <input type="text" [(ngModel)]="dniToDelete" placeholder="Introduce DNI" />
+
+      <button type="button" (click)="eliminarUsuario()">Eliminar</button>
+
+      <p class="resultado">{{ resultado }}</p>
+    </div>
+
+    <!-- TAB: Gestión de Roles -->
+    <div class="tab-content" *ngIf="activeTab === 'roles'">
+      <h3>Buscar Usuario</h3>
+
+      <input 
+        type="text"
+        class="input-dni"
+        [(ngModel)]="dniBusqueda"
+        (ngModelChange)="onDniChange()"
+        placeholder="Introduce DNI"
+      />
+
+      <button type="button" (click)="buscarUsuario()">Buscar</button>
+
+      <p class="resultado">{{ resultadoBusqueda }}</p>
+
+      <!-- Tarjeta del usuario encontrado -->
+      <div *ngIf="usuarioEncontrado" class="user-card">
+        <h4>{{ usuarioEncontrado.nombre }}</h4>
+
+        <p><strong>DNI:</strong> {{ usuarioEncontrado.DNI }}</p>
+        <p><strong>Email:</strong> {{ usuarioEncontrado.email }}</p>
+        <p><strong>Teléfono:</strong> {{ usuarioEncontrado.telefono }}</p>
+        <p><strong>Rol actual:</strong> {{ usuarioEncontrado.Rol }}</p>
+
+        <label>Nuevo Rol:</label>
+
+        <div class="rol-selector-container">
+          <select [(ngModel)]="nuevoRol" class="rol-selector">
+            <option value="">Seleccionar...</option>
+            <option value="jugador">Jugador</option>
+            <option value="entrenador">Entrenador</option>
+            <option value="tutor">Tutor</option>
+          </select>
+        </div>
+
+        <button type="button" (click)="cambiarRol()">Guardar Rol</button>
+
+        <p class="resultado">{{ resultadoRol }}</p>
+      </div>
+    </div>
+    
   </div>
 </div>
