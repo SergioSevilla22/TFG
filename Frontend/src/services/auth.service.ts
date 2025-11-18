@@ -93,4 +93,14 @@ export class AuthService {
   updateUserRole(data: { dni: string; nuevoRol: string }): Observable<any> {
     return this.http.put('http://localhost:3000/api/update-role', data);
   }
+
+  getUserRole(): string | null {
+    const user = this.getUser();
+    console.log(user.Rol);
+    return user && user.Rol ? user.Rol : null;
+  }
+
+  hasRole(role: string): boolean {
+    return this.getUserRole() === role;
+  }
 }
