@@ -81,43 +81,74 @@
     
     <div class="tab-content" *ngIf="activeTab === 'registrar'">
       <div class="register-form-container">
-        <div class="register-message">
-          <h2>Registro de Usuario</h2>
-          <p>Registra a los usuarios del club</p>
+    
+        <div class="register-header">
+          <h3>Registro de Usuario</h3>
+          <p>Da de alta a jugadores, entrenadores y usuarios del club.</p>
         </div>
-
+    
         <form [formGroup]="RegisterForm" (ngSubmit)="onSubmit()" class="register-form">
-          <label for="dni">DNI</label>
-          <input id="dni" type="text" formControlName="DNI" />
-
-          <label for="nombre">Nombre</label>
-          <input id="nombre" type="text" formControlName="nombre" />
-
-          <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" />
-
-          <label for="telefono">Teléfono</label>
-          <input id="telefono" type="text" formControlName="telefono" />
-
-          <label for="rol">Rol</label>
-          <select id="rol" formControlName="Rol">
-            <option value="usuario">Usuario</option>
-            <option value="jugador">Jugador</option>
-            <option value="entrenador">Entrenador</option>
-          </select>
-
-          <button type="submit">Registrar</button>
+          <!-- Fila 1 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dni">DNI</label>
+              <input id="dni" type="text" formControlName="DNI" />
+            </div>
+    
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input id="nombre" type="text" formControlName="nombre" />
+            </div>
+          </div>
+    
+          <!-- Fila 2 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input id="email" type="email" formControlName="email" />
+            </div>
+    
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input id="telefono" type="text" formControlName="telefono" />
+            </div>
+          </div>
+    
+          <!-- Fila 3 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rol">Rol</label>
+              <select id="rol" formControlName="Rol">
+                <option value="usuario">Usuario</option>
+                <option value="jugador">Jugador</option>
+                <option value="entrenador">Entrenador</option>
+              </select>
+            </div>
+    
+            <div class="btn-registrar">
+              <button type="submit">Registrar</button>
+            </div>
+          </div>
         </form>
-
-        <hr />
-
+    
         <div class="register-massive-container">
-          <h3>Registro Masivo (CSV)</h3>
-          <label for="csvFile">Selecciona archivo CSV</label>
-          <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" />
-          <button type="button" (click)="uploadCSV()">Subir CSV</button>
+          <h4>Registro Masivo (CSV)</h4>
+          <p class="register-massive-text">
+            Sube un archivo CSV para registrar varios miembros del club de una sola vez.
+          </p>
+    
+          <div class="csv-row">
+            <input
+              id="csvFile"
+              type="file"
+              (change)="onFileSelected($event)"
+              accept=".csv"
+            />
+            <div class="Massive-button">
+              <button type="button" (click)="uploadCSV()">Subir CSV</button>
+            </div>
+          </div>
         </div>
-      </div>   
+      </div>
     </div>
-  </div>
 </div>

@@ -1,21 +1,17 @@
 <div class="header">
   <div class="logo">
-    <img src="logo.png" alt="Logo Club" /> 
+    <img src="logo.png" alt="Logo Club" />
     <span>ClubFútbol Control</span>
   </div>
 
-  <div class="nav-actions">
-   
-    <button class="btn-inicio" [routerLink]="['/home']">Inicio</button>
+  <nav class="nav-tabs">
+    <a routerLink="/home" routerLinkActive="active">Inicio</a>
+    <a routerLink="/entrenador" routerLinkActive="active">Equipos</a>
+    <a *ngIf="authService.hasRole('entrenador')" routerLink="/register" routerLinkActive="active">Registrar</a>
+    <a *ngIf="authService.hasRole('admin')" routerLink="/admin" routerLinkActive="active">Administrar</a>
+  </nav>
 
-    <button class="btn-equipos" [routerLink]="['/entrenador']">Equipos</button>
-
-    <button class="btn-registrar" [routerLink]="['/register']">Registrar</button>
-
-    <button class="btn-admin" *ngIf="authService.hasRole('admin')" [routerLink]="['/admin']">Administrar</button>
-
-    <a class="profile" [routerLink]="['/perfil']">
-      <img [src]="profileImage" alt="Perfil" />
-    </a>
-  </div>
+  <a class="profile" [routerLink]="['/perfil']">
+    <img [src]="profileImage" alt="Perfil" />
+  </a>
 </div>

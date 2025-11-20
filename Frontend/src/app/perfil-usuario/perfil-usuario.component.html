@@ -6,18 +6,34 @@
       <img [src]="getProfileImage()" alt="Foto de perfil" class="foto-perfil-redonda" />
 
       <div class="acciones-foto">
-        <button class="btn-editar-foto" (click)="fileInput.click()">Editar foto</button>
-
-        <button *ngIf="selectedFile"
-          class="btn-guardar-foto"
-          (click)="guardarSoloFoto()"
-          [disabled]="loading">
-          Guardar foto
+        <button *ngIf="!selectedFile"
+                class="btn-editar-foto"
+                (click)="fileInput.click()">
+          Editar foto
         </button>
-
-        <button class="btn-cambiar-pass" (click)="toggleChangePass()">Cambiar contraseña</button>
+      
+        <div *ngIf="selectedFile" class="acciones-edicion">
+          <button class="btn-guardar-foto"
+                  (click)="guardarSoloFoto()"
+                  [disabled]="loading">
+            Guardar
+          </button>
+      
+          <button class="btn-cancelar-foto"
+                  type="button"
+                  (click)="cancelarFoto()">
+            Cancelar
+          </button>
+        </div>
+      
+        <button class="btn-cambiar-pass" 
+                (click)="toggleChangePass()">
+          Cambiar contraseña
+        </button>
+      
       </div>
-
+      
+      
       <input
         type="file"
         #fileInput
