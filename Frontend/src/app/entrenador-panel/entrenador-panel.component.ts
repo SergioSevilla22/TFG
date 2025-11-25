@@ -1,4 +1,5 @@
 import { Component,OnInit  } from '@angular/core';
+import { HeaderComponent } from "../header/header.component";
 
 interface Jugador {
   nombre: string;
@@ -20,7 +21,7 @@ interface Equipo {
 
 @Component({
   selector: 'app-entrenador-panel',
-  imports: [],
+  imports: [HeaderComponent],
   templateUrl: './entrenador-panel.component.html',
   styleUrl: './entrenador-panel.component.css'
 })

@@ -36,7 +36,8 @@ export const loginUsuario = (req, res) => {
           email: user.email,
           telefono: user.telefono,
           Rol: user.Rol,
-          foto: user.foto ? user.foto : null
+          foto: user.foto ? user.foto : null,
+          idTutor: user.idTutor ? user.idTutor : null,
         },
       });
     } catch (error) {

@@ -7,9 +7,22 @@
   <nav class="nav-tabs">
     <a routerLink="/home" routerLinkActive="active">Inicio</a>
     <a routerLink="/entrenador" routerLinkActive="active">Equipos</a>
-    <a *ngIf="authService.hasRole('entrenador')" routerLink="/register" routerLinkActive="active">Registrar</a>
-    <a *ngIf="authService.hasRole('admin')" routerLink="/admin" routerLinkActive="active">Administrar</a>
+  
+    <a *ngIf="authService.hasRole('entrenador')" 
+       routerLink="/register" 
+       routerLinkActive="active">Registrar</a>
+  
+    <a *ngIf="authService.hasRole('admin')" 
+       routerLink="/admin" 
+       routerLinkActive="active">Administrar</a>
+  
+    <a *ngIf="authService.hasRole('tutor')" 
+       routerLink="/tutor-panel" 
+       routerLinkActive="active">
+       Mis jugadores
+    </a>
   </nav>
+  
 
   <a class="profile" [routerLink]="['/perfil']">
     <img [src]="profileImage" alt="Perfil" />

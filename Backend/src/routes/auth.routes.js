@@ -14,6 +14,11 @@ import {
   getUsuario,
   updateRolUsuario,
 } from "../controllers/auth.controller.js";
+import {
+  registrarDependiente,
+  obtenerDependientes,
+  quitarVinculo
+} from "../controllers/tutor.controller.js";
 
 const router = express.Router();
 
@@ -40,6 +45,9 @@ router.put("/update-user", upload.single("fotoPerfil"), actualizarUsuario);
 router.post("/change-password", cambiarPassword);
 router.delete("/delete-user", deleteUsuario);
 router.get("/get-user", getUsuario);
-router.put("/update-role", updateRolUsuario)
+router.put("/update-role", updateRolUsuario);
+router.post("/tutor/registrar-dependiente", registrarDependiente);
+router.get("/tutor/dependientes", obtenerDependientes);
+router.put("/tutor/quitar-vinculo", quitarVinculo);
 
 export default router;

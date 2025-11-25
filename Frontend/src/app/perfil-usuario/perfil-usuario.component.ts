@@ -18,6 +18,7 @@ export class PerfilUsuarioComponent {
 
   selectedFile: File | null = null;
   previewImage: string | ArrayBuffer | null = null;
+  isDependiente: boolean = false;
 
   loading = false;
   errorMsg = '';
@@ -36,6 +37,9 @@ export class PerfilUsuarioComponent {
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
+    if (this.user && this.user.idTutor) {
+      this.isDependiente = true;
+    }
   }
 
   getProfileImage(): string {
