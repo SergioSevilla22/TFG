@@ -96,11 +96,25 @@ export class AuthService {
 
   getUserRole(): string | null {
     const user = this.getUser();
-    console.log(user.Rol);
-    return user && user.Rol ? user.Rol : null;
+    if (!user) return null;
+    return user.Rol || null;
   }
+  
 
   hasRole(role: string): boolean {
     return this.getUserRole() === role;
   }
+
+  registrarDependiente(data: any) {
+    return this.http.post("http://localhost:3000/api/tutor/registrar-dependiente", data);
+  }
+  
+  obtenerDependientes(idTutor: string) {
+    return this.http.get(`http://localhost:3000/api/tutor/dependientes?idTutor=${idTutor}`);
+  }
+  
+  quitarVinculo(DNI: string) {
+    return this.http.put("http://localhost:3000/api/tutor/quitar-vinculo", { DNI });
+  }
+  
 }

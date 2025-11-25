@@ -1,0 +1,43 @@
+<app-header></app-header>
+<div class="panel-container">
+
+  <!-- Registrar dependiente -->
+  <div class="card">
+    <h3>Registrar Jugador</h3>
+
+    <form [formGroup]="DepForm" (ngSubmit)="registrarDependiente()">
+
+      <label>DNI</label>
+      <input formControlName="DNI" />
+
+      <label>Nombre</label>
+      <input formControlName="nombre" />
+
+      <label>Email</label>
+      <input formControlName="email" />
+
+      <label>Teléfono</label>
+      <input formControlName="telefono" />
+
+      <label>Contraseña</label>
+      <input formControlName="password" type="password" />
+
+      <button type="submit">Registrar</button>
+    </form>
+  </div>
+
+  <!-- Lista de dependientes -->
+  <div class="card">
+    <h3>Jugadores asociados</h3>
+
+    <div *ngFor="let d of dependientes" class="dependiente-card">
+      <p><strong>{{ d.nombre }}</strong></p>
+      <p>DNI: {{ d.DNI }}</p>
+      <p>Email: {{ d.email }}</p>
+      <p>Teléfono: {{ d.telefono }}</p>
+
+      <button (click)="quitarVinculo(d.DNI)">Quitar vínculo</button>
+    </div>
+  </div>
+
+</div>

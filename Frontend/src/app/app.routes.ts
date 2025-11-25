@@ -9,6 +9,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { AcceptInvitationComponent } from './accept-invitation/accept-invitation-component.component';
 import { AdminComponent } from './admin/admin.component';
 import { adminGuard } from './guards/admin.guard';
+import { TutorPanelComponent } from './tutor-panel/tutor-panel.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },  
@@ -20,7 +21,8 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent , title: 'ForgotPassword'},
   { path: 'reset-password', component: ResetPasswordComponent, title: 'resetPassword'},
   { path: 'accept-invitation', component: AcceptInvitationComponent, title: 'Activar cuenta' },
-  { path: 'admin', component: AdminComponent, title: 'Admin Page', canActivate: [adminGuard] }
+  { path: 'admin', component: AdminComponent, title: 'Admin Page', canActivate: [adminGuard] },
+  { path: 'tutor-panel', component: TutorPanelComponent, title: 'tutor-panel'}
 
 ];
 
