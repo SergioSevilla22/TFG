@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { HeaderComponent } from '../header/header.component';
+import { ClubService } from '../../services/club.service';
 
 @Component({
   selector: 'app-admin',
@@ -11,7 +12,7 @@ import { HeaderComponent } from '../header/header.component';
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit {
 
   activeTab: string = 'eliminar';
 
@@ -28,6 +29,7 @@ export class AdminComponent {
   nuevoRol: string = "";
   resultadoRol: string = "";
 
+  // Registro usuario
   RegisterForm = new FormGroup({
     DNI: new FormControl('', Validators.required),
     nombre: new FormControl('', Validators.required),
@@ -38,7 +40,31 @@ export class AdminComponent {
 
   selectedFile: File | null = null;
 
-  constructor(private authService: AuthService) {}
+  // Gestión de clubes
+  clubes: any[] = [];
+  editingClubId: number | null = null;
+  selectedEscudo: File | null = null;
+
+  ClubForm = new FormGroup({
+    nombre: new FormControl('', Validators.required),
+    telefono: new FormControl(''),
+    email: new FormControl(''),
+    direccion: new FormControl(''),
+    poblacion: new FormControl(''),
+    provincia: new FormControl(''),
+    codigo_postal: new FormControl('')
+  });
+
+  constructor(
+    private authService: AuthService,
+    private clubService: ClubService
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarClubes();
+  }
+
+  // ---------- GESTIÓN USUARIOS ----------
 
   onDniChange() {
     // Si no hay usuario mostrado aún, no hacemos nada
@@ -111,7 +137,7 @@ export class AdminComponent {
     });
   }
 
-    get DNI() { return this.RegisterForm.get('DNI'); }
+  get DNI() { return this.RegisterForm.get('DNI'); }
   get email() { return this.RegisterForm.get('email'); }
 
   onSubmit() {
@@ -166,5 +192,107 @@ export class AdminComponent {
         alert(err.error.message || 'Error al registrar usuarios');
       }
     });
+  }
+
+  // ---------- GESTIÓN CLUBES ----------
+
+  cargarClubes() {
+    this.clubService.getClubes().subscribe({
+      next: (data: any) => {
+        this.clubes = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar clubes:', err);
+      }
+    });
+  }
+
+  onEscudoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedEscudo = input.files[0];
+    }
+  }
+
+  guardarClub() {
+    if (this.ClubForm.invalid) {
+      this.ClubForm.markAllAsTouched();
+      return;
+    }
+
+    const formData = new FormData();
+    const values = this.ClubForm.value;
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        formData.append(key, value as string);
+      }
+    });
+
+    if (this.selectedEscudo) {
+      formData.append('escudo', this.selectedEscudo);
+    }
+
+    if (this.editingClubId) {
+      this.clubService.updateClub(this.editingClubId, formData).subscribe({
+        next: () => {
+          alert('Club actualizado');
+          this.resetClubForm();
+          this.cargarClubes();
+        },
+        error: (err) => {
+          console.error('Error al actualizar club:', err);
+          alert(err.error?.message || 'Error al actualizar club');
+        }
+      });
+    } else {
+      this.clubService.createClub(formData).subscribe({
+        next: () => {
+          alert('Club creado');
+          this.resetClubForm();
+          this.cargarClubes();
+        },
+        error: (err) => {
+          console.error('Error al crear club:', err);
+          alert(err.error?.message || 'Error al crear club');
+        }
+      });
+    }
+  }
+
+  editarClub(club: any) {
+    this.editingClubId = club.id;
+
+    this.ClubForm.patchValue({
+      nombre: club.nombre,
+      telefono: club.telefono,
+      email: club.email,
+      direccion: club.direccion,
+      poblacion: club.poblacion,
+      provincia: club.provincia,
+      codigo_postal: club.codigo_postal
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  eliminarClub(id: number) {
+    if (!confirm("¿Eliminar este club?")) return;
+
+    this.clubService.deleteClub(id).subscribe({
+      next: () => {
+        this.cargarClubes();
+      },
+      error: (err) => {
+        console.error('Error al eliminar club:', err);
+        alert(err.error?.message || 'Error al eliminar club');
+      }
+    });
+  }
+
+  resetClubForm() {
+    this.ClubForm.reset();
+    this.selectedEscudo = null;
+    this.editingClubId = null;
   }
 }

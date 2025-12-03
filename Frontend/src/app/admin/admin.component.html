@@ -24,6 +24,12 @@
               (click)="activeTab = 'registrar'">
         Registrar
       </button>
+
+      <button type="button"
+              [class.active]="activeTab === 'clubes'"
+              (click)="activeTab = 'clubes'">
+        Gestión de Clubes
+      </button>
     </div>
 
     <!-- TAB: Eliminar Usuario -->
@@ -79,6 +85,7 @@
       </div>
     </div>
     
+    <!-- TAB: Registrar Usuario -->
     <div class="tab-content" *ngIf="activeTab === 'registrar'">
       <div class="register-form-container">
     
@@ -151,4 +158,90 @@
         </div>
       </div>
     </div>
+
+    <!-- TAB: Gestión de Clubes -->
+    <div class="tab-content" *ngIf="activeTab === 'clubes'">
+      <h3>Gestión de Clubes</h3>
+
+      <!-- FORMULARIO CREAR/EDITAR CLUB -->
+      <form [formGroup]="ClubForm" (ngSubmit)="guardarClub()" class="register-form">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre del Club</label>
+            <input type="text" formControlName="nombre" />
+          </div>
+
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" formControlName="telefono" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" formControlName="email" />
+          </div>
+
+          <div class="form-group">
+            <label>Escudo (opcional)</label>
+            <input type="file" (change)="onEscudoSelected($event)" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Dirección</label>
+            <input type="text" formControlName="direccion" />
+          </div>
+
+          <div class="form-group">
+            <label>Población</label>
+            <input type="text" formControlName="poblacion" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Provincia</label>
+            <input type="text" formControlName="provincia" />
+          </div>
+
+          <div class="form-group">
+            <label>Código Postal</label>
+            <input type="text" formControlName="codigo_postal" />
+          </div>
+        </div>
+
+        <div class="btn-registrar">
+          <button type="submit">
+            {{ editingClubId ? 'Actualizar Club' : 'Crear Club' }}
+          </button>
+        </div>
+
+      </form>
+
+      <!-- LISTA DE CLUBES -->
+      <h3 style="margin-top: 20px;">Clubes Registrados</h3>
+
+      <div class="club-list">
+        <div class="club-card" *ngFor="let club of clubes">
+          <img *ngIf="club.escudo" [src]="'http://localhost:3000' + club.escudo"  class="club-escudo" />
+
+          <div class="club-info">
+            <h4>{{ club.nombre }}</h4>
+            <p><strong>Email:</strong> {{ club.email || 'N/A' }}</p>
+            <p><strong>Teléfono:</strong> {{ club.telefono || 'N/A' }}</p>
+          </div>
+
+          <div class="club-actions">
+            <button type="button" (click)="editarClub(club)">Editar</button>
+            <button type="button" class="delete-btn" (click)="eliminarClub(club.id)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
