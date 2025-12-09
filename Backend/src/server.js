@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import path from "path";
 import authRoutes from "./routes/auth.routes.js";
 import clubRoutes from "./routes/club.routes.js";
+import categoriaRoutes from "./routes/categoria.routes.js";
+import temporadaRoutes from "./routes/temporada.routes.js";
 
 dotenv.config();
 
@@ -18,6 +20,9 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
 app.use("/api", authRoutes);
 app.use("/api", clubRoutes);
+app.use("/api", categoriaRoutes);
+app.use("/api", temporadaRoutes);
+
 
 // Servidor
 app.listen(PORT, () => {
