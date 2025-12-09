@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+
 import { AuthService } from '../../services/auth.service';
 import { HeaderComponent } from '../header/header.component';
 import { ClubService } from '../../services/club.service';
+import { CategoriaService } from '../../services/categoria.service';
+import { TemporadaService } from '../../services/temporada.service';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HeaderComponent, HttpClientModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
@@ -16,20 +20,18 @@ export class AdminComponent implements OnInit {
 
   activeTab: string = 'eliminar';
 
-  // Eliminar usuario
+  // ---------- GESTIÓN USUARIOS ----------
+
   dniToDelete: string = "";
   resultado: string = "";
 
-  // Buscar usuario
   dniBusqueda = "";
   usuarioEncontrado: any = null;
   resultadoBusqueda = "";
 
-  // Modificar rol
   nuevoRol: string = "";
   resultadoRol: string = "";
 
-  // Registro usuario
   RegisterForm = new FormGroup({
     DNI: new FormControl('', Validators.required),
     nombre: new FormControl('', Validators.required),
@@ -40,7 +42,8 @@ export class AdminComponent implements OnInit {
 
   selectedFile: File | null = null;
 
-  // Gestión de clubes
+  // ---------- GESTIÓN CLUBES ----------
+
   clubes: any[] = [];
   editingClubId: number | null = null;
   selectedEscudo: File | null = null;
@@ -55,22 +58,57 @@ export class AdminComponent implements OnInit {
     codigo_postal: new FormControl('')
   });
 
+  // ---------- GESTIÓN CATEGORÍAS ----------
+
+  categorias: any[] = [];
+  editingCategoriaId: number | null = null;
+
+  CategoriaForm = new FormGroup({
+    nombre: new FormControl('', Validators.required),
+    edad_min: new FormControl<number | null>(null),
+    edad_max: new FormControl<number | null>(null)
+  });
+
+  // ---------- GESTIÓN TEMPORADAS ----------
+
+  temporadas: any[] = [];
+
+  TemporadaForm = new FormGroup({
+    nombre: new FormControl('', Validators.required)
+  });
+
+  // ---------- GESTIÓN EQUIPOS ----------
+
+  equipos: any[] = [];
+  editingEquipoId: number | null = null;
+
+  filtroClubId: number | null = null;
+  filtroTemporadaId: number | null = null;
+
+  EquipoForm = new FormGroup({
+    nombre: new FormControl('', Validators.required),
+    club_id: new FormControl<number | null>(null, Validators.required),
+    categoria_id: new FormControl<number | null>(null),
+    temporada_id: new FormControl<number | null>(null)
+  });
+
   constructor(
-    private authService: AuthService,
-    private clubService: ClubService
+    private readonly authService: AuthService,
+    private readonly clubService: ClubService,
+    private readonly categoriaService: CategoriaService,
+    private readonly temporadaService: TemporadaService,
   ) {}
 
   ngOnInit(): void {
     this.cargarClubes();
+    this.cargarCategorias();
+    this.cargarTemporadas();
   }
 
   // ---------- GESTIÓN USUARIOS ----------
 
   onDniChange() {
-    // Si no hay usuario mostrado aún, no hacemos nada
     if (!this.usuarioEncontrado) return;
-  
-    // Si lo que se escribe ya NO coincide con el DNI buscado → ocultamos tarjeta
     if (this.dniBusqueda !== this.usuarioEncontrado.DNI) {
       this.usuarioEncontrado = null;
       this.resultadoRol = "";
@@ -128,7 +166,7 @@ export class AdminComponent implements OnInit {
     }).subscribe({
       next: (res: any) => {
         this.resultadoRol = res.message;
-        this.usuarioEncontrado.Rol = this.nuevoRol; // actualizar vista
+        this.usuarioEncontrado.Rol = this.nuevoRol;
         this.nuevoRol = "";
       },
       error: (err) => {
@@ -294,5 +332,138 @@ export class AdminComponent implements OnInit {
     this.ClubForm.reset();
     this.selectedEscudo = null;
     this.editingClubId = null;
+  }
+
+  // ---------- GESTIÓN CATEGORÍAS ----------
+
+  cargarCategorias() {
+    this.categoriaService.getCategorias().subscribe({
+      next: (data: any) => {
+        this.categorias = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
+      }
+    });
+  }
+
+  guardarCategoria() {
+    if (this.CategoriaForm.invalid) {
+      this.CategoriaForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = this.CategoriaForm.value;
+
+    if (this.editingCategoriaId) {
+      this.categoriaService.updateCategoria(this.editingCategoriaId, payload).subscribe({
+        next: () => {
+          alert('Categoría actualizada');
+          this.resetCategoriaForm();
+          this.cargarCategorias();
+        },
+        error: (err) => {
+          console.error('Error al actualizar categoría:', err);
+          alert(err.error?.message || 'Error al actualizar categoría');
+        }
+      });
+    } else {
+      this.categoriaService.createCategoria(payload).subscribe({
+        next: () => {
+          alert('Categoría creada');
+          this.resetCategoriaForm();
+          this.cargarCategorias();
+        },
+        error: (err) => {
+          console.error('Error al crear categoría:', err);
+          alert(err.error?.message || 'Error al crear categoría');
+        }
+      });
+    }
+  }
+
+  editarCategoria(cat: any) {
+    this.editingCategoriaId = cat.id;
+    this.CategoriaForm.patchValue({
+      nombre: cat.nombre,
+      edad_min: cat.edad_min,
+      edad_max: cat.edad_max
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  eliminarCategoria(id: number) {
+    if (!confirm('¿Eliminar esta categoría?')) return;
+
+    this.categoriaService.deleteCategoria(id).subscribe({
+      next: () => this.cargarCategorias(),
+      error: (err) => {
+        console.error('Error al eliminar categoría:', err);
+        alert(err.error?.message || 'Error al eliminar categoría');
+      }
+    });
+  }
+
+  resetCategoriaForm() {
+    this.CategoriaForm.reset();
+    this.editingCategoriaId = null;
+  }
+
+  // ---------- GESTIÓN TEMPORADAS ----------
+
+  cargarTemporadas() {
+    this.temporadaService.getTemporadas().subscribe({
+      next: (data: any) => {
+        this.temporadas = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar temporadas:', err);
+      }
+    });
+  }
+
+  crearNuevaTemporada() {
+    if (this.TemporadaForm.invalid) {
+      this.TemporadaForm.markAllAsTouched();
+      return;
+    }
+
+    this.temporadaService.createTemporada(this.TemporadaForm.value).subscribe({
+      next: () => {
+        alert('Temporada creada');
+        this.TemporadaForm.reset();
+        this.cargarTemporadas();
+      },
+      error: (err) => {
+        console.error('Error al crear temporada:', err);
+        alert(err.error?.message || 'Error al crear temporada');
+      }
+    });
+  }
+
+  activarTemporada(id: number) {
+    this.temporadaService.activarTemporada(id).subscribe({
+      next: () => {
+        this.cargarTemporadas();
+      },
+      error: (err) => {
+        console.error('Error al activar temporada:', err);
+        alert(err.error?.message || 'Error al activar temporada');
+      }
+    });
+  }
+
+  eliminarTemporada(id: number) {
+    if (!confirm('¿Eliminar esta temporada?')) return;
+
+    this.temporadaService.deleteTemporada(id).subscribe({
+      next: () => {
+        this.cargarTemporadas();
+      },
+      error: (err) => {
+        console.error('Error al eliminar temporada:', err);
+        alert(err.error?.message || 'Error al eliminar temporada');
+      }
+    });
   }
 }

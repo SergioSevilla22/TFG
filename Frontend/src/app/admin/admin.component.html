@@ -30,6 +30,18 @@
               (click)="activeTab = 'clubes'">
         Gestión de Clubes
       </button>
+
+      <button type="button"
+              [class.active]="activeTab === 'categorias'"
+              (click)="activeTab = 'categorias'">
+        Categorías Base
+      </button>
+
+      <button type="button"
+              [class.active]="activeTab === 'temporadas'"
+              (click)="activeTab = 'temporadas'">
+        Temporadas
+      </button>
     </div>
 
     <!-- TAB: Eliminar Usuario -->
@@ -243,5 +255,95 @@
       </div>
     </div>
 
+    <!-- TAB: Categorías Base -->
+    <div class="tab-content" *ngIf="activeTab === 'categorias'">
+      <h3>Categorías Base</h3>
+
+      <form [formGroup]="CategoriaForm" (ngSubmit)="guardarCategoria()" class="register-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" formControlName="nombre" placeholder="Benjamín, Alevín..." />
+          </div>
+
+          <div class="form-group">
+            <label>Edad mínima</label>
+            <input type="number" formControlName="edad_min" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Edad máxima</label>
+            <input type="number" formControlName="edad_max" />
+          </div>
+
+          <div class="btn-registrar">
+            <button type="submit">
+              {{ editingCategoriaId ? 'Actualizar Categoría' : 'Crear Categoría' }}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <h3 style="margin-top: 20px;">Categorías Registradas</h3>
+
+      <div class="catalog-list">
+        <div class="catalog-card" *ngFor="let cat of categorias">
+          <div class="catalog-info">
+            <h4>{{ cat.nombre }}</h4>
+            <p *ngIf="cat.edad_min || cat.edad_max">
+              <strong>Edades:</strong>
+              {{ cat.edad_min || '?' }} - {{ cat.edad_max || '?' }} años
+            </p>
+          </div>
+
+          <div class="catalog-actions">
+            <button type="button" (click)="editarCategoria(cat)">Editar</button>
+            <button type="button" class="delete-btn" (click)="eliminarCategoria(cat.id)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Temporadas -->
+    <div class="tab-content" *ngIf="activeTab === 'temporadas'">
+      <h3>Temporadas</h3>
+
+      <form [formGroup]="TemporadaForm" (ngSubmit)="crearNuevaTemporada()" class="register-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre de la temporada</label>
+            <input type="text" formControlName="nombre" placeholder="2024/2025" />
+          </div>
+
+          <div class="btn-registrar">
+            <button type="submit">Crear Temporada</button>
+          </div>
+        </div>
+      </form>
+
+      <h3 style="margin-top: 20px;">Temporadas Registradas</h3>
+
+      <div class="catalog-list">
+        <div class="catalog-card" *ngFor="let temp of temporadas">
+          <div class="catalog-info">
+            <h4>
+              {{ temp.nombre }}
+              <span *ngIf="temp.activa" class="badge-activa">Activa</span>
+            </h4>
+          </div>
+
+          <div class="catalog-actions">
+            <button type="button" (click)="activarTemporada(temp.id)" [disabled]="temp.activa">
+              Activar
+            </button>
+            <button type="button" class="delete-btn" (click)="eliminarTemporada(temp.id)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
