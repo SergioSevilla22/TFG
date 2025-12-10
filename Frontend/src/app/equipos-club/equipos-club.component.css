@@ -1,0 +1,108 @@
+.nuevo-equipo-form {
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e3e3e3;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nuevo-equipo-form h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 12px;
+}
+
+.nuevo-equipo-form input,
+.nuevo-equipo-form select {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #bfbfbf;
+  background: #f7f7f7;
+  font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+.nuevo-equipo-form input:focus,
+.nuevo-equipo-form select:focus {
+  border-color: #1ea83a;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(30, 168, 58, 0.25);
+  outline: none;
+}
+
+.nuevo-equipo-form button {
+  align-self: flex-start;
+  background: #1ea83a;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: 0.2s;
+}
+
+.nuevo-equipo-form button:hover {
+  background: #16852d;
+  transform: translateY(-2px);
+}
+
+.nuevo-equipo-form p {
+  font-size: 0.95rem;
+  color: #1ea83a;
+  font-weight: 600;
+}
+
+.equipo-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9fafb;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid #dadada;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  margin-bottom: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.equipo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+
+.equipo-card h4 {
+  margin: 0 0 6px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.equipo-card p {
+  margin: 2px 0;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.equipo-card button.delete-btn {
+  background: #d32f2f;
+  color: #fff;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  transition: 0.2s;
+}
+
+.equipo-card button.delete-btn:hover {
+  background: #b71c1c;
+}
+
+.equipo-card .info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

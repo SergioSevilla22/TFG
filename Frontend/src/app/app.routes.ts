@@ -10,6 +10,7 @@ import { AcceptInvitationComponent } from './accept-invitation/accept-invitation
 import { AdminComponent } from './admin/admin.component';
 import { adminGuard } from './guards/admin.guard';
 import { TutorPanelComponent } from './tutor-panel/tutor-panel.component';
+import { EquiposClubComponent } from './equipos-club/equipos-club.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },  
@@ -22,7 +23,8 @@ export const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent, title: 'resetPassword'},
   { path: 'accept-invitation', component: AcceptInvitationComponent, title: 'Activar cuenta' },
   { path: 'admin', component: AdminComponent, title: 'Admin Page', canActivate: [adminGuard] },
-  { path: 'tutor-panel', component: TutorPanelComponent, title: 'tutor-panel'}
+  { path: 'tutor-panel', component: TutorPanelComponent, title: 'tutor-panel'},
+  { path: 'admin/club/:id/equipos', component: EquiposClubComponent, title: 'Equipos' }
 
 ];
 

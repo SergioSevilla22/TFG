@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { Router, RouterModule } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
 import { HeaderComponent } from '../header/header.component';
@@ -97,6 +98,7 @@ export class AdminComponent implements OnInit {
     private readonly clubService: ClubService,
     private readonly categoriaService: CategoriaService,
     private readonly temporadaService: TemporadaService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -334,6 +336,9 @@ export class AdminComponent implements OnInit {
     this.editingClubId = null;
   }
 
+  verEquipos(id: number) {
+    this.router.navigate(['/admin/club', id, 'equipos']);
+  }
   // ---------- GESTIÓN CATEGORÍAS ----------
 
   cargarCategorias() {
