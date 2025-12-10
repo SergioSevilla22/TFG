@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import clubRoutes from "./routes/club.routes.js";
 import categoriaRoutes from "./routes/categoria.routes.js";
 import temporadaRoutes from "./routes/temporada.routes.js";
+import equiposRoutes from "./routes/equipos.routes.js";
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ app.use("/api", authRoutes);
 app.use("/api", clubRoutes);
 app.use("/api", categoriaRoutes);
 app.use("/api", temporadaRoutes);
-
+app.use("/api", equiposRoutes);
 
 // Servidor
 app.listen(PORT, () => {

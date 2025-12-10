@@ -1,0 +1,34 @@
+<app-header></app-header>
+
+<h2>Equipos del Club</h2>
+
+<div class="nuevo-equipo-form">
+  <h3>Crear Nuevo Equipo</h3>
+
+  <input type="text"
+         placeholder="Nombre del equipo (Alevín B, Cadete A...)"
+         [(ngModel)]="nuevoEquipo.nombre">
+
+  <select [(ngModel)]="nuevoEquipo.categoria_id">
+    <option value="">Seleccionar categoría...</option>
+    <option *ngFor="let cat of categorias" [value]="cat.id">
+      {{ cat.nombre }}
+    </option>
+  </select>
+
+  <button (click)="crearEquipo()">Crear Equipo</button>
+
+  <p>{{ mensaje }}</p>
+</div>
+
+<hr>
+
+<h3>Equipos Registrados</h3>
+
+<div class="equipo-card" *ngFor="let eq of equipos">
+  <h4>{{ eq.nombre }}</h4>
+  <p><strong>Categoría:</strong> {{ eq.categoria }}</p>
+  <p><strong>Temporada:</strong> {{ eq.temporada }}</p>
+
+  <button class="delete-btn" (click)="eliminarEquipo(eq.id)">Eliminar</button>
+</div>
