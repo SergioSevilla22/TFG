@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>Gestionar jugadores del club</h2>
+
+<div mat-dialog-content class="content">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Buscar jugador (DNI o nombre)</mat-label>
+    <input matInput [(ngModel)]="busqueda" (input)="buscar()" />
+  </mat-form-field>
+
+  <div *ngIf="resultadosBusqueda.length">
+    <h4>Resultados</h4>
+
+    <div class="row" *ngFor="let j of resultadosBusqueda">
+      <label>
+        <input type="checkbox"
+               [checked]="seleccion.has(j.DNI)"
+               (change)="toggle(j.DNI)" />
+        {{ j.nombre }} ({{ j.DNI }})
+      </label>
+    </div>
+
+    <button mat-raised-button color="primary" (click)="confirmar()">
+      Añadir al club
+    </button>
+  </div>
+
+  <hr />
+
+  <h4>Jugadores del club</h4>
+
+  <div *ngFor="let j of jugadoresClub" class="row">
+    <span>
+      {{ j.nombre }} ({{ j.DNI }})
+      <small *ngIf="j.equipo_nombre"> · {{ j.equipo_nombre }}</small>
+    </span>
+
+    <button mat-button color="warn" (click)="quitar(j.DNI)">
+      Quitar
+    </button>
+  </div>
+
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</div>

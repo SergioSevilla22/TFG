@@ -1,0 +1,99 @@
+<app-header></app-header>
+
+<div class="equipo-wrapper" *ngIf="!loading && equipo; else loadingTpl">
+
+  <!-- =====================================================
+          CABECERA DEL EQUIPO
+  ====================================================== -->
+  <div class="equipo-header">
+    
+    <div class="left">
+      <img 
+        *ngIf="equipo.club.escudo"
+        [src]="'http://localhost:3000' + equipo.club.escudo"
+        class="escudo"
+      />
+
+      <div class="texto">
+        <h1>{{ equipo.nombre }}</h1>
+        <p>{{ equipo.club.nombre }}</p>
+        <p>{{ equipo.categoria }} · {{ equipo.temporada }}</p>
+      </div>
+    </div>
+
+    <button class="volver" (click)="volverAlClub()">← Volver al club</button>
+
+  </div>
+
+  <!-- =====================================================
+          CUADRÍCULA PRINCIPAL
+  ====================================================== -->
+  <div class="grid-panel">
+
+    <!-- TARJETA ENTRENADOR -->
+    <div class="panel-card clickable">
+
+      <h3>Entrenador</h3>
+
+      <div *ngIf="equipo.entrenador; else noCoach">
+        <div class="persona">
+          <span class="round">{{ equipo.entrenador.nombre[0] }}</span>
+          <p>{{ equipo.entrenador.nombre }}</p>
+        </div>
+
+        <button class="cambiar">Cambiar entrenador</button>
+      </div>
+
+      <ng-template #noCoach>
+        <p class="empty">No hay entrenador asignado</p>
+        <button class="cambiar">Asignar entrenador</button>
+      </ng-template>
+
+    </div>
+
+    <!-- TARJETA JUGADORES -->
+    <div 
+      class="panel-card jugadores-card"
+      (drop)="onDropJugador($event)"
+      (dragover)="allowDrop($event)"
+    >
+      <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
+
+      <div class="jug-list" *ngIf="equipo.jugadores.length > 0; else noPlayers">
+
+        <div 
+          class="jug-item"
+          *ngFor="let j of equipo.jugadores"
+          draggable="true"
+          (dragstart)="dragJugador($event, j.DNI)"
+        >
+          <span class="round">{{ j.nombre[0] }}</span>
+
+          <div>
+            <h4>{{ j.nombre }}</h4>
+            <p>DNI: {{ j.DNI }}</p>
+          </div>
+
+          <button class="delete" (click)="eliminarJugador(j.DNI)">✕</button>
+        </div>
+
+      </div>
+
+      <ng-template #noPlayers>
+        <p class="empty">No hay jugadores en este equipo.</p>
+      </ng-template>
+
+    </div>
+
+  </div>
+
+  <button mat-raised-button color="primary"
+        (click)="abrirModalAddJugadores()">
+  ➕ Añadir jugadores
+</button>
+
+</div>
+
+<ng-template #loadingTpl>
+  <p class="loading">Cargando equipo...</p>
+</ng-template>

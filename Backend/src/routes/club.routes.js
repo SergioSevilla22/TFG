@@ -6,7 +6,11 @@ import {
   obtenerClub,
   actualizarClub,
   eliminarClub,
+  obtenerJugadoresClub,
+  asignarJugadoresAClub,
+  quitarJugadorDeClub
 } from "../controllers/club.controller.js";
+
 
 const router = express.Router();
 
@@ -22,5 +26,9 @@ router.get("/clubes", obtenerClubes);
 router.get("/clubes/:id", obtenerClub);
 router.put("/clubes/:id", upload.single("escudo"), actualizarClub);
 router.delete("/clubes/:id", eliminarClub);
+router.get("/clubes/:id/jugadores", obtenerJugadoresClub);
+router.put("/clubes/:id/jugadores", asignarJugadoresAClub);
+router.delete("/clubes/:id/jugadores/:dni", quitarJugadorDeClub);
+
 
 export default router;

@@ -1,0 +1,170 @@
+.club-wrapper {
+    padding: 30px;
+    max-width: 1100px;
+    margin: auto;
+  }
+  
+  .club-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+  }
+  
+  .club-header-left {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .escudo {
+    width: 110px;
+    height: 110px;
+    border-radius: 12%;
+    object-fit: cover;
+    box-shadow: 0px 5px 18px rgba(0,0,0,0.15);
+  }
+  
+  .club-header h1 {
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 800;
+  }
+  
+  .club-location {
+    margin: 3px 0 0 0;
+    color: #777;
+  }
+  
+  /* -------- Buttons -------- */
+  
+  button {
+    background: #1ea83a;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  button:hover {
+    background: #16852d;
+    transform: translateY(-2px);
+  }
+  
+  button.secondary {
+    background: #3a6dec;
+  }
+  
+  button.secondary:hover {
+    background: #2c55bb;
+  }
+  
+  button.small {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+  }
+  
+  /* -------- INFO SECTION -------- */
+  
+  .info-section {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 25px;
+  }
+  
+/* Tarjetas generales */
+    .info-card {
+        background: #ffffff;
+        padding: 28px;
+        border-radius: 16px;
+        box-shadow: 0 12px 26px rgba(0,0,0,0.08);
+        border: 1px solid #ebecec;
+        position: relative;
+        transition: 0.25s ease;
+    }
+
+    .clickable {
+        cursor: pointer;
+      }
+
+      .clickable:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 32px rgba(0,0,0,0.12);
+      }
+      
+      /* Icono flecha */
+      .arrow {
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        font-size: 1.4rem;
+        opacity: 0.35;
+        transition: 0.3s ease;
+      }
+      
+      .clickable:hover .arrow {
+        opacity: 0.7;
+        transform: translateX(4px);
+      }
+  
+  .info-card h3 {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  
+  /* -------- Equipos -------- */
+  
+  .equipos-card {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .equipos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .equipo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .equipo-item {
+    background: #f8f9fa;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e2e2e2;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .equipo-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    background: #ffffff;
+  }
+  
+  .empty {
+    color: #777;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .loading {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 40px;
+  }
+  
