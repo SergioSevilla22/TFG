@@ -7,71 +7,53 @@
 
     <!-- TABS -->
     <div class="tabs">
-      <button type="button"
-              [class.active]="activeTab === 'eliminar'"
-              (click)="activeTab = 'eliminar'">
+      <button type="button" [class.active]="activeTab === 'eliminar'" (click)="activeTab = 'eliminar'">
         Eliminar Usuario
       </button>
 
-      <button type="button"
-              [class.active]="activeTab === 'roles'"
-              (click)="activeTab = 'roles'">
+      <button type="button" [class.active]="activeTab === 'roles'" (click)="activeTab = 'roles'">
         Gestión de Roles
       </button>
 
-      <button type="button"
-              [class.active]="activeTab === 'registrar'"
-              (click)="activeTab = 'registrar'">
+      <button type="button" [class.active]="activeTab === 'registrar'" (click)="activeTab = 'registrar'">
         Registrar
       </button>
 
-      <button type="button"
-              [class.active]="activeTab === 'clubes'"
-              (click)="activeTab = 'clubes'">
+      <button type="button" [class.active]="activeTab === 'clubes'" (click)="activeTab = 'clubes'">
         Gestión de Clubes
       </button>
 
-      <button type="button"
-              [class.active]="activeTab === 'categorias'"
-              (click)="activeTab = 'categorias'">
+      <button type="button" [class.active]="activeTab === 'categorias'" (click)="activeTab = 'categorias'">
         Categorías Base
       </button>
 
-      <button type="button"
-              [class.active]="activeTab === 'temporadas'"
-              (click)="activeTab = 'temporadas'">
+      <button type="button" [class.active]="activeTab === 'temporadas'" (click)="activeTab = 'temporadas'">
         Temporadas
       </button>
     </div>
 
-    <!-- TAB: Eliminar Usuario -->
+    <!-- ===========================
+          TAB: Eliminar Usuario
+    =========================== -->
     <div class="tab-content" *ngIf="activeTab === 'eliminar'">
       <h3>Eliminar Usuario</h3>
 
       <input type="text" [(ngModel)]="dniToDelete" placeholder="Introduce DNI" />
-
       <button type="button" (click)="eliminarUsuario()">Eliminar</button>
-
       <p class="resultado">{{ resultado }}</p>
     </div>
 
-    <!-- TAB: Gestión de Roles -->
+    <!-- ===========================
+          TAB: Gestión de Roles
+    =========================== -->
     <div class="tab-content" *ngIf="activeTab === 'roles'">
       <h3>Buscar Usuario</h3>
 
-      <input 
-        type="text"
-        class="input-dni"
-        [(ngModel)]="dniBusqueda"
-        (ngModelChange)="onDniChange()"
-        placeholder="Introduce DNI"
-      />
-
+      <input type="text" class="input-dni" [(ngModel)]="dniBusqueda" (ngModelChange)="onDniChange()" placeholder="Introduce DNI" />
       <button type="button" (click)="buscarUsuario()">Buscar</button>
 
       <p class="resultado">{{ resultadoBusqueda }}</p>
 
-      <!-- Tarjeta del usuario encontrado -->
       <div *ngIf="usuarioEncontrado" class="user-card">
         <h4>{{ usuarioEncontrado.nombre }}</h4>
 
@@ -81,7 +63,6 @@
         <p><strong>Rol actual:</strong> {{ usuarioEncontrado.Rol }}</p>
 
         <label>Nuevo Rol:</label>
-
         <div class="rol-selector-container">
           <select [(ngModel)]="nuevoRol" class="rol-selector">
             <option value="">Seleccionar...</option>
@@ -92,48 +73,47 @@
         </div>
 
         <button type="button" (click)="cambiarRol()">Guardar Rol</button>
-
         <p class="resultado">{{ resultadoRol }}</p>
       </div>
     </div>
-    
-    <!-- TAB: Registrar Usuario -->
+
+    <!-- ===========================
+          TAB: Registrar Usuario
+    =========================== -->
     <div class="tab-content" *ngIf="activeTab === 'registrar'">
+
       <div class="register-form-container">
-    
         <div class="register-header">
           <h3>Registro de Usuario</h3>
           <p>Da de alta a jugadores, entrenadores y usuarios del club.</p>
         </div>
-    
+
         <form [formGroup]="RegisterForm" (ngSubmit)="onSubmit()" class="register-form">
-          <!-- Fila 1 -->
+
           <div class="form-row">
             <div class="form-group">
               <label for="dni">DNI</label>
               <input id="dni" type="text" formControlName="DNI" />
             </div>
-    
+
             <div class="form-group">
               <label for="nombre">Nombre</label>
               <input id="nombre" type="text" formControlName="nombre" />
             </div>
           </div>
-    
-          <!-- Fila 2 -->
+
           <div class="form-row">
             <div class="form-group">
               <label for="email">Email</label>
               <input id="email" type="email" formControlName="email" />
             </div>
-    
+
             <div class="form-group">
               <label for="telefono">Teléfono</label>
               <input id="telefono" type="text" formControlName="telefono" />
             </div>
           </div>
-    
-          <!-- Fila 3 -->
+
           <div class="form-row">
             <div class="form-group">
               <label for="rol">Rol</label>
@@ -143,124 +123,140 @@
                 <option value="entrenador">Entrenador</option>
               </select>
             </div>
-    
+
             <div class="btn-registrar">
               <button type="submit">Registrar</button>
             </div>
           </div>
         </form>
-    
+
         <div class="register-massive-container">
           <h4>Registro Masivo (CSV)</h4>
           <p class="register-massive-text">
             Sube un archivo CSV para registrar varios miembros del club de una sola vez.
           </p>
-    
+
           <div class="csv-row">
-            <input
-              id="csvFile"
-              type="file"
-              (change)="onFileSelected($event)"
-              accept=".csv"
-            />
+            <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" />
+
             <div class="Massive-button">
               <button type="button" (click)="uploadCSV()">Subir CSV</button>
             </div>
           </div>
         </div>
       </div>
+
     </div>
 
-    <!-- TAB: Gestión de Clubes -->
-    <div class="tab-content" *ngIf="activeTab === 'clubes'">
-      <h3>Gestión de Clubes</h3>
+<!-- TAB: Gestión de Clubes -->
+<div class="tab-content" *ngIf="activeTab === 'clubes'">
+  <h3>Gestión de Clubes</h3>
 
-      <!-- FORMULARIO CREAR/EDITAR CLUB -->
-      <form [formGroup]="ClubForm" (ngSubmit)="guardarClub()" class="register-form">
+  <!-- FORMULARIO CREAR/EDITAR CLUB -->
+  <form [formGroup]="ClubForm" (ngSubmit)="guardarClub()" class="register-form">
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nombre del Club</label>
-            <input type="text" formControlName="nombre" />
-          </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre del Club</label>
+        <input type="text" formControlName="nombre" />
+      </div>
 
-          <div class="form-group">
-            <label>Teléfono</label>
-            <input type="text" formControlName="telefono" />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" formControlName="email" />
-          </div>
-
-          <div class="form-group">
-            <label>Escudo (opcional)</label>
-            <input type="file" (change)="onEscudoSelected($event)" />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Dirección</label>
-            <input type="text" formControlName="direccion" />
-          </div>
-
-          <div class="form-group">
-            <label>Población</label>
-            <input type="text" formControlName="poblacion" />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Provincia</label>
-            <input type="text" formControlName="provincia" />
-          </div>
-
-          <div class="form-group">
-            <label>Código Postal</label>
-            <input type="text" formControlName="codigo_postal" />
-          </div>
-        </div>
-
-        <div class="btn-registrar">
-          <button type="submit">
-            {{ editingClubId ? 'Actualizar Club' : 'Crear Club' }}
-          </button>
-        </div>
-
-      </form>
-
-      <!-- LISTA DE CLUBES -->
-      <h3 style="margin-top: 20px;">Clubes Registrados</h3>
-
-      <div class="club-list">
-        <div class="club-card" *ngFor="let club of clubes">
-          <img *ngIf="club.escudo" [src]="'http://localhost:3000' + club.escudo"  class="club-escudo" />
-
-          <div class="club-info">
-            <h4>{{ club.nombre }}</h4>
-            <p><strong>Email:</strong> {{ club.email || 'N/A' }}</p>
-            <p><strong>Teléfono:</strong> {{ club.telefono || 'N/A' }}</p>
-          </div>
-
-          <div class="club-actions">
-            <button type="button" (click)="verEquipos(club.id)">Equipos</button>
-            <button type="button" (click)="editarClub(club)">Editar</button>
-            <button type="button" class="delete-btn" (click)="eliminarClub(club.id)">Eliminar</button>
-          </div>
-        </div>
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" formControlName="telefono" />
       </div>
     </div>
 
-    <!-- TAB: Categorías Base -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" formControlName="email" />
+      </div>
+
+      <div class="form-group">
+        <label>Escudo (opcional)</label>
+        <input type="file" (change)="onEscudoSelected($event)" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Dirección</label>
+        <input type="text" formControlName="direccion" />
+      </div>
+
+      <div class="form-group">
+        <label>Población</label>
+        <input type="text" formControlName="poblacion" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Provincia</label>
+        <input type="text" formControlName="provincia" />
+      </div>
+
+      <div class="form-group">
+        <label>Código Postal</label>
+        <input type="text" formControlName="codigo_postal" />
+      </div>
+    </div>
+
+    <div class="btn-registrar">
+      <button type="submit">
+        {{ editingClubId ? 'Actualizar Club' : 'Crear Club' }}
+      </button>
+    </div>
+
+  </form>
+
+  <!-- 🔥 NUEVA BARRA DE BÚSQUEDA (ABAJO DEL FORMULARIO) -->
+  <input 
+    type="text"
+    class="input-busqueda"
+    placeholder="Buscar un club por nombre..."
+    [(ngModel)]="busquedaClub"
+    (input)="filtrarClubes()"
+  />
+
+  <!-- 🔥 LISTA DE RESULTADOS -->
+<div class="club-list">
+
+  <div 
+    class="club-card clickable"
+    *ngFor="let club of clubesFiltrados"
+    (click)="abrirClub(club.id)"
+  >
+    <img 
+      *ngIf="club.escudo" 
+      [src]="'http://localhost:3000' + club.escudo" 
+      class="club-escudo" 
+    />
+
+    <div class="club-info">
+      <h4>{{ club.nombre }}</h4>
+      <p><strong>Email:</strong> {{ club.email || 'N/A' }}</p>
+      <p><strong>Teléfono:</strong> {{ club.telefono || 'N/A' }}</p>
+    </div>
+
+  </div>
+
+  <p *ngIf="busquedaClub !== '' && clubesFiltrados.length === 0">
+    No se encontró ningún club.
+  </p>
+
+</div>
+</div>
+
+    <!-- ===========================
+          TAB: Categorías Base
+    =========================== -->
     <div class="tab-content" *ngIf="activeTab === 'categorias'">
       <h3>Categorías Base</h3>
 
       <form [formGroup]="CategoriaForm" (ngSubmit)="guardarCategoria()" class="register-form">
+
         <div class="form-row">
           <div class="form-group">
             <label>Nombre</label>
@@ -285,6 +281,7 @@
             </button>
           </div>
         </div>
+
       </form>
 
       <h3 style="margin-top: 20px;">Categorías Registradas</h3>
@@ -307,11 +304,14 @@
       </div>
     </div>
 
-    <!-- TAB: Temporadas -->
+    <!-- ===========================
+          TAB: Temporadas
+    =========================== -->
     <div class="tab-content" *ngIf="activeTab === 'temporadas'">
       <h3>Temporadas</h3>
 
       <form [formGroup]="TemporadaForm" (ngSubmit)="crearNuevaTemporada()" class="register-form">
+
         <div class="form-row">
           <div class="form-group">
             <label>Nombre de la temporada</label>
@@ -322,6 +322,7 @@
             <button type="submit">Crear Temporada</button>
           </div>
         </div>
+
       </form>
 
       <h3 style="margin-top: 20px;">Temporadas Registradas</h3>
@@ -345,6 +346,8 @@
           </div>
         </div>
       </div>
+
     </div>
+
   </div>
 </div>

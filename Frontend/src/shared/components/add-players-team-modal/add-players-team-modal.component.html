@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Añadir jugadores al equipo</h2>
+
+<div mat-dialog-content class="content">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Buscar por DNI o nombre</mat-label>
+    <input matInput [(ngModel)]="busqueda" />
+  </mat-form-field>
+
+  <div *ngIf="jugadoresFiltrados.length; else empty">
+    <div class="row" *ngFor="let j of jugadoresFiltrados">
+
+      <div class="info">
+        <strong>{{ j.nombre }}</strong>
+        <div class="muted">DNI: {{ j.DNI }}</div>
+
+        <div class="muted" *ngIf="j.equipo_nombre">
+          Equipo actual: {{ j.equipo_nombre }}
+        </div>
+
+        <div class="muted" *ngIf="!j.equipo_nombre">
+          Sin equipo
+        </div>
+      </div>
+
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="j.equipo_id === data.equipoId"
+        (click)="asignarJugador(j.DNI)"
+      >
+        {{
+          j.equipo_id === data.equipoId
+            ? 'Ya está en este equipo'
+            : (j.equipo_id ? 'Mover' : 'Añadir')
+        }}
+      </button>
+
+    </div>
+  </div>
+
+  <ng-template #empty>
+    <p class="muted">No hay jugadores que coincidan.</p>
+  </ng-template>
+
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</div>

@@ -356,6 +356,27 @@ button[disabled] {
   transform: none !important;
 }
 
+.input-busqueda {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #bfbfbf;
+  background: #f7f7f7;
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+
+.club-card.clickable {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.club-card.clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
 
 
 

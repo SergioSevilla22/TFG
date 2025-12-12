@@ -25,10 +25,24 @@
 
 <h3>Equipos Registrados</h3>
 
-<div class="equipo-card" *ngFor="let eq of equipos">
-  <h4>{{ eq.nombre }}</h4>
-  <p><strong>Categoría:</strong> {{ eq.categoria }}</p>
-  <p><strong>Temporada:</strong> {{ eq.temporada }}</p>
+<div 
+  class="equipo-card clickable"
+  *ngFor="let eq of equipos"
+  (click)="abrirEquipo(eq.id)"
+>
 
-  <button class="delete-btn" (click)="eliminarEquipo(eq.id)">Eliminar</button>
+  <div class="info-group">
+    <h4>{{ eq.nombre }}</h4>
+    <p><strong>Categoría:</strong> {{ eq.categoria }}</p>
+    <p><strong>Temporada:</strong> {{ eq.temporada }}</p>
+  </div>
+
+  <button 
+    class="delete-btn"
+    (click)="eliminarEquipo(eq.id); $event.stopPropagation()"
+  >
+    Eliminar
+  </button>
+
 </div>
+

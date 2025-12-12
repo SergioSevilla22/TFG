@@ -1,0 +1,31 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .full {
+    width: 100%;
+  }
+  
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafb;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .muted {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+  

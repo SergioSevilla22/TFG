@@ -22,4 +22,21 @@ export class EquipoService {
   eliminarEquipo(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+
+  getEquipoById(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}`);
+  }
+  
+  asignarJugadores(equipoId: number, jugadores: string[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${equipoId}/asignar-jugadores`, { jugadores });
+  }
+  
+  asignarEntrenador(equipoId: number, entrenadorDNI: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${equipoId}/asignar-entrenador`, { entrenador: entrenadorDNI });
+  }
+  
+  moverJugador(jugadorDNI: string, nuevoEquipoId: number | null): Observable<any> {
+    return this.http.put(`${this.apiUrl}/mover-jugador`, { jugador: jugadorDNI, nuevoEquipoId });
+  }
+  
 }

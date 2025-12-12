@@ -15,6 +15,11 @@ export class ClubService {
     return this.http.get(this.apiUrl);
   }
 
+  // 🔥 NUEVO: Obtener un club por ID
+  getClubById(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${id}`);
+  }
+
   createClub(data: FormData): Observable<any> {
     return this.http.post(this.apiUrl, data);
   }
@@ -25,5 +30,17 @@ export class ClubService {
 
   deleteClub(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getJugadoresClub(clubId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${clubId}/jugadores`);
+  }
+  
+  addJugadoresClub(clubId: number, jugadores: string[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${clubId}/jugadores`, { jugadores });
+  }
+  
+  removeJugadorClub(clubId: number, dni: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${clubId}/jugadores/${dni}`);
   }
 }

@@ -11,6 +11,9 @@ import { AdminComponent } from './admin/admin.component';
 import { adminGuard } from './guards/admin.guard';
 import { TutorPanelComponent } from './tutor-panel/tutor-panel.component';
 import { EquiposClubComponent } from './equipos-club/equipos-club.component';
+import { ClubComponent } from './club/club.component';
+import { EquipoComponent } from './equipo/equipo.component';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },  
@@ -24,7 +27,10 @@ export const routes: Routes = [
   { path: 'accept-invitation', component: AcceptInvitationComponent, title: 'Activar cuenta' },
   { path: 'admin', component: AdminComponent, title: 'Admin Page', canActivate: [adminGuard] },
   { path: 'tutor-panel', component: TutorPanelComponent, title: 'tutor-panel'},
-  { path: 'admin/club/:id/equipos', component: EquiposClubComponent, title: 'Equipos' }
+  { path: 'club/:id', component: ClubComponent , title: 'Club'},
+  { path: 'club/:id/equipos', component: EquiposClubComponent, title: 'Equipos' },
+  { path: 'equipo/:id', component: EquipoComponent, title: 'Equipo' }
+
 
 ];
 

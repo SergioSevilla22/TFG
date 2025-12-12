@@ -1,0 +1,71 @@
+<app-header></app-header>
+<div class="club-wrapper" *ngIf="!loading; else loadingTpl">
+    <div class="club-header">
+  
+      <div class="club-header-left">
+        <img 
+          *ngIf="club.escudo" 
+          [src]="'http://localhost:3000' + club.escudo" 
+          class="escudo"
+        />
+  
+        <div>
+          <h1>{{ club.nombre }}</h1>
+          <p class="club-location">
+            {{ club.poblacion }}, {{ club.provincia }}
+          </p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="info-section">
+
+        <!-- TARJETA INFORMACIÓN DEL CLUB (CLICKABLE) -->
+        <div class="info-card clickable" (click)="editarClub()">
+          <h3>Información del Club</h3>
+      
+          <p><strong>Email:</strong> {{ club.email || 'N/A' }}</p>
+          <p><strong>Teléfono:</strong> {{ club.telefono || 'N/A' }}</p>
+          <p><strong>Dirección:</strong> {{ club.direccion || 'N/A' }}</p>
+          <p><strong>Código Postal:</strong> {{ club.codigo_postal || 'N/A' }}</p>
+      
+          <div class="arrow">➜</div>
+        </div>
+      
+        <!-- TARJETA EQUIPOS DEL CLUB (CLICKABLE) -->
+        <div class="info-card equipos-card clickable" (click)="abrirEquiposClub()">
+      
+          <div class="equipos-header">
+            <h3>Equipos del Club</h3>
+          </div>
+      
+          <div class="equipo-list" *ngIf="equipos.length > 0; else noTeams">
+      
+            <div class="equipo-item">
+              <h4>{{ equipos.length }} equipos registrados</h4>
+              <p>Pulsa para ver todos los equipos del club</p>
+            </div>
+      
+          </div>
+      
+          <ng-template #noTeams>
+            <p class="empty">No hay equipos registrados.</p>
+          </ng-template>
+      
+          <div class="arrow">➜</div>
+        </div>
+      
+      </div>
+
+      <button mat-raised-button color="primary"
+        (click)="abrirModalJugadoresClub()">
+  Gestionar jugadores del club
+</button>
+      
+  
+  </div>
+  
+  <ng-template #loadingTpl>
+    <p class="loading">Cargando datos...</p>
+  </ng-template>
+  

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EquipoService } from '../../services/equipos.service';
 import { CategoriaService } from '../../services/categoria.service';
 import { TemporadaService } from '../../services/temporada.service';
@@ -39,7 +39,8 @@ export class EquiposClubComponent implements OnInit {
     private route: ActivatedRoute,
     private equipoService: EquipoService,
     private categoriaService: CategoriaService,
-    private temporadaService: TemporadaService
+    private temporadaService: TemporadaService,
+    private router: Router 
   ) {}
 
   ngOnInit(): void {
@@ -88,4 +89,9 @@ export class EquiposClubComponent implements OnInit {
       this.cargarEquipos();
     });
   }
+
+  abrirEquipo(id: number) {
+    this.router.navigate(['/equipo', id]);
+  }
+  
 }
