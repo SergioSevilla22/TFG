@@ -74,6 +74,8 @@
 
         <button type="button" (click)="cambiarRol()">Guardar Rol</button>
         <p class="resultado">{{ resultadoRol }}</p>
+
+        <button type="button" (click)="eliminarUser(usuarioEncontrado.DNI)">Eliminar</button>
       </div>
     </div>
 
@@ -93,7 +95,12 @@
           <div class="form-row">
             <div class="form-group">
               <label for="dni">DNI</label>
-              <input id="dni" type="text" formControlName="DNI" />
+              <input id="dni" type="text" formControlName="DNI" maxlength="9"/>
+
+              <div class="error" *ngIf="RegisterForm.get('DNI')?.invalid && RegisterForm.get('DNI')?.touched">
+                <small *ngIf="RegisterForm.get('DNI')?.errors?.['required']">El DNI es obligatorio.</small>
+                <small *ngIf="RegisterForm.get('DNI')?.errors?.['pattern']">Formato inválido: 8 dígitos y una letra.</small>
+              </div>
             </div>
 
             <div class="form-group">
@@ -111,6 +118,11 @@
             <div class="form-group">
               <label for="telefono">Teléfono</label>
               <input id="telefono" type="text" formControlName="telefono" />
+
+              <div class="error" *ngIf="RegisterForm.get('telefono')?.invalid && RegisterForm.get('telefono')?.touched">
+                <small *ngIf="RegisterForm.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</small>
+                <small *ngIf="RegisterForm.get('telefono')?.errors?.['pattern']">Debe tener 9 números.</small>
+              </div>
             </div>
           </div>
 
@@ -164,6 +176,11 @@
       <div class="form-group">
         <label>Teléfono</label>
         <input type="text" formControlName="telefono" />
+
+        <div class="error" *ngIf="ClubForm.get('telefono')?.invalid && ClubForm.get('telefono')?.touched">
+          <small *ngIf="ClubForm.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</small>
+          <small *ngIf="ClubForm.get('telefono')?.errors?.['pattern']">Debe tener 9 números.</small>
+        </div>
       </div>
     </div>
 
