@@ -39,14 +39,15 @@ export class AdminComponent implements OnInit {
   resultadoRol: string = "";
 
   RegisterForm = new FormGroup({
-    DNI: new FormControl('', Validators.required),
+    DNI: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{8}[A-Za-z]$/)]),
     nombre: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
-    telefono: new FormControl('', Validators.required),
+    telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
     Rol: new FormControl('usuario')
   });
 
   selectedFile: File | null = null;
+
 
   // ---------- GESTIÓN CLUBES ----------
   clubes: any[] = [];
@@ -58,7 +59,7 @@ export class AdminComponent implements OnInit {
 
   ClubForm = new FormGroup({
     nombre: new FormControl('', Validators.required),
-    telefono: new FormControl(''),
+    telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
     email: new FormControl(''),
     direccion: new FormControl(''),
     poblacion: new FormControl(''),
@@ -92,10 +93,26 @@ export class AdminComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarClubes();
-    this.cargarCategorias();
-    this.cargarTemporadas();
+  this.cargarClubes();
+  this.cargarCategorias();
+  this.cargarTemporadas();
+
+  const dniControl = this.RegisterForm.get('DNI');
+  if (dniControl) {
+    dniControl.valueChanges.subscribe(value => {
+      if (!value) return;
+      if (value.length > 8) {
+        const numeros = value.slice(0, 8);
+        const letra = value.slice(8).toUpperCase();
+        const nuevoValor = numeros + letra;
+        if (nuevoValor !== value) {
+          dniControl.setValue(nuevoValor, { emitEvent: false });
+        }
+      }
+    });
   }
+}
+
 
   // ===========================
   //       GESTIÓN USUARIOS
@@ -108,6 +125,22 @@ export class AdminComponent implements OnInit {
       this.usuarioEncontrado = null;
       this.resultadoRol = "";
     }
+  }
+
+  eliminarUser(dni: string) {
+    
+    if (!confirm(`¿Seguro que quieres eliminar al usuario con DNI ${dni}?`)) return;
+
+    this.authService.deleteUser(dni).subscribe({
+      next: (res: any) => {
+        this.resultado = res.message;
+        this.dniBusqueda = "";
+        this.usuarioEncontrado = null;
+      },
+      error: (err: any) => {
+        this.resultado = err.error?.message || "Error al eliminar usuario";
+      }
+    });
   }
 
   eliminarUsuario() {

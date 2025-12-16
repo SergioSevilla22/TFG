@@ -100,8 +100,22 @@ export class PerfilUsuarioComponent {
     });
   }
 
+  validateTelefono(telefono: string): boolean {
+
+    const regex = /^[0-9]{9}$/;
+    return regex.test(telefono);
+  }
+
   guardarCambios() {
     if (!this.user) return;
+
+    // Validación del teléfono
+    if (!this.validateTelefono(this.user.telefono)) {
+      this.errorMsg = 'El teléfono debe tener 9 dígitos numéricos';
+      return;
+    }
+
+    this.errorMsg = ''; // limpiar mensaje de error
 
     const formData = new FormData();
     formData.append('DNI', this.user.DNI);
@@ -125,6 +139,7 @@ export class PerfilUsuarioComponent {
       }
     });
   }
+
 
   logout() {
     this.authService.logout();
