@@ -38,5 +38,13 @@ export class EquipoService {
   moverJugador(jugadorDNI: string, nuevoEquipoId: number | null): Observable<any> {
     return this.http.put(`${this.apiUrl}/mover-jugador`, { jugador: jugadorDNI, nuevoEquipoId });
   }
+
+  quitarEntrenadorEquipo(dni: string) {
+    return this.http.put(
+      `${this.apiUrl}/quitar-entrenador`,
+      { dni }
+    );
+  }
+  
   
 }

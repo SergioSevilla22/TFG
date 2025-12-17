@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Asignar entrenador al equipo</h2>
+
+<div mat-dialog-content class="content">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Buscar por DNI o nombre</mat-label>
+    <input matInput [(ngModel)]="busqueda" />
+  </mat-form-field>
+
+  <div *ngIf="entrenadoresFiltrados.length; else empty">
+    <div class="row" *ngFor="let e of entrenadoresFiltrados">
+      <div class="info">
+        <strong>{{ e.nombre }}</strong>
+        <div class="muted">DNI: {{ e.DNI }}</div>
+        <div class="muted" *ngIf="e.equipo_nombre">Equipo actual: {{ e.equipo_nombre }}</div>
+        <div class="muted" *ngIf="!e.equipo_nombre">Sin equipo</div>
+      </div>
+
+      <button mat-raised-button color="primary" (click)="asignar(e.DNI)">
+        {{ e.equipo_id ? 'Mover' : 'Asignar' }}
+      </button>
+    </div>
+  </div>
+
+  <ng-template #empty>
+    <p class="muted">No hay entrenadores que coincidan.</p>
+  </ng-template>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</div>

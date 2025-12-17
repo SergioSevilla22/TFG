@@ -87,40 +87,67 @@
        ENTRENADOR
   =========================== */
   
+  .entrenador-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .coach-info {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
   .persona {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 14px;
   }
   
-  .round {
-    background: #1ea83a;
-    color: white;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    font-weight: bold;
+  .round.coach {
+    background: #2563eb; /* azul entrenador */
+  }
+  
+  .entrenador-card h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  
+  .muted {
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+  
+  .empty {
+    color: #9ca3af;
+    margin: 10px 0;
   }
   
   .cambiar {
-    margin-top: 12px;
+    align-self: flex-start;
     background: #1ea83a;
     padding: 8px 18px;
     border-radius: 10px;
     color: white;
     font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
   }
   
-  .delete {
-    background: #d32f2f;
-    color: white;
-    border-radius: 8px;
-    padding: 6px 12px;
-    cursor: pointer;
+  .cambiar:hover {
+    background: #16852d;
+    transform: translateY(-2px);
+  }
+  
+  .cambiar.primary {
+    background: #1ea83a;
+  }
+  
+  .cambiar.primary:hover {
+    background: #1ea83a;
   }
   
   /* ===========================

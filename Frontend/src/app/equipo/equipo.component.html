@@ -30,26 +30,49 @@
   ====================================================== -->
   <div class="grid-panel">
 
-    <!-- TARJETA ENTRENADOR -->
-    <div class="panel-card clickable">
+   <!-- TARJETA ENTRENADOR -->
+   <div class="panel-card entrenador-card">
 
-      <h3>Entrenador</h3>
-
-      <div *ngIf="equipo.entrenador; else noCoach">
-        <div class="persona">
-          <span class="round">{{ equipo.entrenador.nombre[0] }}</span>
-          <p>{{ equipo.entrenador.nombre }}</p>
+    <h3>Entrenadores ({{ equipo.entrenadores?.length || 0 }})</h3>
+  
+    <div *ngIf="equipo.entrenadores?.length; else noCoaches">
+  
+      <div class="jug-item" *ngFor="let e of equipo.entrenadores">
+  
+        <span class="round coach">
+          {{ e.nombre[0] }}
+        </span>
+  
+        <div>
+          <h4>{{ e.nombre }}</h4>
+          <p class="muted">DNI: {{ e.DNI }}</p>
         </div>
-
-        <button class="cambiar">Cambiar entrenador</button>
+  
+        <button
+          class="delete"
+          (click)="eliminarEntrenador(e.DNI)"
+        >
+          ✕
+        </button>
+  
       </div>
-
-      <ng-template #noCoach>
-        <p class="empty">No hay entrenador asignado</p>
-        <button class="cambiar">Asignar entrenador</button>
-      </ng-template>
-
+  
     </div>
+  
+    <ng-template #noCoaches>
+      <p class="empty">No hay entrenadores asignados</p>
+    </ng-template>
+  
+    <button
+      class="cambiar primary"
+      (click)="abrirModalEntrenadorEquipo()"
+    >
+      Añadir entrenador
+    </button>
+  
+  </div>
+  
+
 
     <!-- TARJETA JUGADORES -->
     <div 

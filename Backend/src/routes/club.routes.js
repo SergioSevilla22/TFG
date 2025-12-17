@@ -8,7 +8,10 @@ import {
   eliminarClub,
   obtenerJugadoresClub,
   asignarJugadoresAClub,
-  quitarJugadorDeClub
+  quitarJugadorDeClub,
+  obtenerEntrenadoresClub,
+  asignarEntrenadoresAClub,
+  quitarEntrenadorDeClub
 } from "../controllers/club.controller.js";
 
 
@@ -29,6 +32,10 @@ router.delete("/clubes/:id", eliminarClub);
 router.get("/clubes/:id/jugadores", obtenerJugadoresClub);
 router.put("/clubes/:id/jugadores", asignarJugadoresAClub);
 router.delete("/clubes/:id/jugadores/:dni", quitarJugadorDeClub);
+router.get("/clubes/:id/entrenadores", obtenerEntrenadoresClub);
+router.put("/clubes/:id/entrenadores", asignarEntrenadoresAClub);
+router.delete("/clubes/:id/entrenadores/:dni", quitarEntrenadorDeClub);
+
 
 
 export default router;

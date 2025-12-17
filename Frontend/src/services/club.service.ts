@@ -43,4 +43,17 @@ export class ClubService {
   removeJugadorClub(clubId: number, dni: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${clubId}/jugadores/${dni}`);
   }
+  
+  getEntrenadoresClub(clubId: number) {
+    return this.http.get(`${this.apiUrl}/${clubId}/entrenadores`);
+  }
+  
+  addEntrenadoresClub(clubId: number, entrenadores: string[]) {
+    return this.http.put(`${this.apiUrl}/${clubId}/entrenadores`, { entrenadores });
+  }
+  
+  removeEntrenadorClub(clubId: number, dni: string) {
+    return this.http.delete(`${this.apiUrl}/${clubId}/entrenadores/${dni}`);
+  }
+  
 }

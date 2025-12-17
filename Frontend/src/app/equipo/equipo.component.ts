@@ -7,6 +7,7 @@ import { HeaderComponent } from '../header/header.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPlayersTeamModalComponent } from
   '../../shared/components/add-players-team-modal/add-players-team-modal.component';
+import { AssignCoachTeamModalComponent } from '../../shared/components/assign-coach-team-modal/assign-coach-team-modal.component';
 
 @Component({
   selector: 'app-equipo',
@@ -49,6 +50,20 @@ export class EquipoComponent implements OnInit {
       if (refresh) {
         this.cargarEquipo();
       }
+    });
+  }
+
+  abrirModalEntrenadorEquipo() {
+    const dialogRef = this.dialog.open(AssignCoachTeamModalComponent, {
+      width: '700px',
+      data: {
+        clubId: this.equipo.club.id,
+        equipoId: this.equipoId
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(refresh => {
+      if (refresh) this.cargarEquipo();
     });
   }
 
@@ -116,5 +131,12 @@ export class EquipoComponent implements OnInit {
 
   dragJugador(event: any, dni: string) {
     event.dataTransfer.setData("text/dni", dni);
+  }
+
+  eliminarEntrenador(dni: string) {
+    this.equipoService.quitarEntrenadorEquipo(dni).subscribe({
+      next: () => this.cargarEquipo(),
+      error: () => alert('Error al quitar entrenador del equipo')
+    });
   }
 }
