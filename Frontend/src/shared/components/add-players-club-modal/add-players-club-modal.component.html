@@ -7,37 +7,42 @@
     <input matInput [(ngModel)]="busqueda" (input)="buscar()" />
   </mat-form-field>
 
-  <div *ngIf="resultadosBusqueda.length">
-    <h4>Resultados</h4>
+  <div *ngIf="resultadosBusqueda.length; else empty">
 
     <div class="row" *ngFor="let j of resultadosBusqueda">
-      <label>
-        <input type="checkbox"
-               [checked]="seleccion.has(j.DNI)"
-               (change)="toggle(j.DNI)" />
-        {{ j.nombre }} ({{ j.DNI }})
-      </label>
+
+      <div class="info">
+        <strong>{{ j.nombre }}</strong>
+        <div class="muted">DNI: {{ j.DNI }}</div>
+
+        <div class="muted" *ngIf="j.club_id === data.clubId">
+          Ya pertenece a este club
+        </div>
+
+        <div class="muted" *ngIf="j.club_id && j.club_id !== data.clubId">
+          Pertenece a otro club
+        </div>
+
+        <div class="muted" *ngIf="!j.club_id">
+          Sin club
+        </div>
+      </div>
+
+      <button
+        mat-raised-button
+        [color]="j.club_id === data.clubId ? 'warn' : 'primary'"
+        (click)="accionJugador(j)"
+      >
+        {{ j.club_id === data.clubId ? 'Quitar del club' : 'Añadir al club' }}
+      </button>
+
     </div>
 
-    <button mat-raised-button color="primary" (click)="confirmar()">
-      Añadir al club
-    </button>
   </div>
 
-  <hr />
-
-  <h4>Jugadores del club</h4>
-
-  <div *ngFor="let j of jugadoresClub" class="row">
-    <span>
-      {{ j.nombre }} ({{ j.DNI }})
-      <small *ngIf="j.equipo_nombre"> · {{ j.equipo_nombre }}</small>
-    </span>
-
-    <button mat-button color="warn" (click)="quitar(j.DNI)">
-      Quitar
-    </button>
-  </div>
+  <ng-template #empty>
+    <p class="muted">No hay jugadores que coincidan.</p>
+  </ng-template>
 
 </div>
 

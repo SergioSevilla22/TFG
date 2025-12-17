@@ -8,6 +8,7 @@ import { HeaderComponent } from "../header/header.component";
 import { MatDialog } from '@angular/material/dialog';
 import { AddPlayersClubModalComponent } from
   '../../shared/components/add-players-club-modal/add-players-club-modal.component';
+import { AddCoachesClubModalComponent } from '../../shared/components/add-coaches-club-modal/add-coaches-club-modal.component';
 
 @Component({
   selector: 'app-club',
@@ -60,6 +61,20 @@ export class ClubComponent implements OnInit {
     dialogRef.afterClosed().subscribe(refresh => {
       if (refresh) {
         this.loadEquipos(); // o refrescar lo que quieras
+      }
+    });
+  }
+
+  abrirModalEntrenadoresClub() {
+    const dialogRef = this.dialog.open(AddCoachesClubModalComponent, {
+      width: '700px',
+      data: { clubId: this.clubId }
+    });
+  
+    dialogRef.afterClosed().subscribe(refresh => {
+      if (refresh) {
+        // si quieres refrescar datos del club
+        this.loadClubData();
       }
     });
   }

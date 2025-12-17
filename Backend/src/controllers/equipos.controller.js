@@ -56,18 +56,15 @@ export const obtenerEquipoPorId = (req, res) => {
       (err2, jugadores) => {
 
         if (err2) return res.status(500).json({ error: err2.message });
-
-        /* ------------- Obtener entrenador ------------- */
+        /* ------------- Obtener entrenadores ------------- */
         db.query(
           `SELECT DNI, nombre, foto 
-           FROM usuarios 
-           WHERE equipo_id = ? AND Rol = 'entrenador' LIMIT 1`,
+          FROM usuarios 
+          WHERE equipo_id = ? AND Rol = 'entrenador'`,
           [id],
           (err3, entrenadores) => {
 
             if (err3) return res.status(500).json({ error: err3.message });
-
-            const entrenador = entrenadores[0] || null;
 
             return res.json({
               id: equipo.equipo_id,
@@ -81,7 +78,7 @@ export const obtenerEquipoPorId = (req, res) => {
               },
               categoria: equipo.categoria_nombre,
               temporada: equipo.temporada_nombre,
-              entrenador,
+              entrenadores, // 👈 ARRAY
               jugadores
             });
           }
@@ -135,55 +132,61 @@ export const asignarJugadores = (req, res) => {
 ================================================ */
 
 export const asignarEntrenador = (req, res) => {
-  const { id } = req.params;
-  const { entrenador } = req.body; // DNI
+  const { id } = req.params; // equipoId
+  const { entrenador } = req.body;
 
-  if (!entrenador) {
-    return res.status(400).json({ message: "DNI del entrenador requerido" });
-  }
+  if (!entrenador) return res.status(400).json({ message: "DNI del entrenador requerido" });
 
-  // Quitar ese entrenador de otro equipo
-  db.query(
-    `UPDATE usuarios SET equipo_id = NULL WHERE DNI = ?`,
-    [entrenador],
-    (err) => {
-      if (err) return res.status(500).json({ error: err.message });
+  db.query(`SELECT club_id FROM equipos WHERE id = ?`, [id], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (rows.length === 0) return res.status(404).json({ message: "Equipo no encontrado" });
 
-      // Asignarlo al nuevo equipo
+    const clubId = rows[0].club_id;
+
+    // Quitar ese entrenador de otro equipo
+    db.query(`UPDATE usuarios SET equipo_id = NULL WHERE DNI = ? AND Rol='entrenador'`, [entrenador], (err2) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+
+      // Asignarlo SOLO si pertenece al club
       db.query(
-        `UPDATE usuarios SET equipo_id = ? WHERE DNI = ? AND Rol = 'entrenador'`,
-        [id, entrenador],
-        (err2) => {
-          if (err2) return res.status(500).json({ error: err2.message });
-
-          return res.json({ message: "Entrenador asignado correctamente" });
+        `UPDATE usuarios SET equipo_id = ?
+         WHERE DNI = ? AND Rol='entrenador' AND club_id = ?`,
+        [id, entrenador, clubId],
+        (err3, result) => {
+          if (err3) return res.status(500).json({ error: err3.message });
+          if (result.affectedRows === 0) {
+            return res.status(400).json({ message: "Ese entrenador no pertenece al club del equipo" });
+          }
+          res.json({ message: "Entrenador asignado correctamente" });
         }
       );
-    }
-  );
+    });
+  });
 };
 
-/* ===============================================
-    4. Mover jugador entre equipos (Drag & Drop)
-================================================ */
 
 export const moverJugador = (req, res) => {
-  const { jugador, nuevoEquipoId } = req.body; // jugador = DNI
+  const { jugador, nuevoEquipoId } = req.body;
 
-  if (!jugador || !nuevoEquipoId) {
+  if (!jugador || nuevoEquipoId === undefined) {
     return res.status(400).json({ message: "Datos incompletos" });
   }
 
   db.query(
     `UPDATE usuarios SET equipo_id = ? WHERE DNI = ? AND Rol = 'jugador'`,
     [nuevoEquipoId, jugador],
-    (err) => {
+    (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
 
-      res.json({ message: "Jugador movido correctamente" });
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Jugador no encontrado" });
+      }
+
+      res.json({ message: "Jugador actualizado correctamente" });
     }
   );
 };
+
 
 
 export const crearEquipo = (req, res) => {
@@ -219,3 +222,28 @@ export const eliminarEquipo = (req, res) => {
     res.json({ message: "Equipo eliminado" });
   });
 };
+
+export const quitarEntrenadorEquipo = (req, res) => {
+  const { dni } = req.body;
+
+  if (!dni) {
+    return res.status(400).json({ message: 'DNI requerido' });
+  }
+
+  db.query(
+    `UPDATE usuarios 
+     SET equipo_id = NULL 
+     WHERE DNI = ? AND Rol = 'entrenador'`,
+    [dni],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'Entrenador no encontrado' });
+      }
+
+      res.json({ message: 'Entrenador quitado del equipo' });
+    }
+  );
+};
+

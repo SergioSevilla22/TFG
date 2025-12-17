@@ -68,14 +68,26 @@ export class AddPlayersClubModalComponent implements OnInit {
       : this.seleccion.add(dni);
   }
 
-  confirmar() {
-    const jugadores = Array.from(this.seleccion);
-    if (jugadores.length === 0) return;
+  accionJugador(jugador: any) {
 
-    this.clubService.addJugadoresClub(this.data.clubId, jugadores).subscribe({
-      next: () => this.dialogRef.close(true)
+    if (jugador.club_id === this.data.clubId) {
+      this.clubService.removeJugadorClub(this.data.clubId, jugador.DNI).subscribe({
+        next: () => {
+          this.buscar();
+        },
+        error: () => alert('Error quitando jugador del club')
+      });
+      return;
+    }
+  
+    this.clubService.addJugadoresClub(this.data.clubId, [jugador.DNI]).subscribe({
+      next: () => {
+        this.buscar();
+      },
+      error: () => alert('Error añadiendo jugador al club')
     });
   }
+  
 
   cerrar() {
     this.dialogRef.close(false);

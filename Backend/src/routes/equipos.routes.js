@@ -6,7 +6,8 @@ import {
   obtenerEquipoPorId,
   asignarJugadores,
   asignarEntrenador,
-  moverJugador
+  moverJugador,
+  quitarEntrenadorEquipo
 } from "../controllers/equipos.controller.js";
 
 const router = express.Router();
@@ -20,5 +21,7 @@ router.delete("/equipos/:id", eliminarEquipo);
 router.put("/equipos/:id/asignar-jugadores", asignarJugadores);
 router.put("/equipos/:id/asignar-entrenador", asignarEntrenador);
 router.put("/equipos/mover-jugador", moverJugador);
+router.put('/equipos/quitar-entrenador', quitarEntrenadorEquipo);
+
 
 export default router;
