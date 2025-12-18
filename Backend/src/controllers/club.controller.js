@@ -19,9 +19,31 @@ export const crearClub = (req, res) => {
 };
 
 export const obtenerClubes = (req, res) => {
-  db.query("SELECT * FROM clubes", (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
+  const { nombre, provincia, poblacion } = req.query;
+
+  let sql = `SELECT * FROM clubes WHERE 1=1`;
+  const values = [];
+
+  if (nombre) {
+    sql += ` AND nombre LIKE ?`;
+    values.push(`%${nombre}%`);
+  }
+
+  if (provincia) {
+    sql += ` AND provincia LIKE ?`;
+    values.push(`%${provincia}%`);
+  }
+
+  if (poblacion) {
+    sql += ` AND poblacion LIKE ?`;
+    values.push(`%${poblacion}%`);
+  }
+
+  sql += ` ORDER BY nombre ASC`;
+
+  db.query(sql, values, (err, data) => {
+    if (err) return res.status(500).json({ message: "Error al obtener clubes" });
+    return res.json(data);
   });
 };
 
@@ -182,4 +204,21 @@ export const quitarEntrenadorDeClub = (req, res) => {
     }
   );
 };
+
+export const obtenerResumenClub = (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    SELECT
+      (SELECT COUNT(*) FROM equipos WHERE club_id = ?) AS totalEquipos,
+      (SELECT COUNT(*) FROM usuarios WHERE club_id = ? AND Rol = 'jugador') AS totalJugadores,
+      (SELECT COUNT(*) FROM usuarios WHERE club_id = ? AND Rol = 'entrenador') AS totalEntrenadores
+  `;
+
+  db.query(sql, [id, id, id], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows[0]);
+  });
+};
+
 
