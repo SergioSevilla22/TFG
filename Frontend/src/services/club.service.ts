@@ -55,5 +55,19 @@ export class ClubService {
   removeEntrenadorClub(clubId: number, dni: string) {
     return this.http.delete(`${this.apiUrl}/${clubId}/entrenadores/${dni}`);
   }
+
+  buscarClubes(filtros: { nombre?: string; provincia?: string; poblacion?: string }) {
+    const params: any = {};
+  
+    if (filtros.nombre?.trim()) params.nombre = filtros.nombre.trim();
+    if (filtros.provincia?.trim()) params.provincia = filtros.provincia.trim();
+    if (filtros.poblacion?.trim()) params.poblacion = filtros.poblacion.trim();
+  
+    return this.http.get<any[]>(this.apiUrl, { params });
+  }
+
+  getResumenClub(clubId: number) {
+    return this.http.get<any>(`${this.apiUrl}/${clubId}/resumen`);
+  }
   
 }

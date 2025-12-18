@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
@@ -13,6 +14,7 @@ import { TutorPanelComponent } from './tutor-panel/tutor-panel.component';
 import { EquiposClubComponent } from './equipos-club/equipos-club.component';
 import { ClubComponent } from './club/club.component';
 import { EquipoComponent } from './equipo/equipo.component';
+import { ClubsComponent } from './clubs/clubs.component';
 
 
 export const routes: Routes = [
@@ -29,7 +31,8 @@ export const routes: Routes = [
   { path: 'tutor-panel', component: TutorPanelComponent, title: 'tutor-panel'},
   { path: 'club/:id', component: ClubComponent , title: 'Club'},
   { path: 'club/:id/equipos', component: EquiposClubComponent, title: 'Equipos' },
-  { path: 'equipo/:id', component: EquipoComponent, title: 'Equipo' }
+  { path: 'equipo/:id', component: EquipoComponent, title: 'Equipo' },
+  { path: 'clubes',component: ClubsComponent, title: 'Search Clubs', canActivate: [adminGuard]}
 
 
 ];

@@ -45,6 +45,22 @@ export class EquipoService {
       { dni }
     );
   }
+
+  buscarEquiposClub(
+    clubId: number,
+    filtros: { nombre?: string; categoria?: string; temporada?: string }
+  ) {
+    const params: any = {};
+  
+    if (filtros.nombre) params.nombre = filtros.nombre;
+    if (filtros.categoria) params.categoria = filtros.categoria;
+    if (filtros.temporada) params.temporada = filtros.temporada;
+  
+    return this.http.get<any[]>(
+      `${this.apiUrl}/club/${clubId}`,
+      { params }
+    );
+  }
   
   
 }

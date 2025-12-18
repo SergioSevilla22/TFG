@@ -21,6 +21,13 @@
        routerLinkActive="active">
        Mis jugadores
     </a>
+
+    <a
+    *ngIf="authService.hasRole('admin')"
+    routerLink="/clubes"
+    routerLinkActive="active">
+    Clubes
+    </a>
   </nav>
   
 

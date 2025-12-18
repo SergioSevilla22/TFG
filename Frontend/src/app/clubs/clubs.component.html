@@ -1,0 +1,67 @@
+<app-header></app-header>
+<div class="clubs-page">
+
+    <h1 class="page-title">Clubes</h1>
+    <p class="page-subtitle">
+      Busca clubes registrados utilizando los filtros disponibles
+    </p>
+  
+    <!-- FILTROS -->
+    <div class="filters-card">
+  
+      <div class="filters-grid">
+        <input
+          type="text"
+          placeholder="Nombre del club"
+          [(ngModel)]="filtros.nombre"
+          (input)="onInputChange()"
+        />
+  
+        <input
+          type="text"
+          placeholder="Provincia"
+          [(ngModel)]="filtros.provincia"
+          (input)="onInputChange()"
+        />
+  
+        <input
+          type="text"
+          placeholder="Población"
+          [(ngModel)]="filtros.poblacion"
+          (input)="onInputChange()"
+        />
+  
+        <button class="btn-search" (click)="buscar()">
+          Buscar
+        </button>
+      </div>
+  
+    </div>
+  
+    <!-- RESULTADOS -->
+    <div class="results">
+  
+      <div *ngIf="clubes.length === 0" class="empty">
+        No se encontraron clubes con los filtros seleccionados.
+      </div>
+  
+      <div
+        class="club-card"
+        *ngFor="let club of clubes"
+        (click)="abrirClub(club.id)"
+      >
+        <img
+          *ngIf="club.escudo"
+          [src]="'http://localhost:3000' + club.escudo"
+        />
+  
+        <div class="info">
+          <h3>{{ club.nombre }}</h3>
+          <p>{{ club.poblacion }} · {{ club.provincia }}</p>
+        </div>
+      </div>
+  
+    </div>
+  
+  </div>
+  
