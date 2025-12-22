@@ -55,27 +55,60 @@
       <p class="resultado">{{ resultadoBusqueda }}</p>
 
       <div *ngIf="usuarioEncontrado" class="user-card">
-        <h4>{{ usuarioEncontrado.nombre }}</h4>
 
-        <p><strong>DNI:</strong> {{ usuarioEncontrado.DNI }}</p>
-        <p><strong>Email:</strong> {{ usuarioEncontrado.email }}</p>
-        <p><strong>Teléfono:</strong> {{ usuarioEncontrado.telefono }}</p>
-        <p><strong>Rol actual:</strong> {{ usuarioEncontrado.Rol }}</p>
+        <!-- ===== MODO LECTURA ===== -->
+        <div *ngIf="!editUserMode">
+          <h4>{{ usuarioEncontrado.nombre }}</h4>
 
-        <label>Nuevo Rol:</label>
-        <div class="rol-selector-container">
-          <select [(ngModel)]="nuevoRol" class="rol-selector">
+          <p><strong>DNI:</strong> {{ usuarioEncontrado.DNI }}</p>
+          <p><strong>Email:</strong> {{ usuarioEncontrado.email }}</p>
+          <p><strong>Teléfono:</strong> {{ usuarioEncontrado.telefono }}</p>
+          <p><strong>Rol:</strong> {{ usuarioEncontrado.Rol }}</p>
+
+          <label>Nuevo Rol:</label>
+          <select [(ngModel)]="nuevoRol">
             <option value="">Seleccionar...</option>
             <option value="jugador">Jugador</option>
             <option value="entrenador">Entrenador</option>
             <option value="tutor">Tutor</option>
           </select>
+
+          <button type="button" (click)="cambiarRol()">Guardar Rol</button>
+          <button type="button" (click)="activarEdicionUsuario()">Editar perfil</button>
+          <button type="button" class= "btn-rojo" (click)="eliminarUser(usuarioEncontrado.DNI)">Eliminar</button>
+
+          <p class="resultado">{{ resultadoRol }}</p>
         </div>
 
-        <button type="button" (click)="cambiarRol()">Guardar Rol</button>
-        <p class="resultado">{{ resultadoRol }}</p>
+        <!-- ===== MODO EDICIÓN ===== -->
+        <div *ngIf="editUserMode">
+          <h4>Editando usuario</h4>
 
-        <button type="button" (click)="eliminarUser(usuarioEncontrado.DNI)">Eliminar</button>
+          <label>Nombre</label>
+          <input [(ngModel)]="editUser.nombre" />
+
+          <label>Email</label>
+          <input [(ngModel)]="editUser.email" />
+
+          <label>Teléfono</label>
+          <input [(ngModel)]="editUser.telefono" />
+
+          <label>Rol</label>
+          <select [(ngModel)]="editUser.Rol">
+            <option value="jugador">Jugador</option>
+            <option value="entrenador">Entrenador</option>
+            <option value="tutor">Tutor</option>
+            <option value="admin">Administrador</option>
+          </select>
+
+          <div class="actions">
+            <button type="button" (click)="guardarEdicionUsuario()">Guardar cambios</button>
+            <button type="button" class="btn-rojo" (click)="cancelarEdicionUsuario()">Cancelar</button>
+          </div>
+
+          <p class="resultado">{{ resultadoEdicion }}</p>
+        </div>
+
       </div>
     </div>
 

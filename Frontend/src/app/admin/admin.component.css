@@ -385,6 +385,29 @@ button[disabled] {
   margin-top: 2px;     
 }
 
+/* Botón rojo igual que el verde */
+.btn-rojo {
+  background: #dc3545; /* color rojo */
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  margin-left: 30px;
+}
+
+.btn-rojo:hover {
+  background: #b52a37; /* rojo más oscuro al pasar el mouse */
+}
+
+.btn-rojo:active {
+  transform: scale(0.98); /* mismo efecto de clic que el verde */
+}
+
+
 
 
 

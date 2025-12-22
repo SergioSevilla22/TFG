@@ -68,10 +68,10 @@ export class AuthService {
     return this.http.post(this.apiUrlAccept, data);
   }
 
-  updateUser(datos: FormData): Observable<any> {
+  updateUser(datos: FormData, actualizarSesion = true): Observable<any> {
     return this.http.put(this.apiUrlUpdateUser, datos).pipe(
       tap((res: any) => {
-        if (res.user && typeof window !== 'undefined') {
+        if (actualizarSesion && res.user && typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(res.user));
         }
       })
