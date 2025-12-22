@@ -48,6 +48,10 @@ export class AdminComponent implements OnInit {
 
   selectedFile: File | null = null;
 
+  // ---- EDICIÓN PERFIL USUARIO (ADMIN) ----
+  editUserMode = false;
+  editUser: any = null;
+  resultadoEdicion = '';
 
   // ---------- GESTIÓN CLUBES ----------
   clubes: any[] = [];
@@ -197,6 +201,45 @@ export class AdminComponent implements OnInit {
       },
       error: (err) => {
         this.resultadoRol = err.error?.message || "Error al actualizar rol";
+      }
+    });
+  }
+
+  activarEdicionUsuario() {
+    this.editUserMode = true;
+    this.resultadoEdicion = '';
+    this.editUser = { ...this.usuarioEncontrado };
+  }
+
+  cancelarEdicionUsuario() {
+    this.editUserMode = false;
+    this.editUser = null;
+    this.resultadoEdicion = '';
+  }
+
+  guardarEdicionUsuario() {
+    if (!this.editUser) return;
+
+    if (!/^[0-9]{9}$/.test(this.editUser.telefono)) {
+      this.resultadoEdicion = 'El teléfono debe tener 9 dígitos';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('DNI', this.editUser.DNI);
+    formData.append('nombre', this.editUser.nombre);
+    formData.append('email', this.editUser.email);
+    formData.append('telefono', this.editUser.telefono);
+    formData.append('Rol', this.editUser.Rol);
+
+    this.authService.updateUser(formData, false).subscribe({
+      next: (res) => {
+        this.usuarioEncontrado = res.user;
+        this.editUserMode = false;
+        this.resultadoEdicion = 'Usuario actualizado correctamente';
+      },
+      error: (err) => {
+        this.resultadoEdicion = err.error?.message || 'Error al actualizar usuario';
       }
     });
   }
