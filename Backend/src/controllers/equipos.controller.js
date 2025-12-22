@@ -49,7 +49,7 @@ export const obtenerEquipoPorId = (req, res) => {
 
     /* ------------- Obtener jugadores ------------- */
     db.query(
-      `SELECT DNI, nombre, telefono, foto
+      `SELECT DNI, nombre, telefono, email, foto
        FROM usuarios 
        WHERE equipo_id = ? AND Rol = 'jugador'`,
       [id],
@@ -58,7 +58,7 @@ export const obtenerEquipoPorId = (req, res) => {
         if (err2) return res.status(500).json({ error: err2.message });
         /* ------------- Obtener entrenadores ------------- */
         db.query(
-          `SELECT DNI, nombre, foto 
+          `SELECT DNI, nombre, telefono, email, foto 
           FROM usuarios 
           WHERE equipo_id = ? AND Rol = 'entrenador'`,
           [id],
