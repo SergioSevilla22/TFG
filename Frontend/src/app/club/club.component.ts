@@ -9,11 +9,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddPlayersClubModalComponent } from
   '../../shared/components/add-players-club-modal/add-players-club-modal.component';
 import { AddCoachesClubModalComponent } from '../../shared/components/add-coaches-club-modal/add-coaches-club-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-club',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, RouterModule, HeaderComponent, FormsModule  ],
   templateUrl: './club.component.html',
   styleUrls: ['./club.component.css']
 })
@@ -23,6 +24,15 @@ export class ClubComponent implements OnInit {
   club: any = null;
   equipos: any[] = [];
   loading: boolean = true;
+  resumen: any = null;
+  equiposFiltrados: any[] = [];
+  buscado = false;
+
+  filtrosEquipos = {
+    nombre: '',
+    categoria: '',
+    temporada: ''
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -39,16 +49,23 @@ export class ClubComponent implements OnInit {
 
   loadClubData() {
     this.loading = true;
-
+  
     this.clubService.getClubById(this.clubId).subscribe({
       next: (data) => {
         this.club = data;
         this.loadEquipos();
+        this.loadResumen();
       },
       error: () => {
         this.loading = false;
         alert("No se pudo cargar el club.");
       }
+    });
+  }
+  
+  loadResumen() {
+    this.clubService.getResumenClub(this.clubId).subscribe({
+      next: data => this.resumen = data
     });
   }
 
@@ -83,6 +100,7 @@ export class ClubComponent implements OnInit {
     this.equipoService.obtenerEquiposPorClub(this.clubId).subscribe({
       next: (data) => {
         this.equipos = data;
+        this.equiposFiltrados = data; // 👈 copia inicial
         this.loading = false;
       },
       error: () => {
@@ -90,6 +108,16 @@ export class ClubComponent implements OnInit {
         alert("Error al cargar equipos.");
       }
     });
+  }
+
+  onInputChange() {
+    const { nombre, categoria, temporada } = this.filtrosEquipos;
+
+    // Si todos los campos están vacíos → limpiar resultados
+    if (!nombre && !categoria && !temporada) {
+      this.equipos = [];
+      this.buscado = false;
+    }
   }
   
 
@@ -110,5 +138,17 @@ export class ClubComponent implements OnInit {
   abrirEquiposClub() {
     this.router.navigate([`/club/${this.clubId}/equipos`]);
   }
+
+  buscarEquipos() {
+    const { nombre, categoria, temporada } = this.filtrosEquipos;
+    this.buscado = true;
+  
+    this.equiposFiltrados = this.equipos.filter(e =>
+      (!nombre || e.nombre.toLowerCase().includes(nombre.toLowerCase())) &&
+      (!categoria || e.categoria.toLowerCase().includes(categoria.toLowerCase())) &&
+      (!temporada || e.temporada.toLowerCase().includes(temporada.toLowerCase()))
+    );
+  }
+  
   
 }

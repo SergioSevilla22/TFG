@@ -2,20 +2,41 @@ import { db } from "../db.js";
 
 export const obtenerEquiposPorClub = (req, res) => {
   const { clubId } = req.params;
+  const { nombre, categoria, temporada } = req.query;
 
-  db.query(
-    `SELECT e.id, e.nombre, c.nombre AS categoria, t.nombre AS temporada
-     FROM equipos e
-     JOIN categorias c ON e.categoria_id = c.id
-     JOIN temporadas t ON e.temporada_id = t.id
-     WHERE e.club_id = ?`,
-    [clubId],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json(results);
-    }
-  );
+  let sql = `
+    SELECT e.id, e.nombre, c.nombre AS categoria, t.nombre AS temporada
+    FROM equipos e
+    JOIN categorias c ON e.categoria_id = c.id
+    JOIN temporadas t ON e.temporada_id = t.id
+    WHERE e.club_id = ?
+  `;
+
+  const values = [clubId];
+
+  if (nombre) {
+    sql += " AND e.nombre LIKE ?";
+    values.push(`%${nombre}%`);
+  }
+
+  if (categoria) {
+    sql += " AND c.nombre LIKE ?";
+    values.push(`%${categoria}%`);
+  }
+
+  if (temporada) {
+    sql += " AND t.nombre LIKE ?";
+    values.push(`%${temporada}%`);
+  }
+
+  sql += " ORDER BY e.nombre ASC";
+
+  db.query(sql, values, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
 };
+
 
 export const obtenerEquipoPorId = (req, res) => {
   const { id } = req.params;

@@ -11,7 +11,8 @@ import {
   quitarJugadorDeClub,
   obtenerEntrenadoresClub,
   asignarEntrenadoresAClub,
-  quitarEntrenadorDeClub
+  quitarEntrenadorDeClub,
+  obtenerResumenClub
 } from "../controllers/club.controller.js";
 
 
@@ -35,6 +36,8 @@ router.delete("/clubes/:id/jugadores/:dni", quitarJugadorDeClub);
 router.get("/clubes/:id/entrenadores", obtenerEntrenadoresClub);
 router.put("/clubes/:id/entrenadores", asignarEntrenadoresAClub);
 router.delete("/clubes/:id/entrenadores/:dni", quitarEntrenadorDeClub);
+router.get("/clubes/:id/resumen", obtenerResumenClub);
+
 
 
 
