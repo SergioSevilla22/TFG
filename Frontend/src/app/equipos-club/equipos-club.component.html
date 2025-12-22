@@ -1,48 +1,54 @@
 <app-header></app-header>
 
-<h2>Equipos del Club</h2>
+<div class="equipos-wrapper">
 
-<div class="nuevo-equipo-form">
-  <h3>Crear Nuevo Equipo</h3>
+  <h2 class="section-title">Equipos del Club</h2>
 
-  <input type="text"
-         placeholder="Nombre del equipo (Alevín B, Cadete A...)"
-         [(ngModel)]="nuevoEquipo.nombre">
+  <!-- FORMULARIO NUEVO EQUIPO -->
+  <div class="panel-card nuevo-equipo-form">
+    <h3>Crear nuevo equipo</h3>
 
-  <select [(ngModel)]="nuevoEquipo.categoria_id">
-    <option value="">Seleccionar categoría...</option>
-    <option *ngFor="let cat of categorias" [value]="cat.id">
-      {{ cat.nombre }}
-    </option>
-  </select>
+    <div class="form-group">
+      <input type="text"
+             placeholder="Nombre del equipo (Alevín B, Cadete A...)"
+             [(ngModel)]="nuevoEquipo.nombre">
+    </div>
 
-  <button (click)="crearEquipo()">Crear Equipo</button>
+    <div class="form-group">
+      <select [(ngModel)]="nuevoEquipo.categoria_id">
+        <option value="">Seleccionar categoría...</option>
+        <option *ngFor="let cat of categorias" [value]="cat.id">
+          {{ cat.nombre }}
+        </option>
+      </select>
+    </div>
 
-  <p>{{ mensaje }}</p>
-</div>
+    <button class="cambiar primary" (click)="crearEquipo()">Crear equipo</button>
 
-<hr>
-
-<h3>Equipos Registrados</h3>
-
-<div 
-  class="equipo-card clickable"
-  *ngFor="let eq of equipos"
-  (click)="abrirEquipo(eq.id)"
->
-
-  <div class="info-group">
-    <h4>{{ eq.nombre }}</h4>
-    <p><strong>Categoría:</strong> {{ eq.categoria }}</p>
-    <p><strong>Temporada:</strong> {{ eq.temporada }}</p>
+    <p class="form-message" *ngIf="mensaje">{{ mensaje }}</p>
   </div>
 
-  <button 
-    class="delete-btn"
-    (click)="eliminarEquipo(eq.id); $event.stopPropagation()"
-  >
-    Eliminar
-  </button>
+  <h3 class="subsection-title">Equipos registrados</h3>
+
+  <!-- LISTADO EQUIPOS -->
+  <div class="equipo-card clickable"
+       *ngFor="let eq of equipos"
+       (click)="abrirEquipo(eq.id)">
+
+    <div class="info-group">
+      <h4>{{ eq.nombre }}</h4>
+
+      <p class="meta">
+        <span class="meta-item">Categoría: {{ eq.categoria }}</span>
+        <span class="meta-item">Temporada: {{ eq.temporada }}</span>
+      </p>
+    </div>
+
+    <button class="delete-btn"
+            (click)="eliminarEquipo(eq.id); $event.stopPropagation()">
+      Eliminar
+    </button>
+
+  </div>
 
 </div>
-
