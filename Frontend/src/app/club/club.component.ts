@@ -100,7 +100,8 @@ export class ClubComponent implements OnInit {
     this.equipoService.obtenerEquiposPorClub(this.clubId).subscribe({
       next: (data) => {
         this.equipos = data;
-        this.equiposFiltrados = data; // 👈 copia inicial
+        this.equiposFiltrados = [];   // 👈 NO mostrar nada al inicio
+        this.buscado = false;         // 👈 aún no se ha buscado
         this.loading = false;
       },
       error: () => {
@@ -113,10 +114,9 @@ export class ClubComponent implements OnInit {
   onInputChange() {
     const { nombre, categoria, temporada } = this.filtrosEquipos;
 
-    // Si todos los campos están vacíos → limpiar resultados
     if (!nombre && !categoria && !temporada) {
-      this.equipos = [];
       this.buscado = false;
+      this.equiposFiltrados = [];
     }
   }
   

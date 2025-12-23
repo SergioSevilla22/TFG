@@ -33,6 +33,13 @@ export class EquiposClubComponent implements OnInit {
   temporada_id: null
 };
 
+equiposPorCategoria: {
+  categoria: string;
+  equipos: any[];
+}[] = [];
+
+categoriaAbierta: string | null = null;
+
   mensaje = '';
 
   constructor(
@@ -55,7 +62,23 @@ export class EquiposClubComponent implements OnInit {
   cargarEquipos() {
     this.equipoService.obtenerEquiposPorClub(this.clubId).subscribe(res => {
       this.equipos = res;
+      this.agruparEquiposPorCategoria();
     });
+  }
+
+  agruparEquiposPorCategoria() {
+    const mapa = new Map<string, any[]>();
+  
+    for (const eq of this.equipos) {
+      if (!mapa.has(eq.categoria)) {
+        mapa.set(eq.categoria, []);
+      }
+      mapa.get(eq.categoria)!.push(eq);
+    }
+  
+    this.equiposPorCategoria = Array.from(mapa.entries()).map(
+      ([categoria, equipos]) => ({ categoria, equipos })
+    );
   }
 
   cargarCategorias() {

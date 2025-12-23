@@ -202,3 +202,48 @@
     text-align: center;
   }
 }
+
+.categoria-card {
+  margin-bottom: 16px;
+}
+
+.categoria-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 16px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.categoria-header h4 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.contador {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.categoria-content {
+  margin-top: 12px;
+}
+
+.categoria-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.arrow {
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+  color: #374151;
+}
+
+.arrow.open {
+  transform: rotate(90deg);
+}

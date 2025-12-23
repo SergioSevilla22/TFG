@@ -16,7 +16,9 @@
 
     <div class="form-group">
       <select [(ngModel)]="nuevoEquipo.categoria_id">
-        <option value="">Seleccionar categoría...</option>
+        <option [ngValue]="null" disabled selected>
+          Seleccionar categoría...
+        </option>
         <option *ngFor="let cat of categorias" [value]="cat.id">
           {{ cat.nombre }}
         </option>
@@ -30,24 +32,48 @@
 
   <h3 class="subsection-title">Equipos registrados</h3>
 
-  <!-- LISTADO EQUIPOS -->
-  <div class="equipo-card clickable"
-       *ngFor="let eq of equipos"
-       (click)="abrirEquipo(eq.id)">
+<div class="categoria-card"
+     *ngFor="let grupo of equiposPorCategoria">
 
-    <div class="info-group">
-      <h4>{{ eq.nombre }}</h4>
+  <!-- CABECERA CATEGORÍA -->
+  <div class="categoria-header clickable"
+     (click)="categoriaAbierta = categoriaAbierta === grupo.categoria ? null : grupo.categoria">
 
-      <p class="meta">
-        <span class="meta-item">Categoría: {{ eq.categoria }}</span>
-        <span class="meta-item">Temporada: {{ eq.temporada }}</span>
-      </p>
+  <div class="categoria-title">
+    <span class="arrow"
+          [class.open]="categoriaAbierta === grupo.categoria">
+      ▶
+    </span>
+
+    <h4>{{ grupo.categoria }}</h4>
+  </div>
+
+  <span class="contador">
+    {{ grupo.equipos.length }} equipos
+  </span>
+</div>
+
+  <!-- LISTA EQUIPOS -->
+  <div class="categoria-content"
+       *ngIf="categoriaAbierta === grupo.categoria">
+
+    <div class="equipo-card clickable"
+         *ngFor="let eq of grupo.equipos"
+         (click)="abrirEquipo(eq.id)">
+
+      <div class="info-group">
+        <h4>{{ eq.nombre }}</h4>
+        <p class="meta">
+          <span class="meta-item">Temporada: {{ eq.temporada }}</span>
+        </p>
+      </div>
+
+      <button class="delete-btn"
+              (click)="eliminarEquipo(eq.id); $event.stopPropagation()">
+        Eliminar
+      </button>
+
     </div>
-
-    <button class="delete-btn"
-            (click)="eliminarEquipo(eq.id); $event.stopPropagation()">
-      Eliminar
-    </button>
 
   </div>
 

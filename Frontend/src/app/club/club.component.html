@@ -91,8 +91,7 @@
         <h3>Equipos del Club</h3>
       </div>
 
-      <div class="equipo-list" *ngIf="equipos.length > 0; else noTeams">
-
+      <div class="equipo-list" *ngIf="buscado && equiposFiltrados.length > 0">
         <div
           class="equipo-item"
           *ngFor="let equipo of equiposFiltrados"
@@ -101,12 +100,16 @@
           <h4>{{ equipo.nombre }}</h4>
           <p>{{ equipo.categoria }} · {{ equipo.temporada }}</p>
         </div>
-
       </div>
 
-      <ng-template #noTeams>
-        <p class="empty">No hay equipos que coincidan con la búsqueda.</p>
-      </ng-template>
+      <p class="empty" *ngIf="!buscado">
+        Usa el buscador de arriba para encontrar equipos del club
+      </p>
+      
+      <!-- 👉 Búsqueda sin resultados -->
+      <p class="empty" *ngIf="buscado && equiposFiltrados.length === 0">
+        No hay equipos que coincidan con la búsqueda
+      </p>
 
     </div>
 
@@ -136,6 +139,10 @@
 
     <button (click)="abrirModalEntrenadoresClub()">
       Gestionar entrenadores del club
+    </button>
+
+    <button class="secondary" (click)="abrirEquiposClub()">
+      Crear / gestionar equipos
     </button>
   </div>
 
