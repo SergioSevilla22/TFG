@@ -5,28 +5,47 @@
   </div>
 
   <nav class="nav-tabs">
+    <!-- TODOS -->
     <a routerLink="/home" routerLinkActive="active">Inicio</a>
-    <a routerLink="/entrenador" routerLinkActive="active">Equipos</a>
   
-    <a *ngIf="authService.hasRole('entrenador')" 
-       routerLink="/register" 
-       routerLinkActive="active">Registrar</a>
-  
-    <a *ngIf="authService.hasRole('admin')" 
-       routerLink="/admin" 
-       routerLinkActive="active">Administrar</a>
-  
-    <a *ngIf="authService.hasRole('tutor')" 
-       routerLink="/tutor-panel" 
+    <!-- ADMIN -->
+    <a *ngIf="authService.hasRole('admin')"
+       routerLink="/clubes"
        routerLinkActive="active">
-       Mis jugadores
+      Clubes
     </a>
-
-    <a
-    *ngIf="authService.hasRole('admin')"
-    routerLink="/clubes"
-    routerLinkActive="active">
-    Clubes
+  
+    <a *ngIf="authService.hasRole('admin')"
+       routerLink="/admin"
+       routerLinkActive="active">
+      Administrar
+    </a>
+  
+    <!-- ENTRENADOR -->
+    <a *ngIf="authService.hasRole('entrenador')"
+       [routerLink]="['/equipo', authService.getUser()?.equipo_id]"
+       routerLinkActive="active">
+      Mi equipo
+    </a>
+  
+    <a *ngIf="authService.hasRole('entrenador')"
+       routerLink="/register"
+       routerLinkActive="active">
+      Registrar
+    </a>
+  
+    <!-- JUGADOR -->
+    <a *ngIf="authService.hasRole('jugador')"
+       [routerLink]="['/equipo', authService.getUser()?.equipo_id]"
+       routerLinkActive="active">
+      Mi equipo
+    </a>
+  
+    <!-- TUTOR -->
+    <a *ngIf="authService.hasRole('tutor')"
+       routerLink="/tutor-panel"
+       routerLinkActive="active">
+      Mis jugadores
     </a>
   </nav>
   

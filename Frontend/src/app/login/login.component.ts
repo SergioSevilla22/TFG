@@ -34,9 +34,23 @@ export class LoginComponent {
 
     this.authService.login(credentials).subscribe({
       next: (res) => {
-        console.log('Login correcto:', res);
-        alert(`Bienvenido ${res.user.email}`);
-        this.router.navigate(['/home']);
+        const user = res.user;
+  
+        alert(`Bienvenido ${user.email}`);
+  
+        // 🔁 Redirección según rol
+        if ((user.Rol === 'jugador' || user.Rol === 'entrenador') && user.equipo_id) {
+          this.router.navigate(['/equipo', user.equipo_id]);
+        }
+        else if (user.Rol === 'admin' && user.club_id) {
+          this.router.navigate(['/club', user.club_id]);
+        }
+        else if (user.Rol === 'tutor') {
+          this.router.navigate(['/tutor-panel']);
+        }
+        else {
+          this.router.navigate(['/home']);
+        }
       },
       error: (err) => {
         console.error('Error en login:', err);
