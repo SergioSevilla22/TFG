@@ -2,29 +2,50 @@
 
 <div class="equipo-wrapper" *ngIf="!loading && equipo; else loadingTpl">
 
+  <!-- =========================
+       CABECERA
+  ========================== -->
   <div class="equipo-header">
     <div class="left">
-      <img *ngIf="equipo.club.escudo" [src]="'http://localhost:3000' + equipo.club.escudo" class="escudo" />
+      <img
+        *ngIf="equipo.club.escudo"
+        [src]="'http://localhost:3000' + equipo.club.escudo"
+        class="escudo"
+      />
       <div class="texto">
         <h1>{{ equipo.nombre }}</h1>
         <p>{{ equipo.club.nombre }}</p>
         <p>{{ equipo.categoria }} · {{ equipo.temporada }}</p>
       </div>
     </div>
-    <button class="volver" (click)="volverAlClub()">← Volver al club</button>
+
+    <!-- VOLVER AL CLUB → SOLO ADMIN -->
+    <button
+      class="volver"
+      *ngIf="authService.hasRole('admin')"
+      (click)="volverAlClub()">
+      ← Volver al club
+    </button>
   </div>
 
+  <!-- =========================
+       GRID PRINCIPAL
+  ========================== -->
   <div class="grid-panel">
 
+    <!-- =========================
+         ENTRENADORES
+    ========================== -->
     <div class="panel-card entrenador-card">
       <h3>Entrenadores ({{ equipo.entrenadores?.length || 0 }})</h3>
 
       <div *ngIf="equipo.entrenadores?.length; else noCoaches">
         <div class="jug-item" *ngFor="let e of equipo.entrenadores">
           <span class="round">
-            <img *ngIf="e.foto" [src]="'http://localhost:3000' + e.foto" alt="{{ e.nombre }}" />
+            <img *ngIf="e.foto" [src]="'http://localhost:3000' + e.foto" />
             <span *ngIf="!e.foto">{{ e.nombre[0] | uppercase }}</span>
           </span>
+
           <div>
             <h4>{{ e.nombre }}</h4>
             <p class="meta">
@@ -33,7 +54,14 @@
               <span class="meta-item email" *ngIf="e.email">{{ e.email }}</span>
             </p>
           </div>
-          <button class="delete" (click)="eliminarEntrenador(e.DNI)">✕</button>
+
+          <!-- QUITAR ENTRENADOR → SOLO ADMIN -->
+          <button
+            class="delete"
+            *ngIf="authService.hasRole('admin')"
+            (click)="eliminarEntrenador(e.DNI)">
+            ✕
+          </button>
         </div>
       </div>
 
@@ -41,18 +69,40 @@
         <p class="empty">No hay entrenadores asignados</p>
       </ng-template>
 
-      <button class="cambiar primary" (click)="abrirModalEntrenadorEquipo()">Añadir entrenador</button>
+      <!-- AÑADIR ENTRENADOR → SOLO ADMIN -->
+      <button
+        class="cambiar primary"
+        *ngIf="authService.hasRole('admin')"
+        (click)="abrirModalEntrenadorEquipo()">
+        Añadir entrenador
+      </button>
     </div>
 
-    <div class="panel-card jugadores-card" (drop)="onDropJugador($event)" (dragover)="allowDrop($event)">
+    <!-- =========================
+         JUGADORES
+    ========================== -->
+
+    <!-- ADMIN (con drag & drop) -->
+    <div
+      class="panel-card jugadores-card"
+      *ngIf="authService.hasRole('admin')"
+      (drop)="onDropJugador($event)"
+      (dragover)="allowDrop($event)">
+
       <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
 
-      <div class="jug-list" *ngIf="equipo.jugadores.length > 0; else noPlayers">
-        <div class="jug-item" *ngFor="let j of equipo.jugadores" draggable="true" (dragstart)="dragJugador($event, j.DNI)">
+      <div class="jug-list" *ngIf="equipo.jugadores.length; else noPlayers">
+        <div
+          class="jug-item"
+          *ngFor="let j of equipo.jugadores"
+          draggable="true"
+          (dragstart)="dragJugador($event, j.DNI)">
+
           <span class="round">
-            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" alt="{{ j.nombre }}" />
+            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
             <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
           </span>
+
           <div>
             <h4>{{ j.nombre }}</h4>
             <p class="meta">
@@ -60,9 +110,14 @@
               <span class="meta-item" *ngIf="j.telefono">Tel: {{ j.telefono }}</span>
               <span class="meta-item email" *ngIf="j.email">{{ j.email }}</span>
             </p>
-
           </div>
-          <button class="delete" (click)="eliminarJugador(j.DNI)">✕</button>
+
+          <!-- QUITAR JUGADOR → ADMIN -->
+          <button
+            class="delete"
+            (click)="eliminarJugador(j.DNI)">
+            ✕
+          </button>
         </div>
       </div>
 
@@ -70,13 +125,116 @@
         <p class="empty">No hay jugadores en este equipo.</p>
       </ng-template>
 
-      <button class="cambiar primary" (click)="abrirModalAddJugadores()">Añadir jugadores</button>
+      <!-- AÑADIR JUGADORES → ADMIN -->
+      <button
+        class="cambiar primary"
+        (click)="abrirModalAddJugadores()">
+        Añadir jugadores
+      </button>
+    </div>
+
+    <!-- ENTRENADOR (sin drag & drop) -->
+    <div
+      class="panel-card jugadores-card"
+      *ngIf="authService.hasRole('entrenador')">
+
+      <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
+
+      <div class="jug-list" *ngIf="equipo.jugadores.length">
+        <div class="jug-item" *ngFor="let j of equipo.jugadores">
+
+          <span class="round">
+            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
+            <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
+          </span>
+
+          <div>
+            <h4>{{ j.nombre }}</h4>
+            <p class="meta">
+              <span class="meta-item">DNI: {{ j.DNI }}</span>
+              <span class="meta-item" *ngIf="j.telefono">Tel: {{ j.telefono }}</span>
+              <span class="meta-item email" *ngIf="j.email">{{ j.email }}</span>
+            </p>
+          </div>
+
+          <!-- QUITAR JUGADOR → ENTRENADOR -->
+          <button
+            class="delete"
+            (click)="eliminarJugador(j.DNI)">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- AÑADIR JUGADORES → ENTRENADOR -->
+      <button
+        class="cambiar primary"
+        (click)="abrirModalAddJugadores()">
+        Añadir jugadores
+      </button>
+    </div>
+
+    <!-- JUGADOR (solo lectura) -->
+    <div
+      class="panel-card jugadores-card"
+      *ngIf="authService.hasRole('jugador')">
+
+      <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
+
+      <div class="jug-list">
+        <div class="jug-item" *ngFor="let j of equipo.jugadores">
+          <span class="round">
+            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
+            <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
+          </span>
+
+          <div>
+            <h4>{{ j.nombre }}</h4>
+            <p class="meta">
+              <span class="meta-item">DNI: {{ j.DNI }}</span>
+              <span class="meta-item" *ngIf="j.telefono">Tel: {{ j.telefono }}</span>
+              <span class="meta-item email" *ngIf="j.email">{{ j.email }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
 
-</div>
+<!-- =========================
+       GESTIÓN DEPORTIVA
+  ========================== -->
+  <div class="panel-card">
+    <h3>Gestión deportiva</h3>
+
+    <div *ngIf="authService.hasRole('admin') || authService.hasRole('entrenador')">
+      <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'eventos']">
+        📅 Eventos del equipo
+      </button>
+
+      <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'convocatorias']">
+        📣 Convocatorias
+      </button>
+
+      <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'calendario']">
+        🗓️ Calendario del equipo
+      </button>
+    </div>
+
+    <div *ngIf="authService.hasRole('jugador')">
+      <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'convocatorias']">
+        📣 Ver convocatorias
+      </button>
+
+      <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'calendario']">
+        🗓️ Ver calendario
+      </button>
+    </div>
+  </div>
+
+</div> <!-- 👈 ESTE DIV FALTABA -->
 
 <ng-template #loadingTpl>
   <p class="loading">Cargando equipo...</p>
-</ng-template>
+</ng-template>>

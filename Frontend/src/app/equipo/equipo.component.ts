@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddPlayersTeamModalComponent } from
   '../../shared/components/add-players-team-modal/add-players-team-modal.component';
 import { AssignCoachTeamModalComponent } from '../../shared/components/assign-coach-team-modal/assign-coach-team-modal.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-equipo',
@@ -21,6 +22,9 @@ export class EquipoComponent implements OnInit {
   equipoId!: number;
   equipo: any = null;
   loading = true;
+  esAdmin = false;
+  esEntrenador = false;
+  esJugador = false;
 
   jugadoresDisponibles: any[] = [];
   entrenadoresDisponibles: any[] = [];
@@ -29,7 +33,8 @@ export class EquipoComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private equipoService: EquipoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

@@ -38,6 +38,8 @@ export const loginUsuario = (req, res) => {
           Rol: user.Rol,
           foto: user.foto ? user.foto : null,
           idTutor: user.idTutor ? user.idTutor : null,
+          club_id: user.club_id ? user.club_id : null,
+          equipo_id: user.equipo_id ? user.equipo_id : null,
         },
       });
     } catch (error) {
