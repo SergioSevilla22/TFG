@@ -1,0 +1,36 @@
+.content { min-width: 520px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.field small { display:block; color:#666; margin-top:4px; }
+
+.lista {
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.jug {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-bottom: 1px dashed #eee;
+}
+.jug:last-child { border-bottom: none; }
+
+.dni { color:#777; font-size: 12px; }
+
+.msg { margin-top: 10px; color: #b00020; }

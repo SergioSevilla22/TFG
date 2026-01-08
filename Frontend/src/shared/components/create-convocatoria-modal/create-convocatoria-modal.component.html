@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Nueva convocatoria</h2>
+
+<div mat-dialog-content class="content">
+
+  <div class="grid">
+    <div class="field">
+      <label>Rival (opcional)</label>
+      <input matInput type="text" [(ngModel)]="convocatoria.rival" placeholder="Ej: UD Example" />
+    </div>
+
+    <div class="field">
+      <label>Lugar (opcional)</label>
+      <input matInput type="text" [(ngModel)]="convocatoria.lugar" placeholder="Campo / pabellón / dirección" />
+    </div>
+
+    <div class="field">
+      <label>Fecha del partido *</label>
+      <input matInput type="date" [(ngModel)]="convocatoria.fecha_partido" />
+    </div>
+
+    <div class="field">
+      <label>Hora inicio *</label>
+      <input matInput type="time" [(ngModel)]="convocatoria.hora_inicio" />
+    </div>
+
+    <div class="field">
+      <label>Hora de quedada *</label>
+      <input matInput type="time" [(ngModel)]="convocatoria.hora_quedada" />
+    </div>
+
+    <div class="field">
+      <label>Límite confirmación *</label>
+      <input matInput type="datetime-local" [(ngModel)]="convocatoria.fecha_limite_confirmacion" />
+      <small>El jugador no debería poder confirmar después de esta fecha.</small>
+    </div>
+  </div>
+
+  <h3>Jugadores convocados *</h3>
+  <div class="lista">
+    <label class="jug" *ngFor="let j of jugadores">
+      <input type="checkbox" (change)="toggleJugador(j.DNI, $event)" />
+      <span>{{ j.nombre }} <span class="dni">({{ j.DNI }})</span></span>
+    </label>
+  </div>
+
+  <p class="msg" *ngIf="mensaje">{{ mensaje }}</p>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar(false)">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="publicar()">
+    {{ loading ? 'Publicando...' : 'Publicar' }}
+  </button>
+</div>
