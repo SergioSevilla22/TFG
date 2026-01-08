@@ -237,4 +237,73 @@
 
 <ng-template #loadingTpl>
   <p class="loading">Cargando equipo...</p>
-</ng-template>>
+</ng-template>
+
+<!-- =========================
+     CONVOCATORIAS
+========================== -->
+<div class="panel-card" style="margin-top: 18px;">
+  <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+    <h2 style="margin:0;">Convocatorias</h2>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button
+        class="cambiar primary"
+        *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin')"
+        (click)="abrirModalCrearConvocatoria()">
+        + Nueva convocatoria
+      </button>
+    </div>
+  </div>
+
+  <p *ngIf="loadingConvocatorias">Cargando convocatorias...</p>
+  <p *ngIf="!loadingConvocatorias && convocatorias.length === 0">No hay convocatorias todavía.</p>
+
+  <div class="lista-convocatorias" *ngIf="!loadingConvocatorias && convocatorias.length > 0">
+    <div class="conv-card" *ngFor="let c of convocatorias">
+      <div class="conv-main">
+        <div class="conv-title">
+          <b>{{ c.fecha_partido | date:'dd/MM/yyyy' }}</b>
+          <span *ngIf="c.rival"> · vs {{ c.rival }}</span>
+        </div>
+
+        <div class="conv-meta">
+          <span>Inicio: {{ c.hora_inicio }}</span>
+          <span>Quedada: {{ c.hora_quedada }}</span>
+          <span *ngIf="c.lugar">Lugar: {{ c.lugar }}</span>
+          <span>Límite: {{ c.fecha_limite_confirmacion | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+
+        <div class="conv-actions" *ngIf="authService.hasRole('jugador')">
+          <span class="estado">
+            Estado: <b>{{ estadoJugador(c) || 'pendiente' }}</b>
+          </span>
+
+          <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')">✅ Confirmar</button>
+          <button class="delete" (click)="responderConvocatoria(c, 'rechazado')">❌ Rechazar</button>
+        </div>
+
+        <div class="conv-actions" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin')">
+          <span class="estado">
+            Convocados: <b>{{ c.jugadores?.length || 0 }}</b>
+            · ✅ {{ contarPorEstado(c, 'confirmado') }}
+            · ❌ {{ contarPorEstado(c, 'rechazado') }}
+            · ⏳ {{ contarPorEstado(c, 'pendiente') }}
+          </span>
+
+          <button class="cambiar" (click)="enviarRecordatorio(c)">🔔 Enviar recordatorio</button>
+        </div>
+
+        <details class="conv-details">
+          <summary>Ver convocados</summary>
+          <div class="convocados">
+            <div class="conv-j" *ngFor="let j of c.jugadores">
+              <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
+              <span class="pill" [ngClass]="j.estado">{{ j.estado }}</span>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>

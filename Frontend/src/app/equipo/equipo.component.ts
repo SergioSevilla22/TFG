@@ -9,6 +9,8 @@ import { AddPlayersTeamModalComponent } from
   '../../shared/components/add-players-team-modal/add-players-team-modal.component';
 import { AssignCoachTeamModalComponent } from '../../shared/components/assign-coach-team-modal/assign-coach-team-modal.component';
 import { AuthService } from '../../services/auth.service';
+import { ConvocatoriaService } from '../../services/convocatoria.service';
+import { CreateConvocatoriaModalComponent } from '../../shared/components/create-convocatoria-modal/create-convocatoria-modal.component';
 
 @Component({
   selector: 'app-equipo',
@@ -25,6 +27,8 @@ export class EquipoComponent implements OnInit {
   esAdmin = false;
   esEntrenador = false;
   esJugador = false;
+  convocatorias: any[] = [];
+  loadingConvocatorias = false;
 
   jugadoresDisponibles: any[] = [];
   entrenadoresDisponibles: any[] = [];
@@ -33,6 +37,7 @@ export class EquipoComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private equipoService: EquipoService,
+    private convocatoriaService: ConvocatoriaService,
     private dialog: MatDialog,
     public authService: AuthService
   ) {}
@@ -40,6 +45,55 @@ export class EquipoComponent implements OnInit {
   ngOnInit(): void {
     this.equipoId = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarEquipo();
+  }
+
+  cargarConvocatorias() {
+    this.loadingConvocatorias = true;
+    this.convocatoriaService.getConvocatoriasEquipo(this.equipoId).subscribe({
+      next: data => {
+        this.convocatorias = data;
+        this.loadingConvocatorias = false;
+      },
+      error: () => this.loadingConvocatorias = false
+    });
+  }
+
+  abrirModalCrearConvocatoria() {
+    const ref = this.dialog.open(CreateConvocatoriaModalComponent, {
+      width: '700px',
+      data: {
+        equipoId: this.equipoId,
+        jugadoresEquipo: this.equipo.jugadores
+      }
+    });
+  
+    ref.afterClosed().subscribe(r => {
+      if (r) this.cargarConvocatorias();
+    });
+  }
+
+  estadoJugador(c: any) {
+    const u = this.authService.getUser();
+    return c.jugadores?.find((j: any) => j.DNI === u?.DNI)?.estado;
+  }
+  
+  responderConvocatoria(c: any, estado: string) {
+    const u = this.authService.getUser();
+    this.convocatoriaService.responderConvocatoria(c.id, {
+      jugador_dni: u.DNI,
+      estado
+    }).subscribe(() => this.cargarConvocatorias());
+  }
+  
+  enviarRecordatorio(c: any) {
+    this.convocatoriaService.enviarRecordatorio(c.id).subscribe(() =>
+      alert('Recordatorio enviado')
+    );
+  }
+
+  contarPorEstado(convocatoria: any, estado: 'confirmado' | 'rechazado' | 'pendiente'): number {
+    if (!convocatoria?.jugadores) return 0;
+    return convocatoria.jugadores.filter((j: any) => j.estado === estado).length;
   }
 
   abrirModalAddJugadores() {
@@ -79,9 +133,11 @@ export class EquipoComponent implements OnInit {
       next: (data) => {
         this.equipo = data;
         this.loading = false;
+        this.cargarConvocatorias();
       },
       error: () => {
         this.loading = false;
+        this.cargarConvocatorias();
         alert('No se pudo cargar el equipo');
       }
     });
