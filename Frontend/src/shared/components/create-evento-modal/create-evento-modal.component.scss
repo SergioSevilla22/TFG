@@ -1,0 +1,53 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .field {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      input, textarea {
+        padding: 6px 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+    }
+
+    .checkbox {
+      flex-direction: row;
+      align-items: center;
+
+      label {
+        font-weight: normal;
+      }
+    }
+  }
+
+  .lista {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .jug {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  .msg {
+    color: red;
+    font-weight: bold;
+  }
+}

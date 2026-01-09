@@ -307,3 +307,40 @@
     </div>
   </div>
 </div>
+<!-- =========================
+     Eventos
+========================== -->
+<div class="panel-card" style="margin-top: 18px;">
+  <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <h2>Eventos</h2>
+    <button class="cambiar primary"
+            *ngIf="authService.hasRole('admin') || authService.hasRole('entrenador')"
+            (click)="abrirModalCrearEvento()">
+      + Nuevo evento
+    </button>
+  </div>
+
+  <p *ngIf="loadingEventos">Cargando eventos...</p>
+  <p *ngIf="!loadingEventos && eventos.length === 0">No hay eventos todavía.</p>
+
+  <div class="lista-eventos" *ngIf="!loadingEventos && eventos.length > 0">
+    <div class="evento" *ngFor="let e of eventos">
+      <h4>{{ e.titulo }}</h4>
+      <p> Descripción: {{ e.descripcion }}</p>
+      <p>📅 Inicio: {{ e.fecha_inicio | date:'short' }} · Fin: {{ e.fecha_fin | date:'short' }}</p>
+
+      <div *ngIf="e.requiere_confirmacion && authService.hasRole('jugador')">
+        <span class="estado">
+          Estado: <b>{{ estadoJugadorEvento(e) || 'pendiente' }}</b>
+        </span>
+
+        <button class="cambiar" (click)="responderEvento(e, 'confirmado')">✅ Confirmar</button>
+        <button class="delete" (click)="responderEvento(e, 'rechazado')">❌ Rechazar</button>
+      </div>
+
+      <div *ngIf="e.requiere_confirmacion && (authService.hasRole('admin') || authService.hasRole('entrenador'))">
+        <span>Confirmaciones: ✅ {{ contarPorEstadoEvento(e, 'confirmado') }} · ❌ {{ contarPorEstadoEvento(e, 'rechazado') }} · ⏳ {{ contarPorEstadoEvento(e, 'pendiente') }}</span>
+      </div>
+    </div>
+  </div>
+</div>

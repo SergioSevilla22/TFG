@@ -11,6 +11,8 @@ import { AssignCoachTeamModalComponent } from '../../shared/components/assign-co
 import { AuthService } from '../../services/auth.service';
 import { ConvocatoriaService } from '../../services/convocatoria.service';
 import { CreateConvocatoriaModalComponent } from '../../shared/components/create-convocatoria-modal/create-convocatoria-modal.component';
+import { EventoService } from '../../services/evento.service';
+import { CreateEventoModalComponent } from '../../shared/components/create-evento-modal/create-evento-modal.component';
 
 @Component({
   selector: 'app-equipo',
@@ -29,6 +31,8 @@ export class EquipoComponent implements OnInit {
   esJugador = false;
   convocatorias: any[] = [];
   loadingConvocatorias = false;
+  eventos: any[] = [];
+  loadingEventos = false;
 
   jugadoresDisponibles: any[] = [];
   entrenadoresDisponibles: any[] = [];
@@ -38,8 +42,10 @@ export class EquipoComponent implements OnInit {
     private router: Router,
     private equipoService: EquipoService,
     private convocatoriaService: ConvocatoriaService,
+    private eventoService: EventoService,
     private dialog: MatDialog,
     public authService: AuthService
+    
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +102,49 @@ export class EquipoComponent implements OnInit {
     return convocatoria.jugadores.filter((j: any) => j.estado === estado).length;
   }
 
+  cargarEventos() {
+    this.loadingEventos = true;
+    this.eventoService.getEventosEquipo(this.equipoId).subscribe({
+      next: data => { this.eventos = data; this.loadingEventos = false; },
+      error: () => this.loadingEventos = false
+    });
+  }
+
+  estadoJugadorEvento(e: any) {
+    const u = this.authService.getUser();
+    return e.jugadores?.find((j: any) => j.DNI === u?.DNI)?.estado;
+  }
+
+  abrirModalCrearEvento() {
+    const ref = this.dialog.open(CreateEventoModalComponent, {
+      width: '700px',
+      data: {
+        equipoId: this.equipoId,
+        jugadoresEquipo: this.equipo.jugadores
+      }
+    });
+
+    ref.afterClosed().subscribe(refresh => {
+      if (refresh) this.cargarEventos();
+    });
+  }
+
+  responderEvento(evento: any, estado: 'confirmado' | 'rechazado') {
+    const user = this.authService.getUser();
+    if (!user?.DNI) return;
+
+    this.eventoService.responderEvento(evento.id, { jugador_dni: user.DNI, estado }).subscribe({
+      next: () => this.cargarEventos(),
+      error: err => console.error(err)
+    });
+  }
+
+
+  contarPorEstadoEvento(evento: any, estado: 'confirmado' | 'rechazado' | 'pendiente'): number {
+    if (!evento?.jugadores) return 0;
+    return evento.jugadores.filter((j: any) => j.estado === estado).length;
+  }
+
   abrirModalAddJugadores() {
     const dialogRef = this.dialog.open(AddPlayersTeamModalComponent, {
       width: '700px',
@@ -134,10 +183,14 @@ export class EquipoComponent implements OnInit {
         this.equipo = data;
         this.loading = false;
         this.cargarConvocatorias();
+        this.cargarEventos();
+
       },
       error: () => {
         this.loading = false;
         this.cargarConvocatorias();
+        this.cargarEventos();
+
         alert('No se pudo cargar el equipo');
       }
     });
