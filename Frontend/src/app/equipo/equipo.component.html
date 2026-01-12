@@ -275,12 +275,30 @@
         </div>
 
         <div class="conv-actions" *ngIf="authService.hasRole('jugador')">
-          <span class="estado">
-            Estado: <b>{{ estadoJugador(c) || 'pendiente' }}</b>
-          </span>
 
-          <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')">✅ Confirmar</button>
-          <button class="delete" (click)="responderConvocatoria(c, 'rechazado')">❌ Rechazar</button>
+          <!-- ESTADO DESTACADO (SI YA RESPONDIÓ) -->
+          <span
+            class="estado-badge"
+            *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'"
+            [ngClass]="estadoJugador(c)">
+            {{ estadoJugador(c) }}
+          </span>
+        
+          <!-- BOTONES SOLO SI ESTÁ PENDIENTE -->
+          <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
+            <span class="estado">
+              Estado: <b>pendiente</b>
+            </span>
+        
+            <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')">
+              ✅ Confirmar
+            </button>
+        
+            <button class="delete" (click)="responderConvocatoria(c, 'rechazado')">
+              ❌ Rechazar
+            </button>
+          </ng-container>
+        
         </div>
 
         <div class="conv-actions" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin')">
