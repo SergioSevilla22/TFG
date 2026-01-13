@@ -33,4 +33,16 @@
 
 .dni { color:#777; font-size: 12px; }
 
-.msg { margin-top: 10px; color: #b00020; }
+.msg {
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.msg ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.msg li {
+  margin-bottom: 6px;
+}

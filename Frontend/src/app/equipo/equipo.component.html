@@ -276,27 +276,46 @@
 
         <div class="conv-actions" *ngIf="authService.hasRole('jugador')">
 
-          <!-- ESTADO DESTACADO (SI YA RESPONDIÓ) -->
+          <!-- CONVOCATORIA CERRADA -->
           <span
-            class="estado-badge"
-            *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'"
-            [ngClass]="estadoJugador(c)">
-            {{ estadoJugador(c) }}
+            class="estado-badge cerrada"
+            *ngIf="convocatoriaCerrada(c)">
+            Convocatoria cerrada ·
+            <span class="estado-text">
+              {{
+                estadoJugador(c) === 'confirmado' ? 'Confirmado' :
+                estadoJugador(c) === 'rechazado' ? 'Rechazado' :
+                'Sin respuesta'
+              }}
+            </span>
           </span>
         
-          <!-- BOTONES SOLO SI ESTÁ PENDIENTE -->
-          <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
-            <span class="estado">
-              Estado: <b>pendiente</b>
+          <!-- CONVOCATORIA ABIERTA -->
+          <ng-container *ngIf="!convocatoriaCerrada(c)">
+        
+            <!-- Estado ya respondido -->
+            <span
+              class="estado-badge"
+              *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'"
+              [ngClass]="estadoJugador(c)">
+              {{ estadoJugador(c) }}
             </span>
         
-            <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')">
-              ✅ Confirmar
-            </button>
+            <!-- Botones solo si está pendiente -->
+            <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
+              <span class="estado">
+                Estado: <b>pendiente</b>
+              </span>
         
-            <button class="delete" (click)="responderConvocatoria(c, 'rechazado')">
-              ❌ Rechazar
-            </button>
+              <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')">
+                ✅ Confirmar
+              </button>
+        
+              <button class="delete" (click)="responderConvocatoria(c, 'rechazado')">
+                ❌ Rechazar
+              </button>
+            </ng-container>
+        
           </ng-container>
         
         </div>
@@ -309,7 +328,19 @@
             · ⏳ {{ contarPorEstado(c, 'pendiente') }}
           </span>
 
-          <button class="cambiar" (click)="enviarRecordatorio(c)">🔔 Enviar recordatorio</button>
+          <button
+          class="cambiar"
+          *ngIf="!convocatoriaCerrada(c)"
+          (click)="enviarRecordatorio(c)">
+          🔔 Enviar recordatorio
+        </button>
+        
+        <!-- INDICADOR CERRADA -->
+        <span
+          class="estado-badge cerrada"
+          *ngIf="convocatoriaCerrada(c)">
+          Convocatoria cerrada
+        </span>
         </div>
 
         <details class="conv-details">
@@ -317,7 +348,7 @@
           <div class="convocados">
             <div class="conv-j" *ngFor="let j of c.jugadores">
               <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
-              <span class="pill" [ngClass]="j.estado">{{ j.estado }}</span>
+              <span class="pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
             </div>
           </div>
         </details>

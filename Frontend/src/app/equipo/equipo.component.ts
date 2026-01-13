@@ -200,4 +200,24 @@ export class EquipoComponent implements OnInit {
       error: () => alert('Error al quitar entrenador del equipo')
     });
   }
+
+  convocatoriaCerrada(c: any): boolean {
+    if (!c?.fecha_limite_confirmacion) return false;
+    return new Date() > new Date(c.fecha_limite_confirmacion);
+  }
+
+  estadoLabel(estado: string | null | undefined): string {
+    switch (estado) {
+      case 'confirmado':
+        return 'Confirmado';
+      case 'rechazado':
+        return 'Rechazado';
+      case 'sin_respuesta':
+        return 'Sin respuesta';
+      case 'pendiente':
+      default:
+        return 'Pendiente';
+    }
+  }
+  
 }
