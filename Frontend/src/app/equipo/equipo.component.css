@@ -406,14 +406,22 @@
   text-transform: capitalize;
 }
 
-/* Confirmado */
 .estado-badge.confirmado {
   background: #dcfce7;
   color: #166534;
 }
 
-/* Rechazado */
 .estado-badge.rechazado {
   background: #fee2e2;
   color: #991b1b;
+}
+
+.estado-badge.cerrada {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.pill.sin_respuesta {
+  background: #f1f5f9;
+  color: #475569;
 }
