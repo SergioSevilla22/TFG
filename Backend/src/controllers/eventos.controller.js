@@ -65,6 +65,7 @@ export const crearEvento = async (req, res) => {
       fecha_fin,
       requiere_confirmacion = false,
       fecha_limite_confirmacion,
+      tipo = 'otro',
       jugadores = []
     } = req.body;
 
@@ -77,11 +78,56 @@ export const crearEvento = async (req, res) => {
     ]);
     if (!equipo) return res.status(404).json({ message: "Equipo no encontrado" });
 
+    const tiposValidos = ['entrenamiento', 'partido', 'reunion', 'otro'];
+    if (!tiposValidos.includes(tipo)) {
+      return res.status(400).json({ message: 'Tipo de evento no válido' });
+    }
+
+    const inicio = new Date(fecha_inicio);
+    const fin = new Date(fecha_fin);
+    const ahora = new Date();
+
+    /* =========================
+       🔴 2. FECHA FIN > FECHA INICIO
+    ========================= */
+    if (fin <= inicio) {
+      return res.status(400).json({
+        message: "La fecha de fin debe ser posterior a la fecha de inicio"
+      });
+    }
+
+    /* =========================
+       🔴 3. FECHA LÍMITE CONFIRMACIÓN
+    ========================= */
+    let fechaLimite = null;
+
+    if (requiere_confirmacion) {
+      if (!fecha_limite_confirmacion) {
+        return res.status(400).json({
+          message: "La fecha límite de confirmación es obligatoria"
+        });
+      }
+
+      fechaLimite = new Date(fecha_limite_confirmacion);
+
+      if (fechaLimite <= ahora) {
+        return res.status(400).json({
+          message: "La fecha límite de confirmación debe ser futura"
+        });
+      }
+
+      if (fechaLimite >= inicio) {
+        return res.status(400).json({
+          message: "La fecha límite de confirmación debe ser anterior al inicio del evento"
+        });
+      }
+    }
+
     // Insert evento
     const result = await query(
       `INSERT INTO eventos
-      (equipo_id, creador_dni, titulo, descripcion, fecha_inicio, fecha_fin, requiere_confirmacion, fecha_limite_confirmacion)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      (equipo_id, creador_dni, titulo, descripcion, fecha_inicio, fecha_fin, requiere_confirmacion, fecha_limite_confirmacion, tipo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         equipo_id,
         creador_dni,
@@ -90,7 +136,8 @@ export const crearEvento = async (req, res) => {
         fecha_inicio,
         fecha_fin,
         requiere_confirmacion ? 1 : 0,
-        fecha_limite_confirmacion || null
+        fecha_limite_confirmacion || null,
+        tipo
       ]
     );
 
@@ -187,39 +234,66 @@ export const obtenerEventosPorEquipo = async (req, res) => {
    RESPONDER EVENTO
 ========================= */
 export const responderEvento = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { jugador_dni, estado } = req.body;
+  const { id } = req.params;
+  const { jugador_dni, estado } = req.body;
 
-    const [evento] = await query(
-      "SELECT fecha_limite_confirmacion FROM eventos WHERE id = ?",
-      [id]
-    );
-
-    if (!evento) return res.status(404).json({ message: "Evento no existe" });
-
-    if (
-      evento.fecha_limite_confirmacion &&
-      new Date() > new Date(evento.fecha_limite_confirmacion)
-    ) {
-      return res.status(403).json({ message: "Plazo de confirmación cerrado" });
-    }
-
-    const r = await query(
-      `UPDATE evento_jugadores
-       SET estado = ?, responded_at = NOW()
-       WHERE evento_id = ? AND jugador_dni = ?`,
-      [estado, id, jugador_dni]
-    );
-
-    if (!r.affectedRows) return res.status(403).json({ message: "No convocado" });
-
-    res.json({ message: "Respuesta guardada" });
-  } catch (e) {
-    console.error("Error responderEvento:", e);
-    res.status(500).json({ error: e.message });
+  if (!['confirmado', 'rechazado'].includes(estado)) {
+    return res.status(400).json({ message: "Estado no válido" });
   }
+
+  // Obtener evento
+  const [evento] = await query(
+    `SELECT fecha_inicio, requiere_confirmacion, fecha_limite_confirmacion
+     FROM eventos WHERE id = ?`,
+    [id]
+  );
+
+  if (!evento) {
+    return res.status(404).json({ message: "Evento no encontrado" });
+  }
+
+  const ahora = new Date();
+
+  // Evento pasado
+  if (new Date(evento.fecha_inicio) <= ahora) {
+    return res.status(403).json({ message: "El evento ya ha comenzado" });
+  }
+
+  // Límite confirmación
+  if (
+    evento.requiere_confirmacion &&
+    evento.fecha_limite_confirmacion &&
+    new Date(evento.fecha_limite_confirmacion) < ahora
+  ) {
+    return res.status(403).json({ message: "Plazo de confirmación cerrado" });
+  }
+
+  // 🔴 COMPROBAR SI YA RESPONDIÓ
+  const [registro] = await query(
+    `SELECT estado FROM evento_jugadores
+     WHERE evento_id = ? AND jugador_dni = ?`,
+    [id, jugador_dni]
+  );
+
+  if (!registro) {
+    return res.status(403).json({ message: "No estás invitado a este evento" });
+  }
+
+  if (registro.estado !== 'pendiente') {
+    return res.status(403).json({ message: "Ya has respondido a este evento" });
+  }
+
+  // Actualizar
+  await query(
+    `UPDATE evento_jugadores
+     SET estado = ?, responded_at = NOW()
+     WHERE evento_id = ? AND jugador_dni = ?`,
+    [estado, id, jugador_dni]
+  );
+
+  res.json({ message: "Respuesta registrada" });
 };
+
 
 /* =========================
    ENVIAR RECORDATORIO
@@ -259,4 +333,30 @@ export const enviarRecordatorioEvento = async (req, res) => {
     console.error("Error enviarRecordatorio:", e);
     res.status(500).json({ error: e.message });
   }
+
+  
 };
+
+// =========================
+// ELIMINAR EVENTO
+// =========================
+export const eliminarEvento = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Primero eliminamos los registros relacionados
+    await query("DELETE FROM evento_jugadores WHERE evento_id = ?", [id]);
+
+    // Luego eliminamos el evento
+    const result = await query("DELETE FROM eventos WHERE id = ?", [id]);
+
+    if (!result.affectedRows) {
+      return res.status(404).json({ message: "Evento no encontrado" });
+    }
+
+    res.json({ message: "Evento eliminado correctamente" });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+

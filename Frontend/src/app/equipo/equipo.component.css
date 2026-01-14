@@ -264,4 +264,19 @@
   .volver {
     align-self: flex-end;
   }
+
+  .evento-pasado {
+    opacity: 0.6;
+  }
+
+  .estado .confirmado { color: green; }
+  .estado .rechazado { color: red; }
+  .estado .pendiente { color: orange; }
+
+  .evento-pasado-msg {
+    margin-top: 6px;
+    font-size: 0.9em;
+    color: #666;
+  }
+
 }

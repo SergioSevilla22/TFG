@@ -26,6 +26,7 @@ export class CreateEventoModalComponent implements OnInit {
   evento: any = {
     titulo: '',
     descripcion: '',
+    tipo: 'otro',
     fecha_inicio: '',
     fecha_fin: '',
     requiere_confirmacion: false,
@@ -69,6 +70,7 @@ export class CreateEventoModalComponent implements OnInit {
       creador_dni: user.DNI,
       titulo: this.evento.titulo,
       descripcion: this.evento.descripcion,
+      tipo: this.evento.tipo,
       fecha_inicio: this.evento.fecha_inicio,
       fecha_fin: this.evento.fecha_fin,
       requiere_confirmacion: this.evento.requiere_confirmacion,

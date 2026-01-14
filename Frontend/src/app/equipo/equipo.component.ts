@@ -129,20 +129,43 @@ export class EquipoComponent implements OnInit {
     });
   }
 
-  responderEvento(evento: any, estado: 'confirmado' | 'rechazado') {
-    const user = this.authService.getUser();
-    if (!user?.DNI) return;
-
-    this.eventoService.responderEvento(evento.id, { jugador_dni: user.DNI, estado }).subscribe({
-      next: () => this.cargarEventos(),
-      error: err => console.error(err)
+  responderEvento(e: any, estado: string) {
+    this.eventoService.responderEvento(e.id, {
+      jugador_dni: this.authService.getUser().DNI,
+      estado
+    }).subscribe({
+      next: () => {
+        alert('Respuesta registrada');
+        this.cargarEventos();
+      },
+      error: err => {
+        alert(err.error?.message || 'No se pudo responder');
+      }
     });
   }
+
 
 
   contarPorEstadoEvento(evento: any, estado: 'confirmado' | 'rechazado' | 'pendiente'): number {
     if (!evento?.jugadores) return 0;
     return evento.jugadores.filter((j: any) => j.estado === estado).length;
+  }
+
+  eliminarEvento(e: any) {
+    if (!confirm(`¿Estás seguro de eliminar el evento "${e.titulo}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    this.eventoService.eliminarEvento(e.id).subscribe({
+      next: () => {
+        // Quitar el evento de la lista local
+        this.eventos = this.eventos.filter(ev => ev.id !== e.id);
+      },
+      error: (err) => {
+        console.error("Error al eliminar evento:", err);
+        alert("No se pudo eliminar el evento. Revisa la consola para más información.");
+      }
+    });
   }
 
   abrirModalAddJugadores() {
@@ -252,5 +275,9 @@ export class EquipoComponent implements OnInit {
       next: () => this.cargarEquipo(),
       error: () => alert('Error al quitar entrenador del equipo')
     });
+  }
+
+  esEventoPasado(e: any): boolean {
+    return new Date(e.fecha_inicio) < new Date();
   }
 }

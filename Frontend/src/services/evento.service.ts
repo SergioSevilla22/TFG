@@ -22,4 +22,9 @@ export class EventoService {
   enviarRecordatorio(id: number) {
     return this.http.post(`${this.base}/${id}/recordatorio`, {});
   }
+
+  eliminarEvento(id: number) {
+    return this.http.delete(`${this.base}/${id}`);
+  }
+
 }

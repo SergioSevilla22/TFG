@@ -11,6 +11,16 @@
   </div>
 
   <div class="field">
+    <label>Tipo de evento *</label>
+    <select [(ngModel)]="evento.tipo">
+      <option value="entrenamiento">Entrenamiento</option>
+      <option value="partido">Partido</option>
+      <option value="reunion">Reunión</option>
+      <option value="otro">Otro</option>
+    </select>
+  </div>
+
+  <div class="field">
     <label>Fecha inicio *</label>
     <input matInput type="datetime-local" [(ngModel)]="evento.fecha_inicio">
   </div>
