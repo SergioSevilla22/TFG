@@ -11,6 +11,8 @@ import { AssignCoachTeamModalComponent } from '../../shared/components/assign-co
 import { AuthService } from '../../services/auth.service';
 import { ConvocatoriaService } from '../../services/convocatoria.service';
 import { CreateConvocatoriaModalComponent } from '../../shared/components/create-convocatoria-modal/create-convocatoria-modal.component';
+import { EventoService } from '../../services/evento.service';
+import { CreateEventoModalComponent } from '../../shared/components/create-evento-modal/create-evento-modal.component';
 
 @Component({
   selector: 'app-equipo',
@@ -29,6 +31,8 @@ export class EquipoComponent implements OnInit {
   esJugador = false;
   convocatorias: any[] = [];
   loadingConvocatorias = false;
+  eventos: any[] = [];
+  loadingEventos = false;
 
   jugadoresDisponibles: any[] = [];
   entrenadoresDisponibles: any[] = [];
@@ -38,8 +42,10 @@ export class EquipoComponent implements OnInit {
     private router: Router,
     private equipoService: EquipoService,
     private convocatoriaService: ConvocatoriaService,
+    private eventoService: EventoService,
     private dialog: MatDialog,
     public authService: AuthService
+    
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +102,85 @@ export class EquipoComponent implements OnInit {
     return convocatoria.jugadores.filter((j: any) => j.estado === estado).length;
   }
 
+  cargarEventos() {
+    this.loadingEventos = true;
+    this.eventoService.getEventosEquipo(this.equipoId).subscribe({
+      next: data => { this.eventos = data; this.loadingEventos = false; },
+      error: () => this.loadingEventos = false
+    });
+  }
+
+  estadoJugadorEvento(e: any) {
+    const u = this.authService.getUser();
+    return e.jugadores?.find((j: any) => j.DNI === u?.DNI)?.estado;
+  }
+
+  abrirModalCrearEvento() {
+    const ref = this.dialog.open(CreateEventoModalComponent, {
+      width: '700px',
+      data: {
+        equipoId: this.equipoId,
+        jugadoresEquipo: this.equipo.jugadores
+      }
+    });
+
+    ref.afterClosed().subscribe(refresh => {
+      if (refresh) this.cargarEventos();
+    });
+  }
+
+  responderEvento(e: any, estado: string) {
+    this.eventoService.responderEvento(e.id, {
+      jugador_dni: this.authService.getUser().DNI,
+      estado
+    }).subscribe({
+      next: () => {
+        alert('Respuesta registrada');
+        this.cargarEventos();
+      },
+      error: err => {
+        alert(err.error?.message || 'No se pudo responder');
+      }
+    });
+  }
+
+
+
+  contarPorEstadoEvento(evento: any, estado: 'confirmado' | 'rechazado' | 'pendiente'): number {
+    if (!evento?.jugadores) return 0;
+    return evento.jugadores.filter((j: any) => j.estado === estado).length;
+  }
+
+  eliminarEvento(e: any) {
+    if (!confirm(`¿Estás seguro de eliminar el evento "${e.titulo}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    this.eventoService.eliminarEvento(e.id).subscribe({
+      next: () => {
+        // Quitar el evento de la lista local
+        this.eventos = this.eventos.filter(ev => ev.id !== e.id);
+      },
+      error: (err) => {
+        console.error("Error al eliminar evento:", err);
+        alert("No se pudo eliminar el evento. Revisa la consola para más información.");
+      }
+    });
+  }
+
+  // evento.component.ts
+  enviarRecordatorioEvento(evento: any) {
+    this.eventoService.enviarRecordatorio(evento.id).subscribe({
+      next: () => {
+        alert('Recordatorio enviado'); // mensaje de éxito
+      },
+      error: (err) => {
+        console.error(err);
+        alert("Error enviando recordatorio");
+      }
+    });
+  }
+
   abrirModalAddJugadores() {
     const dialogRef = this.dialog.open(AddPlayersTeamModalComponent, {
       width: '700px',
@@ -134,10 +219,14 @@ export class EquipoComponent implements OnInit {
         this.equipo = data;
         this.loading = false;
         this.cargarConvocatorias();
+        this.cargarEventos();
+
       },
       error: () => {
         this.loading = false;
         this.cargarConvocatorias();
+        this.cargarEventos();
+
         alert('No se pudo cargar el equipo');
       }
     });
@@ -201,6 +290,9 @@ export class EquipoComponent implements OnInit {
     });
   }
 
+  esEventoPasado(e: any): boolean {
+    return new Date(e.fecha_inicio) < new Date();
+  }
   convocatoriaCerrada(c: any): boolean {
     if (!c?.fecha_limite_confirmacion) return false;
     return new Date() > new Date(c.fecha_limite_confirmacion);

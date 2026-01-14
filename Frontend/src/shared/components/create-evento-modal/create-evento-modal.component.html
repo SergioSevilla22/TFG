@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>Nuevo evento</h2>
+<div mat-dialog-content>
+  <div class="field">
+    <label>Título *</label>
+    <input matInput [(ngModel)]="evento.titulo" placeholder="Título del evento">
+  </div>
+
+  <div class="field">
+    <label>Descripción</label>
+    <textarea matInput [(ngModel)]="evento.descripcion"></textarea>
+  </div>
+
+  <div class="field">
+    <label>Tipo de evento *</label>
+    <select [(ngModel)]="evento.tipo">
+      <option value="entrenamiento">Entrenamiento</option>
+      <option value="partido">Partido</option>
+      <option value="reunion">Reunión</option>
+      <option value="otro">Otro</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Fecha inicio *</label>
+    <input matInput type="datetime-local" [(ngModel)]="evento.fecha_inicio">
+  </div>
+
+  <div class="field">
+    <label>Fecha fin *</label>
+    <input matInput type="datetime-local" [(ngModel)]="evento.fecha_fin">
+  </div>
+
+  <div class="field">
+    <label>
+      <input type="checkbox" [(ngModel)]="evento.requiere_confirmacion">
+      Requiere confirmación
+    </label>
+  </div>
+
+  <div class="field" *ngIf="evento.requiere_confirmacion">
+    <label>Fecha límite confirmación *</label>
+    <input matInput type="datetime-local" [(ngModel)]="evento.fecha_limite_confirmacion">
+    <small>Los jugadores deben confirmar antes de esta fecha</small>
+  </div>
+
+  <div *ngIf="evento.requiere_confirmacion">
+    <h3>Selecciona jugadores</h3>
+    <div class="jugadores-lista">
+      <label *ngFor="let j of jugadores">
+        <input type="checkbox" (change)="toggleJugador(j.DNI, $event)">
+        {{ j.nombre }} ({{ j.DNI }})
+      </label>
+    </div>
+  </div>
+
+  <p class="error" *ngIf="mensaje">{{ mensaje }}</p>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="crear()">
+    {{ loading ? 'Creando...' : 'Crear' }}
+  </button>
+</div>

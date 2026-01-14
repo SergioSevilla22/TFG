@@ -356,3 +356,103 @@
     </div>
   </div>
 </div>
+<!-- =========================
+     EVENTOS
+========================== -->
+<div class="panel-card" style="margin-top: 18px;">
+  <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+    <h2 style="margin:0;">Eventos</h2>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button
+        class="cambiar primary"
+        *ngIf="authService.hasRole('admin') || authService.hasRole('entrenador')"
+        (click)="abrirModalCrearEvento()">
+        + Nuevo evento
+      </button>
+    </div>
+  </div>
+
+  <p *ngIf="loadingEventos">Cargando eventos...</p>
+  <p *ngIf="!loadingEventos && eventos.length === 0">No hay eventos todavía.</p>
+
+  <div class="lista-eventos" *ngIf="!loadingEventos && eventos.length > 0">
+    <div class="evento" *ngFor="let e of eventos" [class.evento-pasado]="esEventoPasado(e)">
+
+      <div class="evento-main">
+        <div class="evento-title">
+          <b>{{ e.titulo }}</b>
+        </div>
+
+        <div class="evento-meta">
+          <span *ngIf="e.descripcion">Descripción: {{ e.descripcion }}</span>
+          <span>Inicio: {{ e.fecha_inicio | date:'short' }}</span>
+          <span>Fin: {{ e.fecha_fin | date:'short' }}</span>
+          <span>Tipo: {{ e.tipo | titlecase }}</span>
+        </div>
+
+        <!-- =========================
+             RESPUESTA JUGADOR
+        ========================== -->
+        <div class="evento-actions" *ngIf="e.requiere_confirmacion && authService.hasRole('jugador')">
+
+          <!-- Estado ya respondido -->
+          <span
+            class="estado-badge"
+            *ngIf="estadoJugadorEvento(e) && estadoJugadorEvento(e) !== 'pendiente'"
+            [ngClass]="estadoJugadorEvento(e)">
+            {{ estadoJugadorEvento(e) }}
+          </span>
+
+          <!-- Botones solo si está pendiente -->
+          <ng-container *ngIf="!estadoJugadorEvento(e) || estadoJugadorEvento(e) === 'pendiente'">
+            <span class="estado">
+              Estado: <b>pendiente</b>
+            </span>
+            <button class="cambiar" (click)="responderEvento(e, 'confirmado')">✅ Confirmar</button>
+            <button class="delete" (click)="responderEvento(e, 'rechazado')">❌ Rechazar</button>
+          </ng-container>
+
+        </div>
+
+        <!-- =========================
+             VISTA ADMIN / ENTRENADOR
+        ========================== -->
+        <div class="evento-actions" *ngIf="authService.hasRole('admin') || authService.hasRole('entrenador')">
+          <span class="estado">
+            Confirmaciones:
+            ✅ {{ contarPorEstadoEvento(e, 'confirmado') }}
+            · ❌ {{ contarPorEstadoEvento(e, 'rechazado') }}
+            · ⏳ {{ contarPorEstadoEvento(e, 'pendiente') }}
+          </span>
+
+          <button class="cambiar" *ngIf="!esEventoPasado(e)" (click)="enviarRecordatorioEvento(e)">
+            🔔 Enviar recordatorio
+          </button>
+
+          <button class="delete" (click)="eliminarEvento(e)">🗑 Eliminar</button>
+
+          <span class="estado-badge cerrada" *ngIf="esEventoPasado(e)">
+            Evento finalizado
+          </span>
+        </div>
+
+        <!-- =========================
+             DETALLES DE JUGADORES
+        ========================== -->
+        <details class="conv-details">
+          <summary>Ver jugadores</summary>
+          <div class="convocados">
+            <div class="conv-j" *ngFor="let j of e.jugadores">
+              <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
+              <span class="pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+

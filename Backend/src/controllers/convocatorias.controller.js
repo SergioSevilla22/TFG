@@ -201,7 +201,7 @@ export const obtenerConvocatoriasPorEquipo = async (req, res) => {
   await query(
     `UPDATE convocatoria_jugadores cj
      JOIN convocatorias c ON c.id = cj.convocatoria_id
-     SET cj.estado = 'sin_respuesta'
+     SET cj.estado = 'pendiente'
      WHERE cj.estado = 'pendiente'
        AND c.fecha_limite_confirmacion < NOW()`
   );
