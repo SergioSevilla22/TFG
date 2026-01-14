@@ -43,7 +43,11 @@
     </label>
   </div>
 
-  <p class="msg" *ngIf="mensaje">{{ mensaje }}</p>
+  <div class="msg" *ngIf="errores.length">
+    <ul>
+      <li *ngFor="let e of errores">{{ e }}</li>
+    </ul>
+  </div>
 </div>
 
 <div mat-dialog-actions align="end">
