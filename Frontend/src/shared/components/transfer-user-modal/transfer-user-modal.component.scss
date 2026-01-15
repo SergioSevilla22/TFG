@@ -1,0 +1,45 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .tipo-selector {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .info strong {
+    font-size: 1rem;
+  }
+  
+  .muted {
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+  
+  .acciones {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+  }
+  
+  .full {
+    width: 100%;
+  }
+  
+  h4 {
+    margin-bottom: 10px;
+  }
+  

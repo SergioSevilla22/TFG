@@ -6,10 +6,11 @@ import { ClubService } from '../../services/club.service';
 import { EquipoService } from '../../services/equipos.service';
 import { HeaderComponent } from "../header/header.component";
 import { MatDialog } from '@angular/material/dialog';
-import { AddPlayersClubModalComponent } from
-  '../../shared/components/add-players-club-modal/add-players-club-modal.component';
-import { AddCoachesClubModalComponent } from '../../shared/components/add-coaches-club-modal/add-coaches-club-modal.component';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { TransferUserModalComponent } from
+  '../../shared/components/transfer-user-modal/transfer-user-modal.component';
+
 
 @Component({
   selector: 'app-club',
@@ -39,13 +40,45 @@ export class ClubComponent implements OnInit {
     private router: Router,
     private clubService: ClubService,
     private equipoService: EquipoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.clubId = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadClubData();
+    const user = this.authService.getUser();
+  
+    // 🔐 ADMIN CLUB → IGNORAR URL
+    if (user?.Rol === 'admin_club') {
+      if (!user.club_id) {
+        if (this.isBrowser()) {
+          alert("No tienes club asignado.");
+        }
+        this.router.navigate(['/login']);
+        return;
+      }
+  
+      this.clubId = user.club_id;
+      this.loadClubData();
+      return;
+    }
+  
+    // 🔓 ADMIN PLATAFORMA → club por URL
+    const routeId = this.route.snapshot.paramMap.get('id');
+    if (routeId) {
+      this.clubId = Number(routeId);
+      this.loadClubData();
+    } else {
+      if (this.isBrowser()) {
+        alert("Club no válido.");
+      }
+      this.router.navigate(['/admin']);
+    }
   }
+
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined';
+  }
+  
 
   loadClubData() {
     this.loading = true;
@@ -58,7 +91,9 @@ export class ClubComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        alert("No se pudo cargar el club.");
+        if (this.isBrowser()) {
+          alert("No se pudo cargar el club.");
+        }
       }
     });
   }
@@ -69,28 +104,16 @@ export class ClubComponent implements OnInit {
     });
   }
 
-  abrirModalJugadoresClub() {
-    const dialogRef = this.dialog.open(AddPlayersClubModalComponent, {
-      width: '700px',
+  abrirModalTraspasos() {
+    const dialogRef = this.dialog.open(TransferUserModalComponent, {
+      width: '800px',
       data: { clubId: this.clubId }
     });
   
     dialogRef.afterClosed().subscribe(refresh => {
       if (refresh) {
-        this.loadEquipos(); // o refrescar lo que quieras
-      }
-    });
-  }
-
-  abrirModalEntrenadoresClub() {
-    const dialogRef = this.dialog.open(AddCoachesClubModalComponent, {
-      width: '700px',
-      data: { clubId: this.clubId }
-    });
-  
-    dialogRef.afterClosed().subscribe(refresh => {
-      if (refresh) {
-        // si quieres refrescar datos del club
+        // Refrescamos KPIs y datos del club
+        this.loadResumen();
         this.loadClubData();
       }
     });
@@ -106,7 +129,9 @@ export class ClubComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        alert("Error al cargar equipos.");
+        if (this.isBrowser()) {
+          alert("Error al cargar equipos.");
+        }
       }
     });
   }

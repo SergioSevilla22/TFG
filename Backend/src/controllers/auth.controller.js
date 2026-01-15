@@ -1,5 +1,5 @@
 import { db } from "../db.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import fs from "fs";
 import csv from "csv-parser";
 import { generateToken } from "../utils/jwt.js";
@@ -10,94 +10,63 @@ import path from "path";
 export const loginUsuario = (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password)
+  if (!email || !password) {
     return res.status(400).json({ message: "Email y contraseña son obligatorios" });
-
-  db.query("SELECT * FROM Usuarios WHERE email = ?", [email], async (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0) return res.status(404).json({ message: "Usuario no encontrado" });
-
-    const user = results[0];
-
-    try {
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (!validPassword) {
-        return res.status(401).json({ message: "Contraseña incorrecta" });
-      }
-
-      const token = generateToken(user);
-
-      res.status(200).json({
-        message: "Login correcto",
-        token,
-        user: {
-          DNI: user.DNI,
-          nombre: user.nombre,
-          email: user.email,
-          telefono: user.telefono,
-          Rol: user.Rol,
-          foto: user.foto ? user.foto : null,
-          idTutor: user.idTutor ? user.idTutor : null,
-          club_id: user.club_id ? user.club_id : null,
-          equipo_id: user.equipo_id ? user.equipo_id : null,
-        },
-      });
-    } catch (error) {
-      res.status(500).json({ error: "Error al validar contraseña" });
-    }
-  });
-};
-
-export const registerUsuario = (req, res) => {
-  const { DNI, nombre, email, Rol, telefono } = req.body;
-
-  if (!email || !DNI || !telefono || !nombre) {
-    return res.status(400).json({ message: "DNI, nombre, email y teléfono son obligatorios" });
   }
 
-  db.query("SELECT * FROM usuarios WHERE email = ?", [email], async (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length > 0) {
-      return res.status(409).json({ message: "El usuario ya está registrado" });
-    }
+  db.query(
+    "SELECT * FROM usuarios WHERE email = ?",
+    [email],
+    async (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.length === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
 
-    try {
-      const invitationToken = uuidv4();
-      const invitationExp = Date.now() + 1000 * 60 * 60 * 48; // 48h
+      const user = results[0];
 
-      db.query(
-        "INSERT INTO usuarios (DNI, nombre, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [DNI, nombre, Rol || "usuario", email, telefono, invitationToken, invitationExp],
-        async (err) => {
-          if (err) return res.status(500).json({ error: err.message });
+      // 🔒 Usuario aún no activado (invitación)
+      if (!user.password) {
+        return res.status(403).json({
+          message: "Debes activar tu cuenta desde el email antes de iniciar sesión"
+        });
+      }
 
-          const invitationUrl = `http://localhost:4200/accept-invitation?token=${invitationToken}`;
-          const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: "Invitación para unirte a ClubFútbol Control",
-            html: `
-              <h3>¡Te han invitado al Club!</h3>
-              <p>Haz clic en el siguiente enlace para crear tu contraseña y activar tu cuenta:</p>
-              <a href="${invitationUrl}">${invitationUrl}</a>
-              <p>Este enlace es válido por 48 horas.</p>
-            `
-          };
+      try {
+        const validPassword = await bcrypt.compare(password, user.password);
 
-          try {
-            await transporter.sendMail(mailOptions);
-            res.status(201).json({
-              message: `Usuario invitado correctamente. Correo enviado a ${email}`
-            });
-          } catch (mailError) {
-            res.status(500).json({ error: "Usuario creado, pero error al enviar correo", mailError });
-          }
+        if (!validPassword) {
+          return res.status(401).json({ message: "Contraseña incorrecta" });
         }
-      );
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+
+        const token = generateToken({
+          DNI: user.DNI,
+          Rol: user.Rol,
+          club_id: user.club_id
+        });
+
+        res.status(200).json({
+          message: "Login correcto",
+          token,
+          user: {
+            DNI: user.DNI,
+            nombre: user.nombre,
+            email: user.email,
+            telefono: user.telefono,
+            Rol: user.Rol,
+            foto: user.foto ?? null,
+            idTutor: user.idTutor ?? null,
+            club_id: user.club_id ?? null,
+            equipo_id: user.equipo_id ?? null
+          }
+        });
+
+      } catch (error) {
+        console.error("Error bcrypt:", error);
+        res.status(500).json({ error: "Error al validar contraseña" });
+      }
     }
-  });
+  );
 };
 
 export const aceptarInvitacion = (req, res) => {
@@ -126,91 +95,6 @@ export const aceptarInvitacion = (req, res) => {
       }
     );
   });
-};
-
-export const registerUsuariosMasivo = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No se subió ningún archivo" });
-  }
-
-  const filePath = req.file.path;
-  const usuarios = [];
-  const skippedUsers = [];
-  const invitedUsers = [];
-
-  fs.createReadStream(filePath)
-    .pipe(csv())
-    .on("data", (row) => {
-      usuarios.push(row);
-    })
-    .on("end", async () => {
-      try {
-        for (const u of usuarios) {
-          const { DNI, nombre, email, telefono, Rol } = u;
-
-          if (!DNI || !email || !telefono || !nombre) {
-            skippedUsers.push({ ...u, reason: "Fila incompleta" });
-            continue;
-          }
-
-          const exists = await new Promise((resolve, reject) => {
-            db.query(
-              "SELECT * FROM usuarios WHERE email = ? OR DNI = ?",
-              [email, DNI],
-              (err, results) => {
-                if (err) reject(err);
-                resolve(results.length > 0);
-              }
-            );
-          });
-
-          if (exists) {
-            skippedUsers.push({ ...u, reason: "Usuario existente" });
-            continue;
-          }
-
-          const invitationToken = uuidv4();
-          const invitationExp = Date.now() + 1000 * 60 * 60 * 48; // 48h
-
-          await new Promise((resolve, reject) => {
-            db.query(
-              "INSERT INTO usuarios (DNI, nombre, Rol, email, telefono, invitationToken, invitationExp) VALUES (?, ?, ?, ?, ?, ?, ?)",
-              [DNI, nombre, Rol || "usuario", email, telefono, invitationToken, invitationExp],
-              (err) => (err ? reject(err) : resolve())
-            );
-          });
-
-          const invitationUrl = `http://localhost:4200/accept-invitation?token=${invitationToken}`;
-          const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: "Invitación para unirte a ClubFútbol Control",
-            html: `
-              <h3>¡Bienvenido al Club!</h3>
-              <p>Has sido invitado a unirte al sistema del club.</p>
-              <p>Haz clic en el siguiente enlace para crear tu contraseña y activar tu cuenta (válido por 48h):</p>
-              <a href="${invitationUrl}">${invitationUrl}</a>
-            `
-          };
-
-          try {
-            await transporter.sendMail(mailOptions);
-            invitedUsers.push(email);
-          } catch {
-            skippedUsers.push({ ...u, reason: "Error al enviar correo" });
-          }
-        }
-
-        fs.unlinkSync(filePath);
-        res.status(201).json({
-          message: `Invitaciones enviadas: ${invitedUsers.length}, Omitidos: ${skippedUsers.length}`,
-          invitedUsers,
-          skippedUsers
-        });
-      } catch (error) {
-        res.status(500).json({ message: "Error al procesar el archivo", error });
-      }
-    });
 };
 
 export const solicitarRecuperacion = (req, res) => {
@@ -454,6 +338,114 @@ export const updateRolUsuario = (req, res) => {
     }
   );
 };
+
+export const registerUsuariosMasivoAdminClub = async (req, res) => {
+  const club_id = req.user.club_id;
+
+  if (!club_id) {
+    return res.status(403).json({ message: "Admin club sin club asignado" });
+  }
+
+  if (!req.file) {
+    return res.status(400).json({ message: "No se subió ningún archivo" });
+  }
+
+  const filePath = req.file.path;
+  const usuarios = [];
+
+  fs.createReadStream(filePath)
+    .pipe(csv())
+    .on("data", (row) => usuarios.push(row))
+    .on("end", async () => {
+      try {
+        for (const u of usuarios) {
+          const { DNI, nombre, email, telefono, Rol } = u;
+
+          if (!DNI || !email || !telefono || !nombre) continue;
+
+          const exists = await new Promise((resolve, reject) => {
+            db.query(
+              "SELECT 1 FROM usuarios WHERE DNI = ? OR email = ?",
+              [DNI, email],
+              (err, results) => err ? reject(err) : resolve(results.length > 0)
+            );
+          });
+
+          if (exists) continue;
+
+          const invitationToken = uuidv4();
+          const invitationExp = Date.now() + 1000 * 60 * 60 * 48;
+
+          await new Promise((resolve, reject) => {
+            db.query(
+              `INSERT INTO usuarios 
+               (DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+              [DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp],
+              (err) => err ? reject(err) : resolve()
+            );
+          });
+        }
+
+        fs.unlinkSync(filePath);
+        res.json({ message: "Registro masivo completado correctamente" });
+
+      } catch (error) {
+        res.status(500).json({ message: "Error en registro masivo", error });
+      }
+    });
+};
+
+export const registerUsuarioAdminClub = (req, res) => {
+  const { DNI, nombre, email, telefono, Rol } = req.body;
+  const club_id = req.user.club_id;
+
+  if (!DNI || !nombre || !email || !telefono || !Rol) {
+    return res.status(400).json({ message: "Campos obligatorios" });
+  }
+
+  if (!['jugador', 'entrenador', 'tutor'].includes(Rol)) {
+    return res.status(403).json({ message: "Rol no permitido" });
+  }
+
+  if (!club_id) {
+    return res.status(403).json({ message: "Admin club sin club asignado" });
+  }
+
+  const invitationToken = uuidv4();
+  const invitationExp = Date.now() + 1000 * 60 * 60 * 48;
+
+  db.query(
+    `INSERT INTO usuarios 
+     (DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp],
+    async (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      const inviteUrl = `http://localhost:4200/accept-invitation?token=${invitationToken}`;
+
+      try {
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: "Activación de cuenta - ClubFútbol Control",
+          html: `
+            <h3>Bienvenido/a ${nombre}</h3>
+            <p>Has sido dado de alta en el club.</p>
+            <a href="${inviteUrl}">${inviteUrl}</a>
+          `
+        });
+
+        res.status(201).json({ message: "Usuario creado y correo enviado" });
+
+      } catch {
+        res.status(201).json({ message: "Usuario creado (email no enviado)" });
+      }
+    }
+  );
+};
+
 
 
 

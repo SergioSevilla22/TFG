@@ -9,7 +9,8 @@ import temporadaRoutes from "./routes/temporada.routes.js";
 import equiposRoutes from "./routes/equipos.routes.js";
 import usuariosRoutes from "./routes/usuarios.routes.js";
 import convocatoriasRoutes from "./routes/convocatorias.routes.js";
-import eventosRoutes from "./routes/eventos.routes.js"
+import eventosRoutes from "./routes/eventos.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use("/api", equiposRoutes);
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/convocatorias", convocatoriasRoutes);
 app.use('/api/eventos', eventosRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Servidor
 app.listen(PORT, () => {

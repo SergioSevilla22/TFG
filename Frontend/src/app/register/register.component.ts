@@ -19,7 +19,8 @@ export class RegisterComponent {
     nombre: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
     telefono: new FormControl('', [Validators.required]),
-    Rol: new FormControl('usuario')
+    Rol: new FormControl('usuario'),
+    club_id: new FormControl<number | null>(null)
   });
   
 

@@ -13,3 +13,7 @@
     justify-content:space-between; 
     align-items:center; 
 }
+
+:host ::ng-deep .mat-mdc-dialog-content mat-form-field {
+    margin-top: 22px;
+  }

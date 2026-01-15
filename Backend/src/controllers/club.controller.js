@@ -115,42 +115,6 @@ export const obtenerJugadoresClub = (req, res) => {
   );
 };
 
-export const asignarJugadoresAClub = (req, res) => {
-  const { id } = req.params; // clubId
-  const { jugadores } = req.body; // array de DNIs
-
-  if (!Array.isArray(jugadores) || jugadores.length === 0) {
-    return res.status(400).json({ message: "jugadores debe ser un array con DNIs" });
-  }
-
-  db.query(
-    `UPDATE usuarios
-     SET club_id = ?, equipo_id = NULL
-     WHERE Rol = 'jugador' AND DNI IN (?)`,
-    [id, jugadores],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: "Jugadores añadidos al club", afectados: result.affectedRows });
-    }
-  );
-};
-
-// 3) Quitar jugador del club (lo saca del club y del equipo)
-export const quitarJugadorDeClub = (req, res) => {
-  const { id, dni } = req.params; // clubId, DNI
-
-  db.query(
-    `UPDATE usuarios
-     SET club_id = NULL, equipo_id = NULL
-     WHERE Rol = 'jugador' AND DNI = ? AND club_id = ?`,
-    [dni, id],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (result.affectedRows === 0) return res.status(404).json({ message: "Jugador no pertenece a este club" });
-      res.json({ message: "Jugador quitado del club" });
-    }
-  );
-};
 
 export const obtenerEntrenadoresClub = (req, res) => {
   const { id } = req.params; // clubId
@@ -169,41 +133,6 @@ export const obtenerEntrenadoresClub = (req, res) => {
   );
 };
 
-// Asignar entrenadores al club (los mete en el club y les quita equipo si tu quieres)
-export const asignarEntrenadoresAClub = (req, res) => {
-  const { id } = req.params; // clubId
-  const { entrenadores } = req.body; // array DNIs
-
-  if (!Array.isArray(entrenadores) || entrenadores.length === 0) {
-    return res.status(400).json({ message: "entrenadores debe ser un array con DNIs" });
-  }
-
-  db.query(
-    `UPDATE usuarios
-     SET club_id = ?, equipo_id = NULL
-     WHERE Rol = 'entrenador' AND DNI IN (?)`,
-    [id, entrenadores],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: "Entrenadores añadidos al club", afectados: result.affectedRows });
-    }
-  );
-};
-
-export const quitarEntrenadorDeClub = (req, res) => {
-  const { id, dni } = req.params;
-  db.query(
-    `UPDATE usuarios
-     SET club_id = NULL, equipo_id = NULL
-     WHERE Rol='entrenador' AND DNI = ? AND club_id = ?`,
-    [dni, id],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (result.affectedRows === 0) return res.status(404).json({ message: "Entrenador no pertenece a este club" });
-      res.json({ message: "Entrenador quitado del club" });
-    }
-  );
-};
 
 export const obtenerResumenClub = (req, res) => {
   const { id } = req.params;

@@ -5,31 +5,58 @@
 
     <h2>Panel de Administración</h2>
 
-    <!-- TABS -->
     <div class="tabs">
-      <button type="button" [class.active]="activeTab === 'eliminar'" (click)="activeTab = 'eliminar'">
+
+      <!-- SOLO ADMIN PLATAFORMA -->
+      <button
+        *ngIf="rolUsuario === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'eliminar'"
+        (click)="activeTab = 'eliminar'">
         Eliminar Usuario
       </button>
-
-      <button type="button" [class.active]="activeTab === 'roles'" (click)="activeTab = 'roles'">
+    
+      <button
+        *ngIf="rolUsuario === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'roles'"
+        (click)="activeTab = 'roles'">
         Gestión de Roles
       </button>
-
-      <button type="button" [class.active]="activeTab === 'registrar'" (click)="activeTab = 'registrar'">
-        Registrar
+    
+      <!-- AMBOS -->
+      <button
+        type="button"
+        [class.active]="activeTab === 'registrar'"
+        (click)="activeTab = 'registrar'">
+        Registrar Usuarios
       </button>
-
-      <button type="button" [class.active]="activeTab === 'clubes'" (click)="activeTab = 'clubes'">
+    
+      <!-- SOLO ADMIN PLATAFORMA -->
+      <button
+        *ngIf="rolUsuario === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'clubes'"
+        (click)="activeTab = 'clubes'">
         Gestión de Clubes
       </button>
-
-      <button type="button" [class.active]="activeTab === 'categorias'" (click)="activeTab = 'categorias'">
+    
+      <button
+        *ngIf="rolUsuario === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'categorias'"
+        (click)="activeTab = 'categorias'">
         Categorías Base
       </button>
-
-      <button type="button" [class.active]="activeTab === 'temporadas'" (click)="activeTab = 'temporadas'">
+    
+      <button
+        *ngIf="rolUsuario === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'temporadas'"
+        (click)="activeTab = 'temporadas'">
         Temporadas
       </button>
+    
     </div>
 
     <!-- ===========================
@@ -166,6 +193,9 @@
                 <option value="tutor">Tutor</option>
                 <option value="jugador">Jugador</option>
                 <option value="entrenador">Entrenador</option>
+                <option *ngIf="rolUsuario === 'admin_plataforma'" value="admin_club">
+                  Administrador de club
+                </option>
               </select>
             </div>
 
@@ -173,6 +203,16 @@
               <button type="submit">Registrar</button>
             </div>
           </div>
+          <div class="form-group"
+            *ngIf="rolUsuario === 'admin_plataforma' && RegisterForm.value.Rol !== 'admin_plataforma'">
+          <label>Club</label>
+          <select formControlName="club_id">
+            <option [ngValue]="null" disabled>Selecciona un club</option>
+            <option *ngFor="let club of clubes" [ngValue]="club.id">
+              {{ club.nombre }}
+            </option>
+          </select>
+        </div>
         </form>
 
         <div class="register-massive-container">
