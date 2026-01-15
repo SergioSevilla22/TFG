@@ -5,50 +5,58 @@
   </div>
 
   <nav class="nav-tabs">
+
     <!-- TODOS -->
     <a routerLink="/home" routerLinkActive="active">Inicio</a>
-  
-    <!-- ADMIN -->
-    <a *ngIf="authService.hasRole('admin')"
+
+    <!-- ADMIN PLATAFORMA -->
+    <a *ngIf="authService.isAdminPlataforma()"
        routerLink="/clubes"
        routerLinkActive="active">
       Clubes
     </a>
-  
-    <a *ngIf="authService.hasRole('admin')"
+
+     <!-- ADMIN CLUB -->
+    <a *ngIf="authService.hasRole('admin_club')"
+      [routerLink]="['/club', authService.getUser()?.club_id]"
+      routerLinkActive="active">
+      Mi club
+    </a>
+
+    <a *ngIf="authService.isAnyAdmin()"
        routerLink="/admin"
        routerLinkActive="active">
       Administrar
     </a>
-  
+
     <!-- ENTRENADOR -->
     <a *ngIf="authService.hasRole('entrenador')"
        [routerLink]="['/equipo', authService.getUser()?.equipo_id]"
        routerLinkActive="active">
       Mi equipo
     </a>
-  
+
     <a *ngIf="authService.hasRole('entrenador')"
        routerLink="/register"
        routerLinkActive="active">
       Registrar
     </a>
-  
+
     <!-- JUGADOR -->
     <a *ngIf="authService.hasRole('jugador')"
        [routerLink]="['/equipo', authService.getUser()?.equipo_id]"
        routerLinkActive="active">
       Mi equipo
     </a>
-  
+
     <!-- TUTOR -->
     <a *ngIf="authService.hasRole('tutor')"
        routerLink="/tutor-panel"
        routerLinkActive="active">
       Mis jugadores
     </a>
+
   </nav>
-  
 
   <a class="profile" [routerLink]="['/perfil']">
     <img [src]="profileImage" alt="Perfil" />

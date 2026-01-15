@@ -43,7 +43,8 @@ export class AdminComponent implements OnInit {
     nombre: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
     telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
-    Rol: new FormControl('usuario')
+    Rol: new FormControl('usuario'),
+    club_id: new FormControl<number | null>(null)
   });
 
   selectedFile: File | null = null;
@@ -88,6 +89,9 @@ export class AdminComponent implements OnInit {
     nombre: new FormControl('', Validators.required)
   });
 
+  rolUsuario: 'admin_plataforma' | 'admin_club' | null = null;
+  clubIdAdminClub: number | null = null;
+
   constructor(
     private readonly authService: AuthService,
     private readonly clubService: ClubService,
@@ -97,25 +101,38 @@ export class AdminComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-  this.cargarClubes();
-  this.cargarCategorias();
-  this.cargarTemporadas();
 
-  const dniControl = this.RegisterForm.get('DNI');
-  if (dniControl) {
-    dniControl.valueChanges.subscribe(value => {
-      if (!value) return;
-      if (value.length > 8) {
-        const numeros = value.slice(0, 8);
-        const letra = value.slice(8).toUpperCase();
-        const nuevoValor = numeros + letra;
-        if (nuevoValor !== value) {
-          dniControl.setValue(nuevoValor, { emitEvent: false });
+    const user = this.authService.getUser();
+    this.rolUsuario = user?.Rol || null;
+    this.clubIdAdminClub = user?.club_id || null;
+  
+    // 🔒 Si es admin club, forzamos pestaña registrar
+    if (this.rolUsuario === 'admin_club') {
+      this.activeTab = 'registrar';
+    }
+  
+    if (this.rolUsuario === 'admin_plataforma') {
+      this.cargarClubes();
+    }
+    this.cargarCategorias();
+    this.cargarTemporadas();
+  
+    // --- TU CÓDIGO DE DNI (NO TOCAR) ---
+    const dniControl = this.RegisterForm.get('DNI');
+    if (dniControl) {
+      dniControl.valueChanges.subscribe(value => {
+        if (!value) return;
+        if (value.length > 8) {
+          const numeros = value.slice(0, 8);
+          const letra = value.slice(8).toUpperCase();
+          const nuevoValor = numeros + letra;
+          if (nuevoValor !== value) {
+            dniControl.setValue(nuevoValor, { emitEvent: false });
+          }
         }
-      }
-    });
+      });
+    }
   }
-}
 
 
   // ===========================
@@ -250,19 +267,72 @@ export class AdminComponent implements OnInit {
       return;
     }
   
-    const userData = this.RegisterForm.getRawValue() as {
-      DNI: string;
-      nombre: string;
-      email: string;
-      telefono: string;
-      Rol?: string;
-    };
+    const raw = this.RegisterForm.getRawValue();
   
-    this.authService.register(userData).subscribe({
-      next: () => alert("Usuario registrado correctamente"),
-      error: (err) => alert(err.error.message || "Error al registrar usuario")
-    });
+    // ============================
+    // ADMIN PLATAFORMA
+    // ============================
+    if (this.rolUsuario === 'admin_plataforma') {
+  
+      const payload: {
+        DNI: string;
+        nombre: string;
+        email: string;
+        telefono: string;
+        Rol: string;
+        club_id?: number;
+      } = {
+        DNI: raw.DNI!,
+        nombre: raw.nombre!,
+        email: raw.email!,
+        telefono: raw.telefono!,
+        Rol: raw.Rol as string
+      };
+      
+      if (raw.Rol !== 'admin_plataforma' && raw.club_id) {
+        payload.club_id = raw.club_id;
+      }
+  
+      this.authService.registerByAdminPlataforma(payload).subscribe({
+        next: () => alert('Usuario creado correctamente'),
+        error: err => alert(err.error?.message || 'Error al crear usuario')
+      });
+    }
+  
+    // ============================
+    // ADMIN CLUB
+    // ============================
+    if (this.rolUsuario === 'admin_club') {
+  
+      const rol = raw.Rol;
+  
+      // 🔒 Validación estricta (y defendible)
+      if (rol !== 'jugador' && rol !== 'entrenador' && rol !== 'tutor') {
+        alert('Rol no válido para admin de club');
+        return;
+      }
+  
+      const payload: {
+        DNI: string;
+        nombre: string;
+        email: string;
+        telefono: string;
+        Rol: 'jugador' | 'entrenador' | 'tutor';
+      } = {
+        DNI: raw.DNI!,
+        nombre: raw.nombre!,
+        email: raw.email!,
+        telefono: raw.telefono!,
+        Rol: rol
+      };
+  
+      this.authService.registerByAdminClub(payload).subscribe({
+        next: () => alert('Usuario creado en tu club'),
+        error: err => alert(err.error?.message || 'Error al crear usuario')
+      });
+    }
   }
+  
   
 
   onFileSelected(event: Event) {
@@ -277,14 +347,25 @@ export class AdminComponent implements OnInit {
       alert("Selecciona un archivo CSV.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("file", this.selectedFile);
-
-    this.authService.registerMassive(formData).subscribe({
-      next: (res) => alert(res.message),
-      error: (err) => alert(err.error?.message || "Error en registro masivo")
-    });
+  
+    // 🔴 ADMIN PLATAFORMA (LEGADO)
+    if (this.rolUsuario === 'admin_plataforma') {
+      this.authService.registerMassive(formData).subscribe({
+        next: res => alert(res.message),
+        error: err => alert(err.error?.message || "Error")
+      });
+    }
+  
+    // 🔵 ADMIN CLUB
+    if (this.rolUsuario === 'admin_club') {
+      this.authService.registerMasivoAdminClub(formData).subscribe({
+        next: res => alert(res.message),
+        error: err => alert(err.error?.message || "Error")
+      });
+    }
   }
 
   // ===========================

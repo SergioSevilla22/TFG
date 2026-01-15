@@ -8,15 +8,15 @@
   <div class="club-header">
     <div class="club-header-left">
       <img
-        *ngIf="club.escudo"
-        [src]="'http://localhost:3000' + club.escudo"
-        class="escudo"
+      *ngIf="club?.escudo"
+      [src]="'http://localhost:3000' + club.escudo"
+      class="escudo"
       />
 
       <div>
-        <h1>{{ club.nombre }}</h1>
+        <h1>{{ club?.nombre }}</h1>
         <p class="club-location">
-          {{ club.poblacion }}, {{ club.provincia }}
+          {{ club?.poblacion }}, {{ club?.provincia }}
         </p>
       </div>
     </div>
@@ -119,10 +119,10 @@
     <div class="info-card clickable" (click)="editarClub()">
       <h3>Información del Club</h3>
 
-      <p><strong>Email:</strong> {{ club.email || 'N/A' }}</p>
-      <p><strong>Teléfono:</strong> {{ club.telefono || 'N/A' }}</p>
-      <p><strong>Dirección:</strong> {{ club.direccion || 'N/A' }}</p>
-      <p><strong>Código Postal:</strong> {{ club.codigo_postal || 'N/A' }}</p>
+      <p><strong>Email:</strong> {{ club?.email || 'N/A' }}</p>
+      <p><strong>Teléfono:</strong> {{ club?.telefono || 'N/A' }}</p>
+      <p><strong>Dirección:</strong> {{ club?.direccion || 'N/A' }}</p>
+      <p><strong>Código Postal:</strong> {{ club?.codigo_postal || 'N/A' }}</p>
 
       <div class="arrow">➜</div>
     </div>
@@ -133,12 +133,8 @@
        ACCIONES
   ========================== -->
   <div class="club-actions">
-    <button (click)="abrirModalJugadoresClub()">
-      Gestionar jugadores del club
-    </button>
-
-    <button (click)="abrirModalEntrenadoresClub()">
-      Gestionar entrenadores del club
+    <button (click)="abrirModalTraspasos()">
+      Gestionar usuarios / traspasos
     </button>
 
     <button class="secondary" (click)="abrirEquiposClub()">

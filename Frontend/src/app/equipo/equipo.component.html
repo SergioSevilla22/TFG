@@ -22,7 +22,7 @@
     <!-- VOLVER AL CLUB → SOLO ADMIN -->
     <button
       class="volver"
-      *ngIf="authService.hasRole('admin')"
+      *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
       (click)="volverAlClub()">
       ← Volver al club
     </button>
@@ -58,7 +58,7 @@
           <!-- QUITAR ENTRENADOR → SOLO ADMIN -->
           <button
             class="delete"
-            *ngIf="authService.hasRole('admin')"
+            *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
             (click)="eliminarEntrenador(e.DNI)">
             ✕
           </button>
@@ -72,7 +72,7 @@
       <!-- AÑADIR ENTRENADOR → SOLO ADMIN -->
       <button
         class="cambiar primary"
-        *ngIf="authService.hasRole('admin')"
+        *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
         (click)="abrirModalEntrenadorEquipo()">
         Añadir entrenador
       </button>
@@ -85,7 +85,7 @@
     <!-- ADMIN (con drag & drop) -->
     <div
       class="panel-card jugadores-card"
-      *ngIf="authService.hasRole('admin')"
+      *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
       (drop)="onDropJugador($event)"
       (dragover)="allowDrop($event)">
 
@@ -208,7 +208,7 @@
   <div class="panel-card">
     <h3>Gestión deportiva</h3>
 
-    <div *ngIf="authService.hasRole('admin') || authService.hasRole('entrenador')">
+    <div *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')">
       <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'eventos']">
         📅 Eventos del equipo
       </button>
@@ -249,7 +249,7 @@
     <div style="display:flex; gap:10px; align-items:center;">
       <button
         class="cambiar primary"
-        *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin')"
+        *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
         (click)="abrirModalCrearConvocatoria()">
         + Nueva convocatoria
       </button>
@@ -320,7 +320,7 @@
         
         </div>
 
-        <div class="conv-actions" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin')">
+        <div class="conv-actions" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')">
           <span class="estado">
             Convocados: <b>{{ c.jugadores?.length || 0 }}</b>
             · ✅ {{ contarPorEstado(c, 'confirmado') }}
@@ -366,7 +366,7 @@
     <div style="display:flex; gap:10px; align-items:center;">
       <button
         class="cambiar primary"
-        *ngIf="authService.hasRole('admin') || authService.hasRole('entrenador')"
+        *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')"
         (click)="abrirModalCrearEvento()">
         + Nuevo evento
       </button>
@@ -418,7 +418,7 @@
         <!-- =========================
              VISTA ADMIN / ENTRENADOR
         ========================== -->
-        <div class="evento-actions" *ngIf="authService.hasRole('admin') || authService.hasRole('entrenador')">
+        <div class="evento-actions" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')">
           <span class="estado">
             Confirmaciones:
             ✅ {{ contarPorEstadoEvento(e, 'confirmado') }}

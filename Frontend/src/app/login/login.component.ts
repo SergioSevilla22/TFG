@@ -42,8 +42,11 @@ export class LoginComponent {
         if ((user.Rol === 'jugador' || user.Rol === 'entrenador') && user.equipo_id) {
           this.router.navigate(['/equipo', user.equipo_id]);
         }
-        else if (user.Rol === 'admin' && user.club_id) {
+        else if (user.Rol === 'admin_club' && user.club_id) {
           this.router.navigate(['/club', user.club_id]);
+        }
+        else if (user.Rol === 'admin_plataforma') {
+          this.router.navigate(['/admin']);
         }
         else if (user.Rol === 'tutor') {
           this.router.navigate(['/tutor-panel']);

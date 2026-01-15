@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>Traspaso / baja de usuarios</h2>
+
+<div mat-dialog-content class="content">
+
+  <!-- TIPO USUARIO -->
+  <div class="tipo-selector">
+    <button
+      mat-raised-button
+      [color]="tipoUsuario === 'jugador' ? 'primary' : ''"
+      (click)="cambiarTipo('jugador')">
+      Jugadores
+    </button>
+
+    <button
+      mat-raised-button
+      [color]="tipoUsuario === 'entrenador' ? 'primary' : ''"
+      (click)="cambiarTipo('entrenador')">
+      Entrenadores
+    </button>
+  </div>
+
+  <!-- LISTADO -->
+  <div *ngIf="usuarios.length; else empty">
+
+    <div class="row" *ngFor="let u of usuarios">
+
+      <div class="info">
+        <strong>{{ u.nombre }}</strong>
+        <div class="muted">DNI: {{ u.DNI }}</div>
+      </div>
+
+      <button mat-button color="primary" (click)="seleccionar(u)">
+        Gestionar
+      </button>
+
+    </div>
+
+  </div>
+
+  <ng-template #empty>
+    <p class="muted">No hay usuarios en este club.</p>
+  </ng-template>
+
+  <!-- ACCIONES -->
+  <div *ngIf="usuarioSeleccionado" class="acciones">
+
+    <h4>Acciones para {{ usuarioSeleccionado.nombre }}</h4>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Traspasar a otro club</mat-label>
+      <mat-select [(ngModel)]="clubDestinoId">
+        <mat-option *ngFor="let c of clubes" [value]="c.id">
+          {{ c.nombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!clubDestinoId"
+      (click)="traspasar()">
+      Traspasar
+    </button>
+
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="eliminar()">
+      Eliminar de la plataforma
+    </button>
+
+  </div>
+
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</div>
