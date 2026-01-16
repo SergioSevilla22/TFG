@@ -1,6 +1,11 @@
 <app-header></app-header>
 
-<div class="equipo-wrapper" *ngIf="!loading && equipo; else loadingTpl">
+<div *ngIf="sinEquipo" class="sin-equipo">
+  <h2>⚠️ Todavía no tienes ningún equipo asignado</h2>
+  <p>Contacta con tu entrenador o con el administrador del club.</p>
+</div>
+
+<div *ngIf="!sinEquipo"><div class="equipo-wrapper" *ngIf="!loading && equipo && !sinEquipo; else loadingTpl">
 
   <!-- =========================
        CABECERA
@@ -454,5 +459,7 @@
     </div>
   </div>
 </div>
+</div>
+
 
 

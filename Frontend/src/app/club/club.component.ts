@@ -81,22 +81,41 @@ export class ClubComponent implements OnInit {
   
 
   loadClubData() {
+    if (!this.isBrowser()) {
+      return; // ⛔ NO SSR
+    }
+  
     this.loading = true;
   
     this.clubService.getClubById(this.clubId).subscribe({
-      next: (data) => {
-        this.club = data;
-        this.loadEquipos();
-        this.loadResumen();
+      next: (club) => {
+        this.club = club;
+  
+        this.equipoService.obtenerEquiposPorClub(this.clubId).subscribe({
+          next: (equipos) => {
+            this.equipos = equipos;
+            this.equiposFiltrados = [];
+            this.buscado = false;
+            this.loading = false;
+          },
+          error: (err) => {
+            console.error(err);
+            this.loading = false;
+          }
+        });
+  
+        this.clubService.getResumenClub(this.clubId).subscribe({
+          next: data => this.resumen = data
+        });
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error cargando club', err);
         this.loading = false;
-        if (this.isBrowser()) {
-          alert("No se pudo cargar el club.");
-        }
       }
     });
   }
+  
+  
   
   loadResumen() {
     this.clubService.getResumenClub(this.clubId).subscribe({

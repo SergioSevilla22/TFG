@@ -636,3 +636,13 @@
   background: #e5e7eb;
   color: #374151;
 }
+
+.sin-equipo {
+  margin: 40px auto;
+  padding: 30px;
+  max-width: 600px;
+  text-align: center;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+}

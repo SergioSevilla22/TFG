@@ -33,6 +33,7 @@ export class EquipoComponent implements OnInit {
   loadingConvocatorias = false;
   eventos: any[] = [];
   loadingEventos = false;
+  sinEquipo = false;
 
   jugadoresDisponibles: any[] = [];
   entrenadoresDisponibles: any[] = [];
@@ -49,9 +50,36 @@ export class EquipoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.equipoId = Number(this.route.snapshot.paramMap.get('id'));
+    const user = this.authService.getUser();
+  
+    // 🧑‍🦱 JUGADOR SIN EQUIPO
+    if (user?.Rol === 'jugador' && !user.equipo_id) {
+      this.sinEquipo = true;
+      this.loading = false;
+      return;
+    }
+  
+    // 🔗 Equipo por URL
+    const idParam = this.route.snapshot.paramMap.get('id');
+  
+    if (!idParam) {
+      this.sinEquipo = true;
+      this.loading = false;
+      return;
+    }
+  
+    const id = Number(idParam);
+  
+    if (isNaN(id)) {
+      this.sinEquipo = true;
+      this.loading = false;
+      return;
+    }
+  
+    this.equipoId = id;
     this.cargarEquipo();
   }
+  
 
   cargarConvocatorias() {
     this.loadingConvocatorias = true;
