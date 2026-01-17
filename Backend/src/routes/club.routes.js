@@ -9,7 +9,8 @@ import {
   eliminarClub,
   obtenerJugadoresClub,
   obtenerEntrenadoresClub,
-  obtenerResumenClub
+  obtenerResumenClub,
+  obtenerJugadoresClubCategoria
 } from "../controllers/club.controller.js";
 
 import { registerUsuariosMasivoAdminClub } from "../controllers/auth.controller.js";
@@ -123,6 +124,16 @@ router.get(
     next();
   },
   obtenerResumenClub
+);
+
+router.get('/clubes/:id/jugadores-categoria', authMiddleware, requireAdminClub,
+  (req, res, next) => {
+    if (req.user.club_id != req.params.id) {
+      return res.status(403).json({ message: "Acceso denegado" });
+    }
+    next();
+  },
+  obtenerJugadoresClubCategoria
 );
 
 /* ======================================================

@@ -17,10 +17,11 @@ export class TutorPanelComponent implements OnInit {
   user: any;
 
   DepForm = new FormGroup({
-    DNI: new FormControl('', Validators.required),
+    DNI: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{8}[A-Za-z]$/)]),
     nombre: new FormControl('', Validators.required),
+    anioNacimiento: new FormControl<number | null>(null, [ Validators.required, Validators.min(1900), Validators.max(new Date().getFullYear())]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    telefono: new FormControl('', Validators.required),
+    telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
     password: new FormControl('', Validators.required),
   });
 

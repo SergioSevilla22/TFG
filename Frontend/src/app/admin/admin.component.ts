@@ -43,6 +43,7 @@ export class AdminComponent implements OnInit {
     nombre: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
     telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
+    anioNacimiento: new FormControl<number | null>(null, [ Validators.required, Validators.min(1900), Validators.max(new Date().getFullYear())]),
     Rol: new FormControl('usuario'),
     club_id: new FormControl<number | null>(null)
   });
@@ -279,13 +280,15 @@ export class AdminComponent implements OnInit {
         nombre: string;
         email: string;
         telefono: string;
-        Rol: string;
+        anioNacimiento: number;
+        Rol: string; 
         club_id?: number;
       } = {
         DNI: raw.DNI!,
         nombre: raw.nombre!,
         email: raw.email!,
         telefono: raw.telefono!,
+        anioNacimiento: raw.anioNacimiento!,
         Rol: raw.Rol as string
       };
       
@@ -317,12 +320,14 @@ export class AdminComponent implements OnInit {
         nombre: string;
         email: string;
         telefono: string;
+        anioNacimiento: number;
         Rol: 'jugador' | 'entrenador' | 'tutor';
       } = {
         DNI: raw.DNI!,
         nombre: raw.nombre!,
         email: raw.email!,
         telefono: raw.telefono!,
+        anioNacimiento: raw.anioNacimiento!,
         Rol: rol
       };
   

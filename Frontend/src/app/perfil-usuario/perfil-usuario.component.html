@@ -125,7 +125,7 @@
           <select [(ngModel)]="user.Rol" name="Rol" [disabled]="isDependiente">
             <option value="jugador">Jugador</option>
             <option value="entrenador">Entrenador</option>
-            <option value="admin">Administrador</option>
+            <option value="admin_plataforma">Administrador</option> <!-- ESTO NO DEBERIA SER ASI, ESTA PUESTO POR COMODIDAD, NUNCA SE TIENE QUE PODER EDITAR PARA SER ADMIN -->
           </select>
 
           <div class="actions">

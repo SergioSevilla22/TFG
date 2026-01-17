@@ -98,6 +98,7 @@ export class AuthService {
     nombre: string;
     email: string;
     telefono: string;
+    anioNacimiento: number;
     Rol: string;
     club_id?: number;
   }): Observable<any> {
@@ -112,6 +113,7 @@ export class AuthService {
     nombre: string;
     email: string;
     telefono: string;
+    anioNacimiento: number;
     Rol: 'jugador' | 'entrenador' | 'tutor';
   }): Observable<any> {
     return this.http.post(`${this.apiBase}/club-admin/register-user`, data);

@@ -6,9 +6,9 @@ import bcrypt from "bcryptjs";
  * El tutor crea un jugador dependiente con email y contraseña reales.
  */
 export const registrarDependiente = (req, res) => {
-  const { DNI, nombre, email, telefono, password, idTutor } = req.body;
+  const { DNI, nombre, email, telefono, anioNacimiento, password, idTutor } = req.body;
 
-  if (!DNI || !nombre || !email || !password || !idTutor) {
+  if (!DNI || !nombre || !email || !password || !idTutor|| !anioNacimiento) {
     return res.status(400).json({ message: "Todos los campos son obligatorios" });
   }
 
@@ -21,9 +21,10 @@ export const registrarDependiente = (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.query(
-      "INSERT INTO usuarios (DNI, nombre, email, telefono, password, Rol, idTutor) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [DNI, nombre, email, telefono, hashedPassword, "jugador", idTutor],
+      "INSERT INTO usuarios (DNI, nombre, email, telefono, anio_nacimiento, password, Rol, idTutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [DNI, nombre, email, telefono, anioNacimiento, hashedPassword, "jugador", idTutor],
       (err2) => {
+        
         if (err2) return res.status(500).json({ error: err2.message });
 
         res.json({ message: "Dependiente registrado correctamente" });

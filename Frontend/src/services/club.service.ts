@@ -63,6 +63,18 @@ export class ClubService {
     return this.http.delete(`${this.apiUrl}/${clubId}/jugadores/${dni}`);
   }
 
+  getJugadoresClubCategoria(clubId: number, anioTemporada: number, edadMin: number, edadMax: number): Observable<any[]> {
+
+    return this.http.get<any[]>(`${this.apiUrl}/${clubId}/jugadores-categoria`,
+      {
+        params: {
+          anioTemporada,
+          edadMin,
+          edadMax
+        }
+      }
+    );
+  }
   // =====================
   // ENTRENADORES
   // =====================

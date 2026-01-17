@@ -35,17 +35,17 @@ export class AddPlayersTeamModalComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<AddPlayersTeamModalComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: { equipoId: number; clubId: number },
+    public data: { equipoId: number; clubId: number, edadMin: number, edadMax: number, anioTemporada: number },
     private clubService: ClubService,
     private equipoService: EquipoService
   ) {}
 
   ngOnInit(): void {
-    this.cargarJugadoresClub();
+    this.cargarJugadoresEdadClub();
   }
 
-  cargarJugadoresClub() {
-    this.clubService.getJugadoresClub(this.data.clubId).subscribe({
+  cargarJugadoresEdadClub() {
+    this.clubService.getJugadoresClubCategoria(this.data.clubId, this.data.anioTemporada, this.data.edadMin, this.data.edadMax).subscribe({
       next: res => this.jugadoresClub = res,
       error: () => alert('Error cargando jugadores del club')
     });
@@ -64,7 +64,7 @@ export class AddPlayersTeamModalComponent implements OnInit {
   asignarJugador(dni: string) {
     this.equipoService.asignarJugadores(this.data.equipoId, [dni]).subscribe({
       next: () => {
-        this.cargarJugadoresClub();
+        this.cargarJugadoresEdadClub();
       },
       error: err =>
         alert(err.error?.message || 'Error asignando jugador')
