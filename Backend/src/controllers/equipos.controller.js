@@ -52,8 +52,14 @@ export const obtenerEquipoPorId = (req, res) => {
       c.poblacion AS club_poblacion,
       c.provincia AS club_provincia,
 
+      cat.id AS categoria_id,
       cat.nombre AS categoria_nombre,
-      t.nombre AS temporada_nombre
+      cat.edad_min,
+      cat.edad_max,
+
+      t.id AS temporada_id,
+      t.nombre AS temporada_nombre,
+      t.anio AS temporada_anio
 
     FROM equipos e
     JOIN clubes c ON c.id = e.club_id
@@ -97,8 +103,17 @@ export const obtenerEquipoPorId = (req, res) => {
                 poblacion: equipo.club_poblacion,
                 provincia: equipo.club_provincia
               },
-              categoria: equipo.categoria_nombre,
-              temporada: equipo.temporada_nombre,
+              categoria: {
+                id: equipo.categoria_id,
+                nombre: equipo.categoria_nombre,
+                edadMin: equipo.edad_min,
+                edadMax: equipo.edad_max
+              },
+              temporada: {
+                id: equipo.temporada_id,
+                nombre: equipo.temporada_nombre,
+                anio: equipo.temporada_anio
+              },
               entrenadores, // 👈 ARRAY
               jugadores
             });

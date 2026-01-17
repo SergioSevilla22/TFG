@@ -53,6 +53,7 @@ export const loginUsuario = (req, res) => {
             nombre: user.nombre,
             email: user.email,
             telefono: user.telefono,
+            anioNacimiento: user.anio_nacimiento,
             Rol: user.Rol,
             foto: user.foto ?? null,
             idTutor: user.idTutor ?? null,
@@ -303,7 +304,7 @@ export const getUsuario = (req, res) => {
   }
 
   db.query(
-    "SELECT DNI, nombre, email, telefono, Rol, foto FROM usuarios WHERE DNI = ?",
+    "SELECT DNI, nombre, email, telefono, anio_nacimiento, Rol, foto FROM usuarios WHERE DNI = ?",
     [dni],
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -359,9 +360,9 @@ export const registerUsuariosMasivoAdminClub = async (req, res) => {
     .on("end", async () => {
       try {
         for (const u of usuarios) {
-          const { DNI, nombre, email, telefono, Rol } = u;
+          const { DNI, nombre, email, telefono, Rol, anioNacimiento  } = u;
 
-          if (!DNI || !email || !telefono || !nombre) continue;
+          if (!DNI || !email || !telefono || !nombre || !anioNacimiento ) continue;
 
           const exists = await new Promise((resolve, reject) => {
             db.query(
@@ -379,9 +380,9 @@ export const registerUsuariosMasivoAdminClub = async (req, res) => {
           await new Promise((resolve, reject) => {
             db.query(
               `INSERT INTO usuarios 
-               (DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-              [DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp],
+               (DNI, nombre, Rol, email, telefono, anio_nacimiento , club_id, invitationToken, invitationExp)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+              [DNI, nombre, Rol, email, telefono, anioNacimiento, club_id, invitationToken, invitationExp],
               (err) => err ? reject(err) : resolve()
             );
           });
@@ -397,10 +398,10 @@ export const registerUsuariosMasivoAdminClub = async (req, res) => {
 };
 
 export const registerUsuarioAdminClub = (req, res) => {
-  const { DNI, nombre, email, telefono, Rol } = req.body;
+  const { DNI, nombre, email, telefono, anioNacimiento, Rol } = req.body;
   const club_id = req.user.club_id;
 
-  if (!DNI || !nombre || !email || !telefono || !Rol) {
+  if (!DNI || !nombre || !email || !telefono || !Rol || !anioNacimiento) {
     return res.status(400).json({ message: "Campos obligatorios" });
   }
 
@@ -412,14 +413,18 @@ export const registerUsuarioAdminClub = (req, res) => {
     return res.status(403).json({ message: "Admin club sin club asignado" });
   }
 
+  if (anioNacimiento < 1900 || anioNacimiento > new Date().getFullYear()) {
+    return res.status(400).json({ message: "Año de nacimiento inválido" });
+  }
+
   const invitationToken = uuidv4();
   const invitationExp = Date.now() + 1000 * 60 * 60 * 48;
 
   db.query(
     `INSERT INTO usuarios 
-     (DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp],
+     (DNI, nombre, Rol, email, telefono, anio_nacimiento , club_id, invitationToken, invitationExp)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [DNI, nombre, Rol, email, telefono, anioNacimiento, club_id, invitationToken, invitationExp],
     async (err) => {
       if (err) return res.status(500).json({ error: err.message });
 

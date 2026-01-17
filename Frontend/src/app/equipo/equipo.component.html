@@ -316,7 +316,7 @@
                 ✅ Confirmar
               </button>
         
-              <button class="delete" (click)="responderConvocatoria(c, 'rechazado')">
+              <button class="rechazar" (click)="responderConvocatoria(c, 'rechazado')">
                 ❌ Rechazar
               </button>
             </ng-container>
@@ -415,7 +415,7 @@
               Estado: <b>pendiente</b>
             </span>
             <button class="cambiar" (click)="responderEvento(e, 'confirmado')">✅ Confirmar</button>
-            <button class="delete" (click)="responderEvento(e, 'rechazado')">❌ Rechazar</button>
+            <button class="rechazar" (click)="responderEvento(e, 'rechazado')">❌ Rechazar</button>
           </ng-container>
 
         </div>
@@ -424,7 +424,7 @@
              VISTA ADMIN / ENTRENADOR
         ========================== -->
         <div class="evento-actions" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')">
-          <span class="estado">
+          <span class="estado" *ngIf="e.requiere_confirmacion">
             Confirmaciones:
             ✅ {{ contarPorEstadoEvento(e, 'confirmado') }}
             · ❌ {{ contarPorEstadoEvento(e, 'rechazado') }}
@@ -445,7 +445,7 @@
         <!-- =========================
              DETALLES DE JUGADORES
         ========================== -->
-        <details class="conv-details">
+        <details class="conv-details" *ngIf="e.requiere_confirmacion">
           <summary>Ver jugadores</summary>
           <div class="convocados">
             <div class="conv-j" *ngFor="let j of e.jugadores">

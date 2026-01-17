@@ -7,17 +7,30 @@
 
     <form [formGroup]="DepForm" (ngSubmit)="registrarDependiente()">
 
-      <label>DNI</label>
-      <input formControlName="DNI" />
+      <label for="dni">DNI</label>
+      <input id="dni" type="text" formControlName="DNI" maxlength="9"/>
 
-      <label>Nombre</label>
-      <input formControlName="nombre" />
+      <div class="error" *ngIf="DepForm.get('DNI')?.invalid && DepForm.get('DNI')?.touched">
+        <small *ngIf="DepForm.get('DNI')?.errors?.['required']">El DNI es obligatorio.</small>
+        <small *ngIf="DepForm.get('DNI')?.errors?.['pattern']">Formato inválido: 8 dígitos y una letra.</small>
+      </div>
 
-      <label>Email</label>
-      <input formControlName="email" />
+      <label for="nombre">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" />
 
-      <label>Teléfono</label>
-      <input formControlName="telefono" />
+      <label for="anioNacimiento">Año de nacimiento</label>
+      <input id="anioNacimiento" type="number" formControlName="anioNacimiento"/>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" type="text" formControlName="telefono" />
+
+      <div class="error" *ngIf="DepForm.get('telefono')?.invalid && DepForm.get('telefono')?.touched">
+        <small *ngIf="DepForm.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</small>
+        <small *ngIf="DepForm.get('telefono')?.errors?.['pattern']">Debe tener 9 números.</small>
+      </div>
 
       <label>Contraseña</label>
       <input formControlName="password" type="password" />

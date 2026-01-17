@@ -11,19 +11,57 @@ export const crearTemporada = (req, res) => {
   const { nombre } = req.body;
 
   if (!nombre) {
-    return res.status(400).json({ message: "El nombre de la temporada es obligatorio" });
+    return res.status(400).json({
+      message: "El nombre de la temporada es obligatorio"
+    });
   }
 
-  db.query(
-    "INSERT INTO temporadas (nombre, activa) VALUES (?, 0)",
-    [nombre],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err.message });
+  // Validar formato 2024/2025
+  const match = nombre.match(/^(\d{4})\/(\d{4})$/);
 
-      res.status(201).json({ message: "Temporada creada correctamente", id: result.insertId });
+  if (!match) {
+    return res.status(400).json({
+      message: "Formato de temporada inválido. Use YYYY/YYYY"
+    });
+  }
+
+  const anio = parseInt(match[2], 10); // 2025
+
+  // Verificar duplicados
+  db.query(
+    "SELECT id FROM temporadas WHERE nombre = ?",
+    [nombre],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      if (rows.length > 0) {
+        return res.status(400).json({
+          message: "La temporada ya existe"
+        });
+      }
+
+      // Insertar temporada
+      db.query(
+        "INSERT INTO temporadas (nombre, anio, activa) VALUES (?, ?, 0)",
+        [nombre, anio],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ error: err.message });
+          }
+
+          res.status(201).json({
+            message: "Temporada creada correctamente",
+            id: result.insertId
+          });
+        }
+      );
     }
   );
 };
+
+
 
 export const activarTemporada = (req, res) => {
   const { id } = req.params;

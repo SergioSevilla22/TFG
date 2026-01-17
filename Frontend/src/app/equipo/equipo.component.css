@@ -209,8 +209,25 @@
 
 .delete:hover {
   background: #dc2626;
+  transform: translateY(-1px);
 }
 
+.rechazar {
+  margin-left: 0;
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.rechazar:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
 /* =========================
    GESTIÓN DEPORTIVA
 ========================= */
@@ -574,38 +591,6 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: #374151;
-}
-
-.evento-actions button.cambiar {
-  background: #1ea83a;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.evento-actions button.cambiar:hover {
-  background: #16852d;
-}
-
-.evento-actions button.delete {
-  background: #ef4444;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.evento-actions button.delete:hover {
-  background: #dc2626;
 }
 
 /* ESTADOS / BADGES */

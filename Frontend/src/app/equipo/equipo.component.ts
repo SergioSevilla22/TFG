@@ -210,11 +210,15 @@ export class EquipoComponent implements OnInit {
   }
 
   abrirModalAddJugadores() {
+
     const dialogRef = this.dialog.open(AddPlayersTeamModalComponent, {
       width: '700px',
       data: {
         equipoId: this.equipoId,
-        clubId: this.equipo.club.id
+        clubId: this.equipo.club.id,
+        edadMin: this.equipo.categoria.edadMin,
+        edadMax: this.equipo.categoria.edadMax,
+        anioTemporada: this.equipo.temporada.anio
       }
     });
   

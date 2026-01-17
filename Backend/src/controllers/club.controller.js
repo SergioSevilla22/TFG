@@ -115,6 +115,31 @@ export const obtenerJugadoresClub = (req, res) => {
   );
 };
 
+export const obtenerJugadoresClubCategoria = (req, res) => {
+  const { id } = req.params; // clubId
+  const { anioTemporada, edadMin, edadMax } = req.query;
+
+  db.query(
+    `SELECT u.DNI, u.nombre, u.anio_nacimiento, u.equipo_id, e.nombre AS equipo_nombre, (? - u.anio_nacimiento) AS edad
+     FROM usuarios u
+     LEFT JOIN equipos e ON e.id = u.equipo_id
+     WHERE u.Rol = 'jugador'
+       AND u.club_id = ?
+       AND (? - u.anio_nacimiento) BETWEEN ? AND ?
+     ORDER BY u.nombre ASC`,
+    [
+      anioTemporada,
+      id,
+      anioTemporada,
+      edadMin,
+      edadMax
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(results);
+    }
+  );
+};
 
 export const obtenerEntrenadoresClub = (req, res) => {
   const { id } = req.params; // clubId
