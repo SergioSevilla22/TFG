@@ -11,6 +11,8 @@ import usuariosRoutes from "./routes/usuarios.routes.js";
 import convocatoriasRoutes from "./routes/convocatorias.routes.js";
 import eventosRoutes from "./routes/eventos.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import calendarioRoutes from "./routes/calendario.routes.js";
+
 
 dotenv.config();
 
@@ -32,6 +34,8 @@ app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/convocatorias", convocatoriasRoutes);
 app.use('/api/eventos', eventosRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/calendario", calendarioRoutes);
+
 
 // Servidor
 app.listen(PORT, () => {
