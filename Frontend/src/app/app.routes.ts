@@ -32,7 +32,13 @@ export const routes: Routes = [
   { path: 'club/:id', component: ClubComponent , title: 'Club'},
   { path: 'club/:id/equipos', component: EquiposClubComponent, title: 'Equipos' },
   { path: 'equipo/:id', component: EquipoComponent, title: 'Equipo' },
-  { path: 'clubes',component: ClubsComponent, title: 'Search Clubs', canActivate: [adminGuard]}
+  { path: 'clubes',component: ClubsComponent, title: 'Search Clubs', canActivate: [adminGuard]},
+  {
+    path: 'equipo/:id/calendario',
+    loadComponent: () =>
+      import('./equipo-calendario/equipo-calendario.component')
+        .then(m => m.EquipoCalendarioComponent)
+  }
 
 
 ];

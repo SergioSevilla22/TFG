@@ -1,0 +1,32 @@
+.calendario-wrapper {
+    padding: 20px;
+  }
+  
+  .calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  /* Colores por tipo */
+  .fc-event.partido {
+    background-color: #e53935;
+    border-color: #e53935;
+  }
+  
+  .fc-event.entrenamiento {
+    background-color: #1e88e5;
+    border-color: #1e88e5;
+  }
+  
+  .fc-event.reunion {
+    background-color: #8e24aa;
+    border-color: #8e24aa;
+  }
+  
+  .fc-event.otro {
+    background-color: #43a047;
+    border-color: #43a047;
+  }
+  

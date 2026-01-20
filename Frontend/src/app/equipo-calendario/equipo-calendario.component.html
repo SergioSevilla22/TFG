@@ -1,0 +1,30 @@
+<app-header></app-header>
+
+<div class="calendario-wrapper">
+
+  <div class="calendario-header">
+    <h2>📅 Calendario del equipo</h2>
+
+    <button class="cambiar primary" (click)="descargarICal()">
+      🔗 Exportar a Google Calendar
+    </button>
+  </div>
+
+  <p *ngIf="loading">Cargando calendario...</p>
+
+  <ng-container *ngIf="isBrowser">
+
+    <full-calendar
+      *ngIf="!loading"
+      [options]="calendarOptions">
+    </full-calendar>
+  
+  </ng-container>
+  
+  <!-- SSR fallback -->
+  <p *ngIf="!isBrowser" style="padding:20px; color:#777;">
+    Cargando calendario...
+  </p>
+  
+
+</div>
