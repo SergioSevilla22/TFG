@@ -1,0 +1,118 @@
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px;
+  
+  .badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    &.convocatoria { background: #dcfce7; color: #166534; }
+    &.evento { background: #e0f2fe; color: #0369a1; }
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  label { font-size: 0.75rem; color: #6b7280; font-weight: 700; text-transform: uppercase; }
+  p { margin: 4px 0; font-weight: 600; color: #111827; }
+}
+
+.resumen-asistencia {
+  margin-top: 20px;
+  h3 { font-size: 1rem; margin-bottom: 10px; }
+  .pills {
+    display: flex;
+    gap: 10px;
+    .pill {
+      padding: 6px 15px;
+      border-radius: 8px;
+      font-weight: 700;
+      &.confirmado { background: #dcfce7; color: #166534; }
+      &.rechazado { background: #fee2e2; color: #991b1b; }
+      &.pendiente { background: #fef9c3; color: #854d0e; }
+    }
+  }
+}
+
+.acciones-jugador {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 20px;
+  padding-top: 20px;
+  text-align: center;
+
+  .botones-respuesta {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+
+    .btn {
+      padding: 12px 25px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+      &.confirm { background: #1ea83a; color: white; }
+      &.reject { background: #ef4444; color: white; }
+      &:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    }
+  }
+}
+.msg-box {
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin: 15px 0;
+  font-weight: 600;
+  &.info { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+  &.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+}
+
+.status-confirmed {
+  text-align: center;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+
+  .badge-estado {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    &.confirmado { background: #1ea83a; color: white; }
+    &.rechazado { background: #ef4444; color: white; }
+  }
+  
+  small { color: #94a3b8; display: block; margin-top: 8px; }
+}
+
+.botones-respuesta {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    &.confirm { background: #1ea83a; color: white; }
+    &.reject { background: #ef4444; color: white; }
+  }
+}
+
+.warning { color: #b45309; font-weight: 600; background: #fffbeb; padding: 10px; border-radius: 8px; }

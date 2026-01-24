@@ -9,9 +9,16 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { EventClickArg } from '@fullcalendar/core';
 
+import { MatDialog } from '@angular/material/dialog';
 import { CalendarioService } from '../../services/calendario.service';
 import { HeaderComponent } from '../header/header.component';
+import { CreateConvocatoriaModalComponent } from '../../shared/components/create-convocatoria-modal/create-convocatoria-modal.component';
+import { CreateEventoModalComponent } from '../../shared/components/create-evento-modal/create-evento-modal.component';
+import { EquipoService } from '../../services/equipos.service';
+import { AuthService } from '../../services/auth.service';
+import { DetallesEventoModalComponent } from '../../shared/components/detalles-evento-modal/detalles-evento-modal.component';
 
 @Component({
   selector: 'app-equipo-calendario',
@@ -25,12 +32,13 @@ export class EquipoCalendarioComponent implements OnInit {
   equipoId!: number;
   loading = true;
   isBrowser = false;
-
+  equipo: any = null;
 
   calendarOptions: any = {
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     initialView: 'dayGridMonth',
     locale: 'es',
+    firstDay: 1,
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
@@ -41,12 +49,17 @@ export class EquipoCalendarioComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
-    }
+    },
+    eventClick: (info: EventClickArg) => this.gestionarClickEvento(info)
+    
   };
 
   constructor(
     private route: ActivatedRoute,
     private calendarioService: CalendarioService,
+    private equipoService: EquipoService,
+    private dialog: MatDialog,
+    public authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -57,10 +70,36 @@ export class EquipoCalendarioComponent implements OnInit {
   
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.equipoId = id;
+    this.cargarDatosEquipo();
     this.cargarCalendario();
   }
   
-  
+  gestionarClickEvento(info: EventClickArg) {
+    
+    const idOriginal = info.event.id;
+    const esConvocatoria = idOriginal.startsWith('conv-');
+    const idNumerico = Number(idOriginal.split('-')[1]);
+
+    this.dialog.open(DetallesEventoModalComponent, {
+      width: '500px',
+      data: { 
+        id: idNumerico, 
+        tipo: esConvocatoria ? 'convocatoria' : 'evento' 
+      }
+    }).afterClosed().subscribe(refresh => {
+      if (refresh) {
+        this.cargarCalendario(); // Recargamos si el jugador confirmó/rechazó
+      }
+    });
+  }
+  cargarDatosEquipo() {
+    this.equipoService.getEquipoById(this.equipoId).subscribe({
+      next: (data) => {
+        this.equipo = data;
+      },
+      error: (err) => console.error('Error al cargar info del equipo', err)
+    });
+  }
 
   cargarCalendario() {
     this.loading = true;
@@ -74,7 +113,8 @@ export class EquipoCalendarioComponent implements OnInit {
           title: e.titulo,
           start: e.inicio,
           end: e.fin,
-          className: e.tipo
+          className: `tipo-${e.tipo}`
+        
         }));
   
         this.calendarOptions = {
@@ -96,5 +136,40 @@ export class EquipoCalendarioComponent implements OnInit {
   descargarICal() {
     window.open(this.calendarioService.getICalEquipo(this.equipoId), '_blank');
   }
-  
+
+  abrirModalCrearConvocatoria() {
+    // Verificación de seguridad
+    if (!this.equipo) {
+      alert('Cargando datos del equipo, por favor espera...');
+      return;
+    }
+    
+    const ref = this.dialog.open(CreateConvocatoriaModalComponent, {
+      width: '700px',
+      data: {
+        equipoId: this.equipoId,
+        jugadoresEquipo: this.equipo.jugadores // Ahora ya no será null
+      }
+    });
+
+    ref.afterClosed().subscribe(r => {
+      if (r) this.cargarCalendario(); // Recargamos el calendario completo
+    });
+  }
+
+  abrirModalCrearEvento() {
+    if (!this.equipo) return;
+
+    const ref = this.dialog.open(CreateEventoModalComponent, {
+      width: '700px',
+      data: {
+        equipoId: this.equipoId,
+        jugadoresEquipo: this.equipo.jugadores
+      }
+    });
+
+    ref.afterClosed().subscribe(refresh => {
+      if (refresh) this.cargarCalendario(); // Recargamos el calendario completo
+    });
+  }
 }

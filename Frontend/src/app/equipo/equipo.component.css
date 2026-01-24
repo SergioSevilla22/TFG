@@ -622,6 +622,19 @@
   color: #374151;
 }
 
+.estado-badge.no-invitado {
+  background-color: #f3f4f6; /* Gris muy clarito */
+  color: #d62811;            /* Texto gris suave */
+  border: 1px dashed #d1d5db;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .sin-equipo {
   margin: 40px auto;
   padding: 30px;
@@ -631,3 +644,5 @@
   border: 1px solid #ffeeba;
   border-radius: 8px;
 }
+
+

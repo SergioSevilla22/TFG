@@ -1,30 +1,50 @@
 <app-header></app-header>
 
-<div class="calendario-wrapper">
+<div class="equipo-wrapper">
+  <header class="page-header">
+    <div class="header-info">
+      <h1>📅 Calendario del equipo</h1>
+      <p class="subtitle" *ngIf="equipo">{{ equipo.nombre }} · Gestión de temporada</p>
+    </div>
 
-  <div class="calendario-header">
-    <h2>📅 Calendario del equipo</h2>
+    <div class="header-actions">
+      <button 
+        class="btn-action primary" 
+        *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
+        [disabled]="!equipo"
+        (click)="abrirModalCrearConvocatoria()">
+        + Convocatoria
+      </button>
 
-    <button class="cambiar primary" (click)="descargarICal()">
-      🔗 Exportar a Google Calendar
-    </button>
-  </div>
+      <button 
+        class="btn-action primary" 
+        *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
+        [disabled]="!equipo"
+        (click)="abrirModalCrearEvento()">
+        + Evento
+      </button>
 
-  <p *ngIf="loading">Cargando calendario...</p>
+      <button class="btn-action outline" (click)="descargarICal()">
+        🔗 Exportar iCal
+      </button>
+    </div>
+  </header>
 
-  <ng-container *ngIf="isBrowser">
+  <main class="calendar-card">
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Sincronizando calendario...</p>
+    </div>
 
-    <full-calendar
-      *ngIf="!loading"
-      [options]="calendarOptions">
-    </full-calendar>
-  
-  </ng-container>
-  
-  <!-- SSR fallback -->
-  <p *ngIf="!isBrowser" style="padding:20px; color:#777;">
-    Cargando calendario...
-  </p>
-  
+    <ng-container *ngIf="isBrowser">
+      <full-calendar
+        *ngIf="!loading"
+        [options]="calendarOptions">
+      </full-calendar>
+    </ng-container>
 
+    <div *ngIf="!isBrowser" class="loading-state">
+      <p>Cargando visor de eventos...</p>
+    </div>
+  </main>
 </div>

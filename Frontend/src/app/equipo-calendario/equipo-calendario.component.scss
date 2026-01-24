@@ -1,32 +1,154 @@
-.calendario-wrapper {
-    padding: 20px;
+/* Variables de diseño */
+$primary-green: #1ea83a;
+$secondary-blue: #0ea5e9;
+$dark-gray: #111827;
+$light-gray: #6b7280;
+$bg-card: #ffffff;
+$shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+.equipo-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Cabecera */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: $bg-card;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: $shadow;
+
+  .header-info {
+    h1 { margin: 0; font-size: 1.8rem; font-weight: 800; color: $dark-gray; }
+    .subtitle { margin: 5px 0 0; color: $light-gray; font-size: 0.95rem; }
   }
-  
-  .calendario-header {
+
+  .header-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    gap: 12px;
   }
-  
-  /* Colores por tipo */
-  .fc-event.partido {
-    background-color: #e53935;
-    border-color: #e53935;
+}
+
+/* Botones Profesionales */
+.btn-action {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &.primary { background: $primary-green; color: white; }
+  &.secondary { background: $secondary-blue; color: white; }
+  &.outline { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+}
+
+/* Contenedor Calendario */
+.calendar-card {
+  background: $bg-card;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: $shadow;
+}
+
+/* --- Personalización de FullCalendar --- */
+::ng-deep {
+  .fc {
+    --fc-border-color: #f1f5f9;
+    
+    /* Resaltado del día actual (HOY) */
+    .fc-day-today {
+      background-color: rgba(30, 168, 58, 0.05) !important; // Un verde muy sutil de fondo
+      
+      .fc-daygrid-day-number {
+        background-color: #1ea83a; // Círculo verde en el número
+        color: white;
+        border-radius: 50%;
+        padding: 4px 8px;
+        min-width: 25px;
+        text-align: center;
+      }
+    }
+
+    .fc-toolbar-title { font-weight: 800; color: #111827; }
+    
+    .fc-button-primary {
+      background-color: white !important;
+      border-color: #e2e8f0 !important;
+      color: #475569 !important;
+      font-weight: 600 !important;
+      &:hover { background-color: #f8fafc !important; }
+    }
+
+    .fc-button-active {
+      background-color: #1ea83a !important;
+      border-color: #1ea83a !important;
+      color: white !important;
+    }
+
+    /* --- PARTIDOS (Rojo/Coral - ¡Máxima atención!) --- */
+    .tipo-partido {
+      background-color: #fee2e2 !important;
+      border-left: 4px solid #ef4444 !important;
+      color: #991b1b !important;
+      .fc-daygrid-event-dot { border-color: #ef4444 !important; }
+    }
+
+    /* --- ENTRENAMIENTOS (Verde - Acción en el campo) --- */
+    .tipo-entrenamiento {
+      background-color: #dcfce7 !important;
+      border-left: 4px solid #10b981 !important;
+      color: #065f46 !important;
+      .fc-daygrid-event-dot { border-color: #10b981 !important; }
+    }
+
+    /* --- REUNIONES (Azul - Pizarra y táctica) --- */
+    .tipo-reunion {
+      background-color: #e0f2fe !important;
+      border-left: 4px solid #0ea5e9 !important;
+      color: #075985 !important;
+      .fc-daygrid-event-dot { border-color: #0ea5e9 !important; }
+    }
+
+    /* --- OTROS (Violeta/Gris - Eventos varios) --- */
+    .tipo-otro {
+      background-color: #f3e8ff !important;
+      border-left: 4px solid #a855f7 !important;
+      color: #6b21a8 !important;
+      .fc-daygrid-event-dot { border-color: #a855f7 !important; }
+    }
+
+    /* Estilo común para todos los eventos del calendario */
+    .fc-event {
+      border: none !important;
+      border-radius: 6px !important;
+      padding: 2px 5px !important;
+      font-weight: 700 !important;
+      margin-bottom: 2px !important;
+      
+      .fc-daygrid-event-dot {
+        border-width: 4px !important;
+        margin-right: 6px !important;
+      }
+    }  
   }
-  
-  .fc-event.entrenamiento {
-    background-color: #1e88e5;
-    border-color: #1e88e5;
-  }
-  
-  .fc-event.reunion {
-    background-color: #8e24aa;
-    border-color: #8e24aa;
-  }
-  
-  .fc-event.otro {
-    background-color: #43a047;
-    border-color: #43a047;
-  }
-  
+}
+
+.loading-state {
+  text-align: center;
+  padding: 60px;
+  color: $light-gray;
+}

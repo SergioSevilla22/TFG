@@ -1,0 +1,47 @@
+<div class="modal-header">
+  <h2 mat-dialog-title>{{ detalles?.titulo || (detalles?.rival ? 'Partido vs ' + detalles.rival : 'Detalles') }}</h2>
+  <span class="badge" [ngClass]="data.tipo" *ngIf="detalles">{{ data.tipo }}</span>
+</div>
+
+<mat-dialog-content class="content">
+  <div *ngIf="loading" class="loader">Cargando...</div>
+
+  <div *ngIf="!loading && detalles">
+    <div class="info-grid">
+       </div>
+
+    <div class="seccion-jugador" *ngIf="authService.hasRole('jugador')">
+      
+      <div class="msg-box info" *ngIf="!estaConvocado">
+        <p>No estás convocado para este {{ data.tipo }}.</p>
+      </div>
+
+      <div *ngIf="estaConvocado">
+        
+        <div class="status-confirmed" *ngIf="estadoActual && estadoActual !== 'pendiente'">
+          <p>Has respondido: <span class="badge-estado" [ngClass]="estadoActual">{{ estadoActual | uppercase }}</span></p>
+          <small>Ya no puedes modificar tu respuesta.</small>
+        </div>
+
+        <div class="acciones-pendientes" *ngIf="(estadoActual === 'pendiente' || !estadoActual) && !cerrada && !esPasado">
+          <h3>¿Confirmas tu asistencia?</h3>
+          <div class="botones-respuesta">
+            <button class="btn confirm" (click)="responder('confirmado')">Confirmar</button>
+            <button class="btn reject" (click)="responder('rechazado')">Rechazar</button>
+          </div>
+        </div>
+
+        <div class="msg-box warning" *ngIf="estadoActual === 'pendiente' && (cerrada || esPasado)">
+          <p>El plazo para responder ha finalizado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="resumen-entrenador" *ngIf="!authService.hasRole('jugador')">
+      </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close(false)">Cerrar</button>
+</mat-dialog-actions>
