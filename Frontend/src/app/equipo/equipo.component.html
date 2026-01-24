@@ -20,7 +20,7 @@
       <div class="texto">
         <h1>{{ equipo.nombre }}</h1>
         <p>{{ equipo.club.nombre }}</p>
-        <p>{{ equipo.categoria }} · {{ equipo.temporada }}</p>
+        <p>{{ equipo.categoria.nombre }} · {{ equipo.temporada.nombre }}</p>
       </div>
     </div>
 
@@ -281,48 +281,30 @@
 
         <div class="conv-actions" *ngIf="authService.hasRole('jugador')">
 
-          <!-- CONVOCATORIA CERRADA -->
-          <span
-            class="estado-badge cerrada"
-            *ngIf="convocatoriaCerrada(c)">
-            Convocatoria cerrada ·
-            <span class="estado-text">
-              {{
-                estadoJugador(c) === 'confirmado' ? 'Confirmado' :
-                estadoJugador(c) === 'rechazado' ? 'Rechazado' :
-                'Sin respuesta'
-              }}
-            </span>
+          <span class="estado-badge no-invitado" *ngIf="!estaInvitado(c)">
+             No convocado
           </span>
-        
-          <!-- CONVOCATORIA ABIERTA -->
-          <ng-container *ngIf="!convocatoriaCerrada(c)">
-        
-            <!-- Estado ya respondido -->
-            <span
-              class="estado-badge"
-              *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'"
-              [ngClass]="estadoJugador(c)">
-              {{ estadoJugador(c) }}
-            </span>
-        
-            <!-- Botones solo si está pendiente -->
-            <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
-              <span class="estado">
-                Estado: <b>pendiente</b>
+
+          <ng-container *ngIf="estaInvitado(c)">
+            <span class="estado-badge cerrada" *ngIf="convocatoriaCerrada(c)">
+              Convocatoria cerrada · 
+              <span class="estado-text">
+                {{ estadoJugador(c) === 'confirmado' ? 'Confirmado' : (estadoJugador(c) === 'rechazado' ? 'Rechazado' : 'Sin respuesta') }}
               </span>
-        
-              <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')">
-                ✅ Confirmar
-              </button>
-        
-              <button class="rechazar" (click)="responderConvocatoria(c, 'rechazado')">
-                ❌ Rechazar
-              </button>
+            </span>
+
+            <ng-container *ngIf="!convocatoriaCerrada(c)">
+              <span class="estado-badge" *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'" [ngClass]="estadoJugador(c)">
+                {{ estadoJugador(c) | uppercase }}
+              </span>
+
+              <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
+                <span class="estado">Estado: <b>pendiente</b></span>
+                <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')"> Confirmar</button>
+                <button class="rechazar" (click)="responderConvocatoria(c, 'rechazado')"> Rechazar</button>
+              </ng-container>
             </ng-container>
-        
           </ng-container>
-        
         </div>
 
         <div class="conv-actions" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')">
@@ -401,23 +383,21 @@
         ========================== -->
         <div class="evento-actions" *ngIf="e.requiere_confirmacion && authService.hasRole('jugador')">
 
-          <!-- Estado ya respondido -->
-          <span
-            class="estado-badge"
-            *ngIf="estadoJugadorEvento(e) && estadoJugadorEvento(e) !== 'pendiente'"
-            [ngClass]="estadoJugadorEvento(e)">
-            {{ estadoJugadorEvento(e) }}
+          <span class="estado-badge no-invitado" *ngIf="!estaInvitado(e)">
+             No requerido
           </span>
 
-          <!-- Botones solo si está pendiente -->
-          <ng-container *ngIf="!estadoJugadorEvento(e) || estadoJugadorEvento(e) === 'pendiente'">
-            <span class="estado">
-              Estado: <b>pendiente</b>
+          <ng-container *ngIf="estaInvitado(e)">
+            <span class="estado-badge" *ngIf="estadoJugadorEvento(e) && estadoJugadorEvento(e) !== 'pendiente'" [ngClass]="estadoJugadorEvento(e)">
+              {{ estadoJugadorEvento(e) | uppercase }}
             </span>
-            <button class="cambiar" (click)="responderEvento(e, 'confirmado')">✅ Confirmar</button>
-            <button class="rechazar" (click)="responderEvento(e, 'rechazado')">❌ Rechazar</button>
-          </ng-container>
 
+            <ng-container *ngIf="!estadoJugadorEvento(e) || estadoJugadorEvento(e) === 'pendiente'">
+              <span class="estado">Estado: <b>pendiente</b></span>
+              <button class="cambiar" (click)="responderEvento(e, 'confirmado')"> Confirmar</button>
+              <button class="rechazar" (click)="responderEvento(e, 'rechazado')"> Rechazar</button>
+            </ng-container>
+          </ng-container>
         </div>
 
         <!-- =========================

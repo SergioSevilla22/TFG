@@ -106,6 +106,13 @@ export class EquipoComponent implements OnInit {
     });
   }
 
+  estaInvitado(item: any): boolean {
+    const user = this.authService.getUser();
+    if (!user || !item.jugadores) return false;
+    
+    // Comprobamos si el DNI del usuario está en el array de jugadores del evento/convocatoria
+    return item.jugadores.some((j: any) => j.DNI === user.DNI);
+  }
   estadoJugador(c: any) {
     const u = this.authService.getUser();
     return c.jugadores?.find((j: any) => j.DNI === u?.DNI)?.estado;
