@@ -84,7 +84,8 @@ export class EquipoCalendarioComponent implements OnInit {
       width: '500px',
       data: { 
         id: idNumerico, 
-        tipo: esConvocatoria ? 'convocatoria' : 'evento' 
+        tipo: esConvocatoria ? 'convocatoria' : 'evento' ,
+        equipoId: this.equipoId
       }
     }).afterClosed().subscribe(refresh => {
       if (refresh) {

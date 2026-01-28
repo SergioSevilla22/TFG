@@ -23,7 +23,7 @@ export class DetallesEventoModalComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<DetallesEventoModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { id: number; tipo: 'convocatoria' | 'evento' },
+    @Inject(MAT_DIALOG_DATA) public data: { id: number; tipo: 'convocatoria' | 'evento'; equipoId: number;},
     private convocatoriaService: ConvocatoriaService,
     private eventoService: EventoService,
     public authService: AuthService
@@ -37,7 +37,7 @@ export class DetallesEventoModalComponent implements OnInit {
 
   cargarInformacion() {
     this.loading = true;
-    const equipoId = this.user?.equipo_id;
+    const equipoId = this.data.equipoId;
 
     const observer = {
       next: (list: any[]) => {
@@ -67,7 +67,9 @@ export class DetallesEventoModalComponent implements OnInit {
 
   verificarFechas() {
     if (!this.detalles) return;
+  
     const ahora = new Date();
+  
     if (this.data.tipo === 'convocatoria') {
       this.esPasado = new Date(this.detalles.fecha_partido) < ahora;
       this.cerrada = ahora > new Date(this.detalles.fecha_limite_confirmacion);

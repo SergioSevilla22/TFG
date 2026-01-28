@@ -4,7 +4,10 @@ import { transporter } from "../utils/mailer.js";
 
 
 export const registerUsuarioAdminPlataforma = (req, res) => {
-    const { DNI, nombre, email, telefono, Rol, club_id } = req.body;
+  console.log("🔥 registerUsuarioAdminPlataforma HIT");
+  console.log("ROL:", req.user.Rol);
+  console.log("BODY:", req.body);
+    const { DNI, nombre, email, telefono, Rol, club_id, anioNacimiento } = req.body;
   
     if (!DNI || !nombre || !email || !telefono || !Rol) {
       return res.status(400).json({ message: "Campos obligatorios" });
@@ -20,12 +23,23 @@ export const registerUsuarioAdminPlataforma = (req, res) => {
     const invitationExp = Date.now() + 1000 * 60 * 60 * 48;
   
     db.query(
-      `INSERT INTO usuarios 
-       (DNI, nombre, Rol, email, telefono, club_id, invitationToken, invitationExp)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [DNI, nombre, Rol, email, telefono, club_id || null, invitationToken, invitationExp],
+      `INSERT INTO usuarios
+(DNI, nombre, Rol, email, telefono, anio_nacimiento, club_id, invitationToken, invitationExp)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [DNI,
+        nombre,
+        Rol,
+        email,
+        telefono,
+        anioNacimiento,
+        club_id || null,
+        invitationToken,
+        invitationExp],
       async (err) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+          console.error("❌ ERROR INSERT USUARIO:", err);
+          return res.status(500).json({ error: err.message });
+        }
   
         const inviteUrl = `http://localhost:4200/accept-invitation?token=${invitationToken}`;
   

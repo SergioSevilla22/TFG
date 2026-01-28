@@ -4,42 +4,105 @@
 </div>
 
 <mat-dialog-content class="content">
-  <div *ngIf="loading" class="loader">Cargando...</div>
 
-  <div *ngIf="!loading && detalles">
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loader">Cargando detalles...</div>
+
+  <!-- CONTENIDO -->
+  <ng-container *ngIf="!loading && detalles">
+
+    <!-- ===================== -->
+    <!-- DETALLES DEL EVENTO -->
+    <!-- ===================== -->
     <div class="info-grid">
-       </div>
-
-    <div class="seccion-jugador" *ngIf="authService.hasRole('jugador')">
-      
-      <div class="msg-box info" *ngIf="!estaConvocado">
-        <p>No estás convocado para este {{ data.tipo }}.</p>
+      <div>
+        <label>Fecha</label>
+        <p>
+          {{ detalles.fecha_partido || detalles.fecha_inicio | date:'dd/MM/yyyy' }}
+        </p>
       </div>
 
-      <div *ngIf="estaConvocado">
-        
-        <div class="status-confirmed" *ngIf="estadoActual && estadoActual !== 'pendiente'">
-          <p>Has respondido: <span class="badge-estado" [ngClass]="estadoActual">{{ estadoActual | uppercase }}</span></p>
-          <small>Ya no puedes modificar tu respuesta.</small>
-        </div>
+      <div>
+        <label>Hora</label>
+        <p>
+          {{ detalles.hora || (detalles.hora_inicio || '-') }}
+        </p>
+      </div>
 
-        <div class="acciones-pendientes" *ngIf="(estadoActual === 'pendiente' || !estadoActual) && !cerrada && !esPasado">
-          <h3>¿Confirmas tu asistencia?</h3>
-          <div class="botones-respuesta">
-            <button class="btn confirm" (click)="responder('confirmado')">Confirmar</button>
-            <button class="btn reject" (click)="responder('rechazado')">Rechazar</button>
-          </div>
-        </div>
+      <div *ngIf="detalles.lugar">
+        <label>Lugar</label>
+        <p>{{ detalles.lugar }}</p>
+      </div>
 
-        <div class="msg-box warning" *ngIf="estadoActual === 'pendiente' && (cerrada || esPasado)">
-          <p>El plazo para responder ha finalizado.</p>
-        </div>
+      <div *ngIf="detalles.rival">
+        <label>Rival</label>
+        <p>{{ detalles.rival }}</p>
+      </div>
+
+      <div *ngIf="detalles.descripcion" style="grid-column: span 2;">
+        <label>Descripción</label>
+        <p>{{ detalles.descripcion }}</p>
       </div>
     </div>
 
-    <div class="resumen-entrenador" *ngIf="!authService.hasRole('jugador')">
+    <!-- ===================== -->
+    <!-- SECCIÓN JUGADOR -->
+    <!-- ===================== -->
+    <section *ngIf="authService.hasRole('jugador')">
+
+      <div class="msg-box info" *ngIf="!estaConvocado">
+        No estás convocado para este evento.
       </div>
-  </div>
+
+      <ng-container *ngIf="estaConvocado">
+
+        <!-- YA RESPONDIDO -->
+        <div class="status-confirmed" *ngIf="estadoActual && estadoActual !== 'pendiente'">
+          Has respondido:
+          <span class="badge-estado" [ngClass]="estadoActual">
+            {{ estadoActual | uppercase }}
+          </span>
+        </div>
+
+        <!-- PUEDE RESPONDER -->
+        <div
+          class="acciones-jugador"
+          *ngIf="(estadoActual === 'pendiente' || !estadoActual) && !cerrada && !esPasado">
+
+          <h3>¿Confirmas tu asistencia?</h3>
+
+          <div class="botones-respuesta">
+            <button class="btn confirm" (click)="responder('confirmado')">
+              Confirmar
+            </button>
+            <button class="btn reject" (click)="responder('rechazado')">
+              Rechazar
+            </button>
+          </div>
+        </div>
+
+        <!-- FUERA DE PLAZO -->
+        <div class="msg-box warning" *ngIf="cerrada || esPasado">
+          El plazo de respuesta ha finalizado.
+        </div>
+
+      </ng-container>
+    </section>
+
+    <!-- ===================== -->
+    <!-- RESUMEN ENTRENADOR / ADMIN -->
+    <!-- ===================== -->
+    <section *ngIf="!authService.hasRole('jugador')" class="resumen-asistencia">
+      <h3>Resumen de asistencia</h3>
+
+      <div class="pills">
+        <span class="pill confirmado">✔ {{ contar('confirmado') }}</span>
+        <span class="pill rechazado">✖ {{ contar('rechazado') }}</span>
+        <span class="pill pendiente">⏳ {{ contar('pendiente') }}</span>
+      </div>
+    </section>
+
+  </ng-container>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
