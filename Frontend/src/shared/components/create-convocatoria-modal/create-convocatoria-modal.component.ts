@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
+import { MatIconModule } from '@angular/material/icon';
 import { ConvocatoriaService } from '../../../services/convocatoria.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -18,6 +18,7 @@ import { AuthService } from '../../../services/auth.service';
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule
   ],
   templateUrl: './create-convocatoria-modal.component.html',

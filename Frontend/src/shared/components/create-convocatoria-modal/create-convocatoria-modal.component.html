@@ -1,58 +1,79 @@
-<h2 mat-dialog-title>Nueva convocatoria</h2>
+<div class="modal-header">
+  <h2 mat-dialog-title>Nueva Convocatoria</h2>
+  <p class="subtitle">Configura los detalles del partido y selecciona a los convocados.</p>
+</div>
 
-<div mat-dialog-content class="content">
+<div mat-dialog-content class="modal-content">
+  <div class="section-title">
+    <mat-icon>info</mat-icon>
+    <span>Información del Encuentro</span>
+  </div>
 
-  <div class="grid">
-    <div class="field">
-      <label>Rival (opcional)</label>
-      <input matInput type="text" [(ngModel)]="convocatoria.rival" placeholder="Ej: UD Example" />
+  <div class="form-grid">
+    <div class="field full-width">
+      <label>Rival</label>
+      <input type="text" [(ngModel)]="convocatoria.rival" placeholder="Ej: UD San Lorenzo" class="custom-input" />
+    </div>
+
+    <div class="field full-width">
+      <label>Lugar / Estadio</label>
+      <input type="text" [(ngModel)]="convocatoria.lugar" placeholder="Ciudad Deportiva, Campo 2" class="custom-input" />
     </div>
 
     <div class="field">
-      <label>Lugar (opcional)</label>
-      <input matInput type="text" [(ngModel)]="convocatoria.lugar" placeholder="Campo / pabellón / dirección" />
+      <label>Fecha del Partido</label>
+      <input type="date" [(ngModel)]="convocatoria.fecha_partido" class="custom-input" />
     </div>
 
     <div class="field">
-      <label>Fecha del partido *</label>
-      <input matInput type="date" [(ngModel)]="convocatoria.fecha_partido" />
+      <label>Hora Inicio</label>
+      <input type="time" [(ngModel)]="convocatoria.hora_inicio" class="custom-input" />
     </div>
 
     <div class="field">
-      <label>Hora inicio *</label>
-      <input matInput type="time" [(ngModel)]="convocatoria.hora_inicio" />
+      <label>Hora de Quedada</label>
+      <input type="time" [(ngModel)]="convocatoria.hora_quedada" class="custom-input" />
     </div>
 
     <div class="field">
-      <label>Hora de quedada *</label>
-      <input matInput type="time" [(ngModel)]="convocatoria.hora_quedada" />
-    </div>
-
-    <div class="field">
-      <label>Límite confirmación *</label>
-      <input matInput type="datetime-local" [(ngModel)]="convocatoria.fecha_limite_confirmacion" />
-      <small>El jugador no debería poder confirmar después de esta fecha.</small>
+      <label>Límite de Confirmación</label>
+      <input type="datetime-local" [(ngModel)]="convocatoria.fecha_limite_confirmacion" class="custom-input" />
     </div>
   </div>
 
-  <h3>Jugadores convocados *</h3>
-  <div class="lista">
-    <label class="jug" *ngFor="let j of jugadores">
-      <input type="checkbox" (change)="toggleJugador(j.DNI, $event)" />
-      <span>{{ j.nombre }} <span class="dni">({{ j.DNI }})</span></span>
-    </label>
+  <div class="section-title margin-top">
+    <mat-icon>groups</mat-icon>
+    <span>Jugadores Convocados</span>
   </div>
 
-  <div class="msg" *ngIf="errores.length">
-    <ul>
-      <li *ngFor="let e of errores">{{ e }}</li>
-    </ul>
+  <div class="player-selection-container">
+    <div class="player-list">
+      <label class="player-row" *ngFor="let j of jugadores">
+        <div class="player-info">
+          <input type="checkbox" (change)="toggleJugador(j.DNI, $event)" class="custom-checkbox" />
+          <div class="avatar-mini">
+            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" alt="Foto" class="avatar-img" />
+            <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
+          </div>
+          <span class="name">{{ j.nombre }}</span>
+          <span class="dni-tag">{{ j.DNI }}</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="error-container" *ngIf="errores.length">
+    <div class="error-item" *ngFor="let e of errores">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ e }}</span>
+    </div>
   </div>
 </div>
 
-<div mat-dialog-actions align="end">
-  <button mat-button (click)="cerrar(false)">Cancelar</button>
-  <button mat-flat-button color="primary" [disabled]="loading" (click)="publicar()">
-    {{ loading ? 'Publicando...' : 'Publicar' }}
+<div mat-dialog-actions align="end" class="modal-actions">
+  <button mat-button (click)="cerrar(false)" class="btn-cancel">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="publicar()" class="btn-publish">
+    <mat-icon *ngIf="!loading">send</mat-icon>
+    {{ loading ? 'Publicando...' : 'Publicar Convocatoria' }}
   </button>
 </div>

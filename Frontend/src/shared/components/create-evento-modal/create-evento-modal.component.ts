@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
 
 import { EventoService } from '../../../services/evento.service';
 import { AuthService } from '../../../services/auth.service';
@@ -16,6 +17,7 @@ import { AuthService } from '../../../services/auth.service';
     FormsModule,
     MatDialogModule,
     MatButtonModule,
+    MatIconModule,
     MatInputModule
   ],
   templateUrl: './create-evento-modal.component.html',
