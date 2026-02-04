@@ -15,9 +15,14 @@ export class EventoService {
     return this.http.get<any[]>(`${this.base}/equipo/${equipoId}`);
   }
 
-  responderEvento(id: number, body: any) {
+  responderEvento(id: number, body: {
+    jugador_dni: string;
+    estado: string;
+    motivo?: string;
+  }) {
     return this.http.post(`${this.base}/${id}/responder`, body);
   }
+  
 
   enviarRecordatorio(id: number) {
     return this.http.post(`${this.base}/${id}/recordatorio`, {});

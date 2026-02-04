@@ -235,7 +235,7 @@ export const obtenerConvocatoriasPorEquipo = async (req, res) => {
 ========================= */
 export const responderConvocatoria = async (req, res) => {
   const { id } = req.params;
-  const { jugador_dni, estado } = req.body;
+  const { jugador_dni, estado, motivo } = req.body;
 
   const [conv] = await query(
     "SELECT fecha_limite_confirmacion FROM convocatorias WHERE id = ?",
@@ -244,15 +244,25 @@ export const responderConvocatoria = async (req, res) => {
 
   if (!conv) return res.status(404).json({ message: "No existe" });
 
+  if (!['confirmado', 'rechazado'].includes(estado)) {
+    return res.status(400).json({ message: "Estado no válido" });
+  }
+  
+  if (estado === 'rechazado' && (!motivo || !motivo.trim())) {
+    return res.status(400).json({
+      message: "Debes indicar el motivo de la ausencia"
+    });
+  }
+
   if (new Date() > new Date(conv.fecha_limite_confirmacion)) {
     return res.status(403).json({ message: "Plazo cerrado" });
   }
 
   const r = await query(
     `UPDATE convocatoria_jugadores
-     SET estado = ?, responded_at = NOW()
+     SET estado = ?, motivo = ?, responded_at = NOW()
      WHERE convocatoria_id = ? AND jugador_dni = ?`,
-    [estado, id, jugador_dni]
+    [estado, estado === 'rechazado' ? motivo : null, id, jugador_dni]
   );
 
   if (!r.affectedRows) return res.status(403).json({ message: "No convocado" });

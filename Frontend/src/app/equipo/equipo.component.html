@@ -301,7 +301,7 @@
               <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
                 <span class="estado">Estado: <b>pendiente</b></span>
                 <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')"> Confirmar</button>
-                <button class="rechazar" (click)="responderConvocatoria(c, 'rechazado')"> Rechazar</button>
+                <button class="rechazar" (click)="abrirModalMotivoConvocatoria(c)"> Rechazar</button>
               </ng-container>
             </ng-container>
           </ng-container>
@@ -336,6 +336,9 @@
             <div class="conv-j" *ngFor="let j of c.jugadores">
               <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
               <span class="pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
+              <div *ngIf="j.motivo" style="font-size:0.8rem;color:#6b7280;">
+                Motivo: {{ j.motivo }}
+              </div>
             </div>
           </div>
         </details>
@@ -394,8 +397,20 @@
 
             <ng-container *ngIf="!estadoJugadorEvento(e) || estadoJugadorEvento(e) === 'pendiente'">
               <span class="estado">Estado: <b>pendiente</b></span>
-              <button class="cambiar" (click)="responderEvento(e, 'confirmado')"> Confirmar</button>
-              <button class="rechazar" (click)="responderEvento(e, 'rechazado')"> Rechazar</button>
+              <button class="cambiar" (click)="responderEvento(e, 'confirmado')">
+                Confirmar
+              </button>
+              
+              <button
+                *ngIf="e.tipo !== 'partido'"
+                class="cambiar"
+                (click)="abrirModalLlegadaTarde(e)">
+                Llegaré tarde
+              </button>
+              
+              <button class="rechazar" (click)="abrirModalMotivoEvento(e)">
+                Rechazar
+              </button>
             </ng-container>
           </ng-container>
         </div>
@@ -431,6 +446,10 @@
             <div class="conv-j" *ngFor="let j of e.jugadores">
               <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
               <span class="pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
+              <div *ngIf="j.motivo" class="motivo">
+                Motivo: {{ j.motivo }}
+              </div>
+              
             </div>
           </div>
         </details>

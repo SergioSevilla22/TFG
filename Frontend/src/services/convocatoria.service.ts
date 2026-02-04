@@ -15,9 +15,14 @@ export class ConvocatoriaService {
     return this.http.get<any[]>(`${this.base}/equipo/${equipoId}`);
   }
 
-  responderConvocatoria(id: number, body: any) {
+  responderConvocatoria(id: number, body: {
+    jugador_dni: string;
+    estado: string;
+    motivo?: string;
+  }) {
     return this.http.post(`${this.base}/${id}/responder`, body);
   }
+  
 
   enviarRecordatorio(id: number) {
     return this.http.post(`${this.base}/${id}/recordatorio`, {});

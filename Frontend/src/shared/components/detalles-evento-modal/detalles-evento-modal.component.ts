@@ -1,15 +1,19 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { ConvocatoriaService } from '../../../services/convocatoria.service';
 import { EventoService } from '../../../services/evento.service';
 import { AuthService } from '../../../services/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-detalles-evento-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [MatDialogContent, MatDialogActions,CommonModule,
+  FormsModule,
+  MatDialogModule,
+  MatButtonModule],
   templateUrl: './detalles-evento-modal.component.html',
   styleUrls: ['./detalles-evento-modal.component.scss']
 })
@@ -20,6 +24,8 @@ export class DetallesEventoModalComponent implements OnInit {
   esPasado = false;
   cerrada = false;
   estaConvocado = false; // Nueva propiedad
+  motivo = '';
+
 
   constructor(
     public dialogRef: MatDialogRef<DetallesEventoModalComponent>,
@@ -90,7 +96,15 @@ export class DetallesEventoModalComponent implements OnInit {
 
   responder(nuevoEstado: string) {
     this.loading = true;
-    const payload = { jugador_dni: this.user.DNI, estado: nuevoEstado };
+    const payload: any = {
+      jugador_dni: this.user.DNI,
+      estado: nuevoEstado
+    };
+    
+    if (this.motivo?.trim()) {
+      payload.motivo = this.motivo.trim();
+    }
+    
 
     const peticion = this.data.tipo === 'convocatoria' 
       ? this.convocatoriaService.responderConvocatoria(this.detalles.id, payload)

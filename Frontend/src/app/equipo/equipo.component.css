@@ -645,4 +645,12 @@
   border-radius: 8px;
 }
 
+.pill.confirmado_tarde {
+  background: #c5f8b5;
+  color: #070606;
+  border: 1px solid #c6f38b;
+  font-weight: 600;
+}
+
+
 
