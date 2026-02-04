@@ -78,6 +78,11 @@
             <button class="btn reject" (click)="responder('rechazado')">
               Rechazar
             </button>
+            <textarea
+  *ngIf="estadoActual === 'pendiente'"
+  [(ngModel)]="motivo"
+  placeholder="Indica el motivo"
+></textarea>
           </div>
         </div>
 

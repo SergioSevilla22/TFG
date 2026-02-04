@@ -233,66 +233,110 @@ export const obtenerEventosPorEquipo = async (req, res) => {
 /* =========================
    RESPONDER EVENTO
 ========================= */
+/* =========================
+   RESPONDER EVENTO
+========================= */
 export const responderEvento = async (req, res) => {
-  const { id } = req.params;
-  const { jugador_dni, estado } = req.body;
+  try {
+    const { id } = req.params;
+    const { jugador_dni, estado, motivo } = req.body;
 
-  if (!['confirmado', 'rechazado'].includes(estado)) {
-    return res.status(400).json({ message: "Estado no válido" });
+    // 1️⃣ Obtener evento
+    const [evento] = await query(
+      `SELECT fecha_inicio, tipo, requiere_confirmacion, fecha_limite_confirmacion
+       FROM eventos
+       WHERE id = ?`,
+      [id]
+    );
+
+    if (!evento) {
+      return res.status(404).json({ message: "Evento no encontrado" });
+    }
+
+    const ahora = new Date();
+
+    // 2️⃣ Evento pasado
+    if (new Date(evento.fecha_inicio) <= ahora) {
+      return res.status(403).json({
+        message: "El evento ya ha comenzado"
+      });
+    }
+
+    // 3️⃣ Límite de confirmación
+    if (
+      evento.requiere_confirmacion &&
+      evento.fecha_limite_confirmacion &&
+      new Date(evento.fecha_limite_confirmacion) < ahora
+    ) {
+      return res.status(403).json({
+        message: "Plazo de confirmación cerrado"
+      });
+    }
+
+    // 4️⃣ Estados permitidos según tipo
+    const estadosPermitidosPorTipo = {
+      entrenamiento: ['confirmado', 'confirmado_tarde', 'rechazado'],
+      reunion: ['confirmado', 'confirmado_tarde', 'rechazado'],
+      otro: ['confirmado', 'confirmado_tarde', 'rechazado'],
+      partido: ['confirmado', 'rechazado']
+    };
+
+    const estadosValidos =
+      estadosPermitidosPorTipo[evento.tipo] || ['confirmado', 'rechazado'];
+
+    if (!estadosValidos.includes(estado)) {
+      return res.status(400).json({
+        message: "Estado no permitido para este tipo de evento"
+      });
+    }
+
+    // 5️⃣ Motivo obligatorio cuando toca
+    if (
+      (estado === 'rechazado' || estado === 'confirmado_tarde') &&
+      (!motivo || !motivo.trim())
+    ) {
+      return res.status(400).json({
+        message: "Debes indicar un motivo"
+      });
+    }
+
+    // 6️⃣ Comprobar invitación
+    const [registro] = await query(
+      `SELECT estado
+       FROM evento_jugadores
+       WHERE evento_id = ? AND jugador_dni = ?`,
+      [id, jugador_dni]
+    );
+
+    if (!registro) {
+      return res.status(403).json({
+        message: "No estás invitado a este evento"
+      });
+    }
+
+    // 7️⃣ Evitar doble respuesta
+    if (registro.estado !== 'pendiente') {
+      return res.status(403).json({
+        message: "Ya has respondido a este evento"
+      });
+    }
+
+    // 8️⃣ Actualizar respuesta
+    await query(
+      `UPDATE evento_jugadores
+       SET estado = ?, motivo = ?, responded_at = NOW()
+       WHERE evento_id = ? AND jugador_dni = ?`,
+      [estado, motivo || null, id, jugador_dni]
+    );
+
+    res.json({ message: "Respuesta registrada correctamente" });
+
+  } catch (error) {
+    console.error("Error responderEvento:", error);
+    res.status(500).json({ error: error.message });
   }
-
-  // Obtener evento
-  const [evento] = await query(
-    `SELECT fecha_inicio, requiere_confirmacion, fecha_limite_confirmacion
-     FROM eventos WHERE id = ?`,
-    [id]
-  );
-
-  if (!evento) {
-    return res.status(404).json({ message: "Evento no encontrado" });
-  }
-
-  const ahora = new Date();
-
-  // Evento pasado
-  if (new Date(evento.fecha_inicio) <= ahora) {
-    return res.status(403).json({ message: "El evento ya ha comenzado" });
-  }
-
-  // Límite confirmación
-  if (
-    evento.requiere_confirmacion &&
-    evento.fecha_limite_confirmacion &&
-    new Date(evento.fecha_limite_confirmacion) < ahora
-  ) {
-    return res.status(403).json({ message: "Plazo de confirmación cerrado" });
-  }
-
-  // 🔴 COMPROBAR SI YA RESPONDIÓ
-  const [registro] = await query(
-    `SELECT estado FROM evento_jugadores
-     WHERE evento_id = ? AND jugador_dni = ?`,
-    [id, jugador_dni]
-  );
-
-  if (!registro) {
-    return res.status(403).json({ message: "No estás invitado a este evento" });
-  }
-
-  if (registro.estado !== 'pendiente') {
-    return res.status(403).json({ message: "Ya has respondido a este evento" });
-  }
-
-  // Actualizar
-  await query(
-    `UPDATE evento_jugadores
-     SET estado = ?, responded_at = NOW()
-     WHERE evento_id = ? AND jugador_dni = ?`,
-    [estado, id, jugador_dni]
-  );
-
-  res.json({ message: "Respuesta registrada" });
 };
+
 
 
 /* =========================

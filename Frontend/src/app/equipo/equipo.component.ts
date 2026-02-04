@@ -13,6 +13,9 @@ import { ConvocatoriaService } from '../../services/convocatoria.service';
 import { CreateConvocatoriaModalComponent } from '../../shared/components/create-convocatoria-modal/create-convocatoria-modal.component';
 import { EventoService } from '../../services/evento.service';
 import { CreateEventoModalComponent } from '../../shared/components/create-evento-modal/create-evento-modal.component';
+import { MotivoModalComponent } from
+  '../../shared/components/motivo-modal/motivo-modal.component';
+
 
 @Component({
   selector: 'app-equipo',
@@ -181,10 +184,20 @@ export class EquipoComponent implements OnInit {
 
 
 
-  contarPorEstadoEvento(evento: any, estado: 'confirmado' | 'rechazado' | 'pendiente'): number {
+  contarPorEstadoEvento(
+    evento: any,
+    estado: 'confirmado' | 'rechazado' | 'pendiente'
+  ): number {
     if (!evento?.jugadores) return 0;
-    return evento.jugadores.filter((j: any) => j.estado === estado).length;
+  
+    return evento.jugadores.filter((j: any) => {
+      if (estado === 'confirmado') {
+        return j.estado === 'confirmado' || j.estado === 'confirmado_tarde';
+      }
+      return j.estado === estado;
+    }).length;
   }
+  
 
   eliminarEvento(e: any) {
     if (!confirm(`¿Estás seguro de eliminar el evento "${e.titulo}"? Esta acción no se puede deshacer.`)) {
@@ -341,14 +354,75 @@ export class EquipoComponent implements OnInit {
     switch (estado) {
       case 'confirmado':
         return 'Confirmado';
+      case 'confirmado_tarde':
+        return 'Confirmado (llega tarde)';
       case 'rechazado':
         return 'Rechazado';
-      case 'sin_respuesta':
-        return 'Sin respuesta';
       case 'pendiente':
       default:
         return 'Pendiente';
     }
   }
+  
+  
+
+  abrirModalMotivoConvocatoria(c: any) {
+    const ref = this.dialog.open(MotivoModalComponent, {
+      width: '400px',
+      data: {
+        titulo: 'Motivo de la ausencia'
+      }
+    });
+  
+    ref.afterClosed().subscribe(motivo => {
+      if (!motivo) return;
+  
+      this.convocatoriaService.responderConvocatoria(c.id, {
+        jugador_dni: this.authService.getUser().DNI,
+        estado: 'rechazado',
+        motivo
+      }).subscribe(() => this.cargarConvocatorias());
+    });
+  }
+
+  abrirModalLlegadaTarde(e: any) {
+    const ref = this.dialog.open(MotivoModalComponent, {
+      width: '400px',
+      data: {
+        titulo: 'Indica el motivo del retraso'
+      }
+    });
+  
+    ref.afterClosed().subscribe(motivo => {
+      if (!motivo) return;
+  
+      this.eventoService.responderEvento(e.id, {
+        jugador_dni: this.authService.getUser().DNI,
+        estado: 'confirmado_tarde',
+        motivo
+      }).subscribe(() => this.cargarEventos());
+    });
+  }
+
+  abrirModalMotivoEvento(e: any) {
+    const ref = this.dialog.open(MotivoModalComponent, {
+      width: '400px',
+      data: {
+        titulo: 'Motivo de la ausencia'
+      }
+    });
+  
+    ref.afterClosed().subscribe(motivo => {
+      if (!motivo) return;
+  
+      this.eventoService.responderEvento(e.id, {
+        jugador_dni: this.authService.getUser().DNI,
+        estado: 'rechazado',
+        motivo
+      }).subscribe(() => this.cargarEventos());
+    });
+  }
+  
+  
   
 }
