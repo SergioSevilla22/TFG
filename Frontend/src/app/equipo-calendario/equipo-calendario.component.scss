@@ -6,10 +6,11 @@ $light-gray: #6b7280;
 $bg-card: #ffffff;
 $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 
-.equipo-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
+.equipo-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 65px); // altura real bajo el header
+  background: #f4f6f8;
 }
 
 /* Cabecera */
@@ -151,4 +152,9 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   text-align: center;
   padding: 60px;
   color: $light-gray;
+}
+
+.equipo-content {
+  padding: 40px;
+  overflow-y: auto;
 }

@@ -1,0 +1,137 @@
+.mini-calendario {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .mini-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 800;
+  }
+  
+  .mini-header button {
+    background: transparent;
+    border: none;
+    color: #1ea83a;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  .dias-semana,
+  .dias-mes {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  
+  .dias-semana span {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #6b7280;
+  }
+  
+  .dia {
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 8px 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  
+  .dia.hoy {
+    background: #1ea83a;
+    color: white;
+  }
+  
+  .dia.con-evento {
+    border-bottom: 3px solid #1ea83a;
+  }
+
+  .dia {
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 8px 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    position: relative;
+  }
+  
+  /* HOY */
+  .dia.hoy {
+    background: #1ea83a;
+    color: white;
+  }
+  
+  /* Opcional: punto indicador */
+  .dia.evento::after, 
+  .dia.convocatoria::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  
+  .dia.evento::after {
+    background: #ff1c27;
+  }
+  
+  .dia.convocatoria::after {
+    background: #2563eb;
+  }
+  
+  .dia.ambos::after {
+    background: #7c3aed;
+  }
+
+  /* =========================
+   LEYENDA MINI CALENDARIO
+========================= */
+.mini-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 0.75rem;
+    color: #374151;
+  }
+  
+  .mini-leyenda .item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .mini-leyenda .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  
+  /* COLORES */
+  .dot.evento {
+    background: #ff1c27;
+  }
+  
+  .dot.convocatoria {
+    background: #2563eb;
+  }
+  
+  .dot.ambos {
+    background: #7c3aed;
+  }
+  
+  .dot.hoy {
+    background: #1ea83a;
+    box-shadow: 0 0 0 2px rgba(30,168,58,0.3);
+  }
+  
+  
+  

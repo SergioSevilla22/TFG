@@ -15,12 +15,23 @@ import { EventoService } from '../../services/evento.service';
 import { CreateEventoModalComponent } from '../../shared/components/create-evento-modal/create-evento-modal.component';
 import { MotivoModalComponent } from
   '../../shared/components/motivo-modal/motivo-modal.component';
+import { SidebarEquipoComponent } from "../sidebar-equipo/sidebar-equipo.component";
+import { MiniCalendarioComponent } from "../mini-calendario/mini-calendario.component";
+
+interface Jugador {
+  DNI: string;
+  nombre: string;
+  foto?: string | null;
+  telefono?: string;
+  email?: string;
+}
+
 
 
 @Component({
   selector: 'app-equipo',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, RouterModule, HeaderComponent, SidebarEquipoComponent, MiniCalendarioComponent],
   templateUrl: './equipo.component.html',
   styleUrls: ['./equipo.component.css']
 })
@@ -40,6 +51,9 @@ export class EquipoComponent implements OnInit {
 
   jugadoresDisponibles: any[] = [];
   entrenadoresDisponibles: any[] = [];
+
+  diasSemana = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -422,7 +436,48 @@ export class EquipoComponent implements OnInit {
       }).subscribe(() => this.cargarEventos());
     });
   }
+
+  hayPendientes(): boolean {
+    const u = this.authService.getUser();
   
+    return (
+      this.convocatorias.some(c =>
+        c.jugadores?.some((j: any) => j.DNI === u?.DNI && j.estado === 'pendiente')
+      ) ||
+      this.eventos.some(e =>
+        e.jugadores?.some((j: any) => j.DNI === u?.DNI && j.estado === 'pendiente')
+      )
+    );
+  }
   
+  contarConfirmados(): number {
+    return this.convocatorias.reduce(
+      (acc, c) => acc + this.contarPorEstado(c, 'confirmado'),
+      0
+    );
+  }
   
+  contarPendientes(): number {
+    return this.convocatorias.reduce(
+      (acc, c) => acc + this.contarPorEstado(c, 'pendiente'),
+      0
+    );
+  }
+  
+  contarRechazados(): number {
+    return this.convocatorias.reduce(
+      (acc, c) => acc + this.contarPorEstado(c, 'rechazado'),
+      0
+    );
+  }
+
+  get jugadoresPreview(): Jugador[] {
+    if (!this.equipo?.jugadores) return [];
+    return this.equipo.jugadores.slice(0, 8);
+  }
+  
+  get jugadoresExtra(): number {
+    if (!this.equipo?.jugadores) return 0;
+    return Math.max(this.equipo.jugadores.length - 8, 0);
+  }
 }

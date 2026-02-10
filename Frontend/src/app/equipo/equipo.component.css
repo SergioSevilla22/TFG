@@ -1,3 +1,9 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+
 /* =========================
    CONTENEDOR GENERAL
 ========================= */
@@ -651,6 +657,169 @@
   border: 1px solid #c6f38b;
   font-weight: 600;
 }
+
+/* =========================
+   LAYOUT GENERAL
+========================= */
+.equipo-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 65px); /* header */
+  background: #f4f6f8;
+}
+
+/* =========================
+   CONTENIDO
+========================= */
+.equipo-content {
+  padding: 32px;
+}
+
+/* =========================
+   RESUMEN
+========================= */
+.resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  margin-bottom: 40px;
+}
+
+.resumen-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.resumen-card.destacado {
+  border-left: 6px solid #1ea83a;
+}
+
+.resumen-card h3 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.titulo {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.meta {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.btn-ver {
+  margin-top: 12px;
+  background: #1ea83a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-ver:hover {
+  background: #16852d;
+}
+
+.estado-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.calendario-mini {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendario-mini .dia {
+  background: #f3f4f6;
+  border-radius: 8px;
+  text-align: center;
+  padding: 10px 0;
+  font-weight: 700;
+}
+
+.alerta {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.resumen-card.clickable {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.resumen-card.clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.1);
+}
+
+.resumen-card .cta {
+  margin-top: 12px;
+  display: inline-block;
+  font-weight: 700;
+  color: #1ea83a;
+}
+
+/* =========================
+   PREVIEW PLANTILLA
+========================= */
+.plantilla-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: white;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar.extra {
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 0.8rem;
+}
+
+.resumen-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.plantilla-content {
+  flex: 1;
+  align-items: center;
+}
+
+
+
+
+
 
 
 

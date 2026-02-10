@@ -1,0 +1,114 @@
+<app-header></app-header>
+
+<div class="equipo-layout" *ngIf="!sinEquipo">
+
+  <app-sidebar-equipo
+    [equipo]="equipo"
+    [equipoId]="equipoId"
+    activo="eventos">
+  </app-sidebar-equipo>
+
+  <main class="equipo-content">
+
+    <div class="panel-card">
+
+      <!-- CABECERA -->
+      <div class="panel-header">
+        <h2>Eventos</h2>
+
+        <button
+          class="cambiar"
+          *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')"
+          (click)="abrirModalCrearEvento()">
+          + Nuevo evento
+        </button>
+      </div>
+
+      <p *ngIf="loadingEventos">Cargando eventos...</p>
+      <p *ngIf="!loadingEventos && eventos.length === 0" class="empty">
+        No hay eventos todavía.
+      </p>
+
+      <!-- LISTA -->
+      <div class="lista-eventos" *ngIf="!loadingEventos && eventos.length > 0">
+
+        <div class="evento"
+             *ngFor="let e of eventos"
+             [class.evento-pasado]="esEventoPasado(e)">
+
+          <div class="evento-title">
+            {{ e.titulo }}
+          </div>
+
+          <div class="evento-meta">
+            <span *ngIf="e.descripcion">Descripción: {{ e.descripcion }}</span>
+            <span>Inicio: {{ e.fecha_inicio | date:'short' }}</span>
+            <span>Fin: {{ e.fecha_fin | date:'short' }}</span>
+            <span>Tipo: {{ e.tipo | titlecase }}</span>
+          </div>
+
+          <!-- JUGADOR -->
+          <div class="evento-actions"
+               *ngIf="e.requiere_confirmacion && authService.hasRole('jugador')">
+
+            <span class="estado-badge no-invitado" *ngIf="!estaInvitado(e)">
+              No requerido
+            </span>
+
+            <ng-container *ngIf="estaInvitado(e)">
+              <span class="estado-badge"
+                    *ngIf="estadoJugadorEvento(e) && estadoJugadorEvento(e) !== 'pendiente'"
+                    [ngClass]="estadoJugadorEvento(e)">
+                {{ estadoJugadorEvento(e) | uppercase }}
+              </span>
+
+              <ng-container *ngIf="!estadoJugadorEvento(e) || estadoJugadorEvento(e) === 'pendiente'">
+                <button class="cambiar" (click)="responderEvento(e, 'confirmado')">
+                  Confirmar
+                </button>
+
+                <button class="cambiar"
+                        *ngIf="e.tipo !== 'partido'"
+                        (click)="abrirModalLlegadaTarde(e)">
+                  Llegaré tarde
+                </button>
+
+                <button class="rechazar" (click)="abrirModalMotivoEvento(e)">
+                  Rechazar
+                </button>
+              </ng-container>
+            </ng-container>
+          </div>
+
+          <!-- ADMIN / ENTRENADOR -->
+          <div class="evento-actions"
+               *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')">
+
+            <span class="estado" *ngIf="e.requiere_confirmacion">
+              ✅ {{ contarPorEstadoEvento(e, 'confirmado') }}
+              · ❌ {{ contarPorEstadoEvento(e, 'rechazado') }}
+              · ⏳ {{ contarPorEstadoEvento(e, 'pendiente') }}
+            </span>
+
+            <button class="cambiar"
+                    *ngIf="!esEventoPasado(e)"
+                    (click)="enviarRecordatorioEvento(e)">
+              🔔 Recordatorio
+            </button>
+
+            <button class="delete" (click)="eliminarEvento(e)">
+              🗑 Eliminar
+            </button>
+
+            <span class="estado-badge cerrada" *ngIf="esEventoPasado(e)">
+              Evento finalizado
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>

@@ -15,6 +15,10 @@ import { EquiposClubComponent } from './equipos-club/equipos-club.component';
 import { ClubComponent } from './club/club.component';
 import { EquipoComponent } from './equipo/equipo.component';
 import { ClubsComponent } from './clubs/clubs.component';
+import { EquipoConvocatoriasComponent } from './equipo-convocatorias/equipo-convocatorias.component';
+import { EquipoEventosComponent } from './equipo-eventos/equipo-eventos.component';
+import { PlantillaComponent } from './plantilla/plantilla.component';
+
 
 
 export const routes: Routes = [
@@ -38,7 +42,21 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./equipo-calendario/equipo-calendario.component')
         .then(m => m.EquipoCalendarioComponent)
+  },
+  {
+    path: 'equipo/:id/convocatorias',
+    component: EquipoConvocatoriasComponent
+  },
+  {
+    path: 'equipo/:id/eventos',
+    component: EquipoEventosComponent
+  },
+  {
+    path: 'equipo/:id/plantilla',
+    component: PlantillaComponent
   }
+  
+  
 
 
 ];

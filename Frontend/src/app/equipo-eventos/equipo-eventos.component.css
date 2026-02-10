@@ -1,0 +1,155 @@
+:host {
+    display: block;
+    height: 100%;
+  }
+  
+  /* LAYOUT */
+  .equipo-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 65px);
+    background: #f4f6f8;
+  }
+  
+  .equipo-content {
+    padding: 32px;
+  }
+  
+  /* PANEL */
+  .panel-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+  }
+  
+  /* LISTA */
+  .lista-eventos {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  
+  .evento {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+    padding: 22px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .evento:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.08);
+  }
+  
+  .evento-pasado {
+    opacity: 0.6;
+  }
+  
+  /* TEXTO */
+  .evento-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  
+  .evento-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 14px;
+  }
+  
+  .evento-meta span {
+    background: #f3f4f6;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+  
+  /* ACCIONES */
+  .evento-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  /* BOTONES */
+  .cambiar {
+    background: #1ea83a;
+    padding: 6px 14px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .cambiar:hover {
+    background: #16852d;
+  }
+  
+  .rechazar {
+    background: #ef4444;
+    padding: 6px 14px;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .delete {
+    background: #ef4444;
+    padding: 6px 10px;
+    border-radius: 8px;
+    color: white;
+    border: none;
+  }
+  
+  /* BADGES */
+  .estado-badge {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+  
+  .estado-badge.confirmado {
+    background: #dcfce7;
+    color: #166534;
+  }
+  
+  .estado-badge.rechazado {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  
+  .estado-badge.cerrada {
+    background: #e5e7eb;
+    color: #374151;
+  }
+  
+  .estado-badge.no-invitado {
+    background: #f3f4f6;
+    color: #d62811;
+    border: 1px dashed #d1d5db;
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .equipo-layout {
+      grid-template-columns: 1fr;
+    }
+  
+    .evento-actions {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  

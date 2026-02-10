@@ -19,11 +19,12 @@ import { CreateEventoModalComponent } from '../../shared/components/create-event
 import { EquipoService } from '../../services/equipos.service';
 import { AuthService } from '../../services/auth.service';
 import { DetallesEventoModalComponent } from '../../shared/components/detalles-evento-modal/detalles-evento-modal.component';
+import { SidebarEquipoComponent } from "../sidebar-equipo/sidebar-equipo.component";
 
 @Component({
   selector: 'app-equipo-calendario',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FullCalendarModule],
+  imports: [CommonModule, HeaderComponent, FullCalendarModule, SidebarEquipoComponent],
   templateUrl: './equipo-calendario.component.html',
   styleUrls: ['./equipo-calendario.component.scss']
 })
