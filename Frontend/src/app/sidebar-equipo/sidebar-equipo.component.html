@@ -1,0 +1,54 @@
+<aside class="sidebar" *ngIf="equipo">
+
+    <!-- HEADER -->
+    <div class="sidebar-header">
+      <img
+        *ngIf="equipo.club?.escudo"
+        [src]="'http://localhost:3000' + equipo.club.escudo"
+        class="sidebar-escudo"
+      />
+  
+      <h2>{{ equipo.nombre }}</h2>
+      <p>{{ equipo.categoria?.nombre }} · {{ equipo.temporada?.nombre }}</p>
+    </div>
+  
+    <!-- NAV -->
+    <nav class="sidebar-nav">
+      <button
+        class="nav-item"
+        [class.active]="activo === 'resumen'"
+        (click)="navegar('')">
+        📊 Resumen
+      </button>
+  
+      <button
+        class="nav-item"
+        [class.active]="activo === 'plantilla'"
+        (click)="navegar('plantilla')">
+        👥 Plantilla
+      </button>
+  
+      <button
+        class="nav-item"
+        [class.active]="activo === 'calendario'"
+        (click)="navegar('calendario')">
+        📆 Calendario
+      </button>
+  
+      <button
+        class="nav-item"
+        [class.active]="activo === 'eventos'"
+        (click)="navegar('eventos')">
+        📅 Eventos
+      </button>
+  
+      <button
+        class="nav-item"
+        [class.active]="activo === 'convocatorias'"
+        (click)="navegar('convocatorias')">
+        📣 Convocatorias
+      </button>
+    </nav>
+  
+  </aside>
+  

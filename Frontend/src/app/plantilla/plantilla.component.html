@@ -1,0 +1,22 @@
+<app-header></app-header>
+
+<div class="equipo-layout">
+
+  <app-sidebar-equipo
+    [equipo]="equipo"
+    [equipoId]="equipoId"
+    activo="plantilla">
+  </app-sidebar-equipo>
+
+  <main class="equipo-content">
+
+    <h1>Plantilla</h1>
+
+    <h2>Entrenadores</h2>
+    <p *ngIf="!equipo?.entrenadores?.length">No hay entrenadores</p>
+
+    <h2>Jugadores</h2>
+    <p *ngIf="!equipo?.jugadores?.length">No hay jugadores</p>
+
+  </main>
+</div>

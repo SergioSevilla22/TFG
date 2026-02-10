@@ -1,46 +1,61 @@
 <app-header></app-header>
 
-<div class="equipo-wrapper">
-  <header class="page-header">
-    <div class="header-info">
-      <h1>📅 Calendario del equipo</h1>
-      <p class="subtitle" *ngIf="equipo">{{ equipo.nombre }} · Gestión de temporada</p>
-    </div>
+<div class="equipo-layout">
 
-    <div class="header-actions">
-      <button 
-        class="btn-action primary" 
-        *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
-        [disabled]="!equipo"
-        (click)="abrirModalCrearConvocatoria()">
-        + Convocatoria
-      </button>
+  <!-- SIDEBAR REUTILIZABLE -->
+  <app-sidebar-equipo
+    [equipo]="equipo"
+    [equipoId]="equipoId"
+    activo="calendario">
+  </app-sidebar-equipo>
 
-      <button 
-        class="btn-action primary" 
-        *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
-        [disabled]="!equipo"
-        (click)="abrirModalCrearEvento()">
-        + Evento
-      </button>
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="equipo-content">
 
-      <button class="btn-action outline" (click)="descargarICal()">
-        🔗 Exportar iCal
-      </button>
-    </div>
-  </header>
+    <header class="page-header">
+      <div class="header-info">
+        <h1>📅 Calendario del equipo</h1>
+        <p class="subtitle" *ngIf="equipo">
+          {{ equipo.nombre }} · Gestión de temporada
+        </p>
+      </div>
 
-  <main class="calendar-card">
-    <div *ngIf="loading" class="loading-state">
-      <div class="spinner"></div>
-      <p>Sincronizando calendario...</p>
-    </div>
+      <div class="header-actions">
+        <button 
+          class="btn-action primary" 
+          *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
+          [disabled]="!equipo"
+          (click)="abrirModalCrearConvocatoria()">
+          + Convocatoria
+        </button>
 
-    <ng-container *ngIf="isBrowser">
-      <full-calendar
-        *ngIf="!loading"
-        [options]="calendarOptions">
-      </full-calendar>
-    </ng-container>
+        <button 
+          class="btn-action primary" 
+          *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
+          [disabled]="!equipo"
+          (click)="abrirModalCrearEvento()">
+          + Evento
+        </button>
+
+        <button class="btn-action outline" (click)="descargarICal()">
+          🔗 Exportar iCal
+        </button>
+      </div>
+    </header>
+
+    <section class="calendar-card">
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Sincronizando calendario...</p>
+      </div>
+
+      <ng-container *ngIf="isBrowser">
+        <full-calendar
+          *ngIf="!loading"
+          [options]="calendarOptions">
+        </full-calendar>
+      </ng-container>
+    </section>
+
   </main>
 </div>
