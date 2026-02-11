@@ -474,7 +474,7 @@ export class EquipoComponent implements OnInit {
 
   get jugadoresPreview(): Jugador[] {
     if (!this.equipo?.jugadores) return [];
-    return this.equipo.jugadores.slice(0, 8);
+    return this.equipo.jugadores.slice(0, 10);
   }
   
   get jugadoresExtra(): number {

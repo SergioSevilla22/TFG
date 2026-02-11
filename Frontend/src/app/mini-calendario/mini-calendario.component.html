@@ -11,37 +11,51 @@
   
     <div class="dias-mes">
       <span
-        *ngFor="let dia of dias"
-        class="dia"
-        [class.hoy]="dia.esHoy"
-        [class.evento]="dia.hayEvento"
-        [class.convocatoria]="dia.hayConvocatoria"
-        [class.ambos]="dia.hayEvento && dia.hayConvocatoria">
-        {{ dia.numero }}
-      </span>
+  *ngFor="let dia of dias"
+  class="dia"
+  [class.hoy]="dia.esHoy"
+  [class.partido]="dia.tipo === 'partido'"
+  [class.entrenamiento]="dia.tipo === 'entrenamiento'"
+  [class.reunion]="dia.tipo === 'reunion'"
+  [class.otro]="dia.tipo === 'otro'"
+  [class.clickable]="dia.tieneEvento"
+  (click)="abrirDetalleDia($event, dia)"
+>
+  {{ dia.numero }}
+</span>
+
+    
     </div>
 
     <div class="mini-leyenda">
-        <div class="item">
-          <span class="dot evento"></span>
-          <span>Evento</span>
-        </div>
-      
-        <div class="item">
-          <span class="dot convocatoria"></span>
-          <span>Convocatoria</span>
-        </div>
-      
-        <div class="item">
-          <span class="dot ambos"></span>
-          <span>Ambos</span>
-        </div>
-      
-        <div class="item">
-          <span class="dot hoy"></span>
-          <span>Hoy</span>
-        </div>
+
+      <div class="item">
+        <span class="dot partido"></span>
+        <span>Partido</span>
       </div>
+    
+      <div class="item">
+        <span class="dot entrenamiento"></span>
+        <span>Entrenamiento</span>
+      </div>
+    
+      <div class="item">
+        <span class="dot reunion"></span>
+        <span>Reunión</span>
+      </div>
+    
+      <div class="item">
+        <span class="dot otro"></span>
+        <span>Otro</span>
+      </div>
+    
+      <div class="item">
+        <span class="dot hoy"></span>
+        <span>Hoy</span>
+      </div>
+    
+    </div>
+    
       
   
   </div>

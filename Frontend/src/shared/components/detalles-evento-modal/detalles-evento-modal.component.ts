@@ -25,6 +25,8 @@ export class DetallesEventoModalComponent implements OnInit {
   cerrada = false;
   estaConvocado = false; // Nueva propiedad
   motivo = '';
+  tipoBadge!: string;
+
 
 
   constructor(
@@ -48,10 +50,31 @@ export class DetallesEventoModalComponent implements OnInit {
     const observer = {
       next: (list: any[]) => {
         this.detalles = list.find((item: any) => item.id === this.data.id);
-        this.verificarEstadoUsuario(); // Verificamos si está en la lista
+        if (this.data.tipo === 'convocatoria') {
+          this.tipoBadge = 'partido';
+        } else {
+          // Evento normal
+          switch (this.detalles?.tipo) {
+            case 'partido':
+              this.tipoBadge = 'partido';
+              break;
+            case 'entrenamiento':
+              this.tipoBadge = 'entrenamiento';
+              break;
+            case 'reunion':
+              this.tipoBadge = 'reunion';
+              break;
+            default:
+              this.tipoBadge = 'otro';
+          }
+        }
+        
+      
+        this.verificarEstadoUsuario();
         this.verificarFechas();
         this.loading = false;
       },
+      
       error: () => this.loading = false
     };
 

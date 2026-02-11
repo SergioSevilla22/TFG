@@ -8,15 +8,90 @@
     activo="plantilla">
   </app-sidebar-equipo>
 
-  <main class="equipo-content">
+  <main class="plantilla-content" *ngIf="!loading && equipo">
 
-    <h1>Plantilla</h1>
+    <!-- =========================
+         ENTRENADORES
+    ========================== -->
+    <section class="bloque">
+      <div class="bloque-header">
+        <h1>Entrenadores: {{ equipo.entrenadores.length }}</h1>
 
-    <h2>Entrenadores</h2>
-    <p *ngIf="!equipo?.entrenadores?.length">No hay entrenadores</p>
+        <button
+          *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
+          class="btn-add"
+          (click)="abrirModalEntrenadorEquipo()">
+          + Añadir entrenador
+        </button>
+      </div>
 
-    <h2>Jugadores</h2>
-    <p *ngIf="!equipo?.jugadores?.length">No hay jugadores</p>
+      <div class="grid-personas entrenadores">
+        <div class="card-persona" *ngFor="let e of equipo.entrenadores">
+
+          <div class="foto">
+            <img *ngIf="e.foto" [src]="'http://localhost:3000' + e.foto" />
+            <span *ngIf="!e.foto">{{ e.nombre[0] }}</span>
+          </div>
+
+          <h3>{{ e.nombre }}</h3>
+
+          <button
+            *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
+            class="btn-delete"
+            (click)="eliminarEntrenador(e.DNI)">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         JUGADORES
+    ========================== -->
+    <section class="bloque">
+      <div class="bloque-header">
+        <h1>Jugadores: {{ equipo.jugadores.length }}</h1>
+
+        <button
+          *ngIf="authService.hasRole('admin_plataforma') || 
+                 authService.hasRole('admin_club') || 
+                 authService.hasRole('entrenador')"
+          class="btn-add"
+          (click)="abrirModalAddJugadores()">
+          + Añadir jugador
+        </button>
+      </div>
+
+      <div class="grid-personas jugadores">
+
+        <div class="card-persona"
+             *ngFor="let j of equipo.jugadores"
+             draggable="true"
+             (dragstart)="dragJugador($event, j.DNI)"
+             (drop)="onDropJugador($event)"
+             (dragover)="allowDrop($event)">
+
+          <div class="foto grande">
+            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
+            <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
+          </div>
+
+          <h3>{{ j.nombre }}</h3>
+          
+
+          <button
+            *ngIf="authService.hasRole('admin_plataforma') || 
+                   authService.hasRole('admin_club') || 
+                   authService.hasRole('entrenador')"
+            class="btn-delete"
+            (click)="eliminarJugador(j.DNI)">
+            Eliminar
+          </button>
+        </div>
+
+      </div>
+    </section>
 
   </main>
+
 </div>

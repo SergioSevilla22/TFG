@@ -78,69 +78,6 @@
       </div>
     </section>
 
-    <div class="equipo-wrapper" *ngIf="!loading && equipo; else loadingTpl">
-      <div class="equipo-header">
-        <div class="left">
-          <img *ngIf="equipo.club.escudo" [src]="'http://localhost:3000' + equipo.club.escudo" class="escudo" />
-          <div class="texto">
-            <h1>{{ equipo.nombre }}</h1>
-            <p>{{ equipo.club.nombre }}</p>
-            <p>{{ equipo.categoria.nombre }} · {{ equipo.temporada.nombre }}</p>
-          </div>
-        </div>
-        <button class="volver" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')" (click)="volverAlClub()">
-          ← Volver al club
-        </button>
-      </div>
-
-      <div class="grid-panel">
-        <div class="panel-card">
-          <h3>Entrenadores ({{ equipo.entrenadores?.length || 0 }})</h3>
-          <div *ngIf="equipo.entrenadores?.length; else noCoaches">
-            <div class="jug-item" *ngFor="let e of equipo.entrenadores">
-              <span class="round">
-                <img *ngIf="e.foto" [src]="'http://localhost:3000' + e.foto" />
-                <span *ngIf="!e.foto">{{ e.nombre[0] | uppercase }}</span>
-              </span>
-              <div>
-                <h4>{{ e.nombre }}</h4>
-                <p class="meta">
-                  <span class="meta-item">DNI: {{ e.DNI }}</span>
-                  <span class="meta-item" *ngIf="e.telefono">Tel: {{ e.telefono }}</span>
-                </p>
-              </div>
-              <button class="delete" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')" (click)="eliminarEntrenador(e.DNI)">✕</button>
-            </div>
-          </div>
-          <ng-template #noCoaches><p class="empty">No hay entrenadores</p></ng-template>
-          <button class="cambiar" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')" (click)="abrirModalEntrenadorEquipo()">Añadir entrenador</button>
-        </div>
-
-        <div class="panel-card jugadores-card">
-          <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
-          <div class="jug-list" *ngIf="equipo.jugadores.length; else noPlayers">
-            <div class="jug-item" *ngFor="let j of equipo.jugadores">
-              <span class="round">
-                <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
-                <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
-              </span>
-              <div>
-                <h4>{{ j.nombre }}</h4>
-                <p class="meta">
-                  <span class="meta-item">DNI: {{ j.DNI }}</span>
-                  <span class="meta-item" *ngIf="j.telefono">Tel: {{ j.telefono }}</span>
-                  <span class="meta-item email" *ngIf="j.email">{{ j.email }}</span>
-                </p>
-              </div>
-              <button class="delete" *ngIf="!authService.hasRole('jugador')" (click)="eliminarJugador(j.DNI)">✕</button>
-            </div>
-          </div>
-          <ng-template #noPlayers><p class="empty">No hay jugadores.</p></ng-template>
-          <button class="cambiar" *ngIf="!authService.hasRole('jugador')" (click)="abrirModalAddJugadores()">Añadir jugadores</button>
-        </div>
-      </div>
-    </div>
-
     <ng-template #loadingTpl><p class="loading">Cargando equipo...</p></ng-template>
   </main>
 </div>

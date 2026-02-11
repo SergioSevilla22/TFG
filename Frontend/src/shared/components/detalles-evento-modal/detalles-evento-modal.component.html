@@ -1,6 +1,12 @@
 <div class="modal-header">
   <h2 mat-dialog-title>{{ detalles?.titulo || (detalles?.rival ? 'Partido vs ' + detalles.rival : 'Detalles') }}</h2>
-  <span class="badge" [ngClass]="data.tipo" *ngIf="detalles">{{ data.tipo }}</span>
+  <span 
+  class="badge"
+  [ngClass]="'badge-' + tipoBadge"
+  *ngIf="detalles"
+>
+  {{ tipoBadge | uppercase }}
+</span>
 </div>
 
 <mat-dialog-content class="content">

@@ -1,4 +1,9 @@
 /* Variables de diseño */
+$color-partido: #ef4444;        // Rojo
+$color-entrenamiento: #10b981;  // Verde
+$color-reunion: #0ea5e9;        // Azul
+$color-otro: #a855f7;           // Violeta
+$color-hoy: #1ea83a;
 $primary-green: #1ea83a;
 $secondary-blue: #0ea5e9;
 $dark-gray: #111827;
@@ -100,36 +105,47 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       color: white !important;
     }
 
-    /* --- PARTIDOS (Rojo/Coral - ¡Máxima atención!) --- */
     .tipo-partido {
-      background-color: #fee2e2 !important;
-      border-left: 4px solid #ef4444 !important;
-      color: #991b1b !important;
-      .fc-daygrid-event-dot { border-color: #ef4444 !important; }
+      background-color: rgba($color-partido, 0.12) !important;
+      border-left: 4px solid $color-partido !important;
+      color: darken($color-partido, 25%) !important;
+    
+      .fc-daygrid-event-dot {
+        border-color: $color-partido !important;
+      }
     }
-
-    /* --- ENTRENAMIENTOS (Verde - Acción en el campo) --- */
+    
+    /* --- ENTRENAMIENTO --- */
     .tipo-entrenamiento {
-      background-color: #dcfce7 !important;
-      border-left: 4px solid #10b981 !important;
-      color: #065f46 !important;
-      .fc-daygrid-event-dot { border-color: #10b981 !important; }
+      background-color: rgba($color-entrenamiento, 0.12) !important;
+      border-left: 4px solid $color-entrenamiento !important;
+      color: darken($color-entrenamiento, 25%) !important;
+    
+      .fc-daygrid-event-dot {
+        border-color: $color-entrenamiento !important;
+      }
     }
-
-    /* --- REUNIONES (Azul - Pizarra y táctica) --- */
+    
+    /* --- REUNION --- */
     .tipo-reunion {
-      background-color: #e0f2fe !important;
-      border-left: 4px solid #0ea5e9 !important;
-      color: #075985 !important;
-      .fc-daygrid-event-dot { border-color: #0ea5e9 !important; }
+      background-color: rgba($color-reunion, 0.12) !important;
+      border-left: 4px solid $color-reunion !important;
+      color: darken($color-reunion, 25%) !important;
+    
+      .fc-daygrid-event-dot {
+        border-color: $color-reunion !important;
+      }
     }
-
-    /* --- OTROS (Violeta/Gris - Eventos varios) --- */
+    
+    /* --- OTRO --- */
     .tipo-otro {
-      background-color: #f3e8ff !important;
-      border-left: 4px solid #a855f7 !important;
-      color: #6b21a8 !important;
-      .fc-daygrid-event-dot { border-color: #a855f7 !important; }
+      background-color: rgba($color-otro, 0.12) !important;
+      border-left: 4px solid $color-otro !important;
+      color: darken($color-otro, 25%) !important;
+    
+      .fc-daygrid-event-dot {
+        border-color: $color-otro !important;
+      }
     }
 
     /* Estilo común para todos los eventos del calendario */
