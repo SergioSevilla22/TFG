@@ -1,3 +1,9 @@
+$color-partido: #ef4444;        // Rojo
+$color-entrenamiento: #10b981;  // Verde
+$color-reunion: #0ea5e9;        // Azul
+$color-otro: #a855f7;           // Violeta
+$color-hoy: #1ea83a;
+
 .mini-calendario {
     display: flex;
     flex-direction: column;
@@ -79,18 +85,22 @@
     border-radius: 50%;
   }
   
-  .dia.evento::after {
-    background: #ff1c27;
+  .dia.partido::after {
+    background: $color-partido;
   }
   
-  .dia.convocatoria::after {
-    background: #2563eb;
+  .dia.entrenamiento::after {
+    background: $color-entrenamiento;
   }
   
-  .dia.ambos::after {
-    background: #7c3aed;
+  .dia.reunion::after {
+    background: $color-reunion;
   }
-
+  
+  .dia.otro::after {
+    background: $color-otro;
+  }
+  
   /* =========================
    LEYENDA MINI CALENDARIO
 ========================= */
@@ -115,23 +125,51 @@
     border-radius: 50%;
   }
   
-  /* COLORES */
-  .dot.evento {
-    background: #ff1c27;
+  .dot.partido {
+    background: $color-partido;
   }
   
-  .dot.convocatoria {
-    background: #2563eb;
+  .dot.entrenamiento {
+    background: $color-entrenamiento;
   }
   
-  .dot.ambos {
-    background: #7c3aed;
+  .dot.reunion {
+    background: $color-reunion;
+  }
+  
+  .dot.otro {
+    background: $color-otro;
   }
   
   .dot.hoy {
-    background: #1ea83a;
-    box-shadow: 0 0 0 2px rgba(30,168,58,0.3);
+    background: $color-hoy;
+    box-shadow: 0 0 0 2px rgba($color-hoy, 0.3);
   }
+
+  /* PUNTO BASE */
+.dia.partido::after,
+.dia.entrenamiento::after,
+.dia.reunion::after,
+.dia.otro::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.dia.clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.dia.clickable:hover {
+  transform: scale(1.05);
+}
+
+  
   
   
   

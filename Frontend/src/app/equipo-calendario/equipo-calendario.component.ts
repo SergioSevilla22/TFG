@@ -109,12 +109,13 @@ export class EquipoCalendarioComponent implements OnInit {
     this.calendarioService.getCalendarioEquipo(this.equipoId).subscribe({
       next: (data) => {
         console.log('Eventos recibidos del backend:', data);
-  
+        console.log(data);
         const eventos = data.map(e => ({
           id: e.id,
           title: e.titulo,
-          start: e.inicio,
-          end: e.fin,
+          start: new Date(e.inicio.replace('Z','')),
+          end: new Date(e.fin.replace('Z','')),
+          allDay: false,          
           className: `tipo-${e.tipo}`
         
         }));

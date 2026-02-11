@@ -1,3 +1,9 @@
+$color-partido: #ef4444;
+$color-entrenamiento: #10b981;
+$color-reunion: #0ea5e9;
+$color-otro: #a855f7;
+$color-convocatoria: #2563eb;
+
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -116,3 +122,40 @@
 }
 
 .warning { color: #b45309; font-weight: 600; background: #fffbeb; padding: 10px; border-radius: 8px; }
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.badge-convocatoria {
+  background: rgba($color-convocatoria, 0.15);
+  color: darken($color-convocatoria, 25%);
+}
+
+/* PARTIDO */
+.badge-partido {
+  background: rgba($color-partido, 0.15);
+  color: darken($color-partido, 25%);
+}
+
+/* ENTRENAMIENTO */
+.badge-entrenamiento {
+  background: rgba($color-entrenamiento, 0.15);
+  color: darken($color-entrenamiento, 25%);
+}
+
+/* REUNION */
+.badge-reunion {
+  background: rgba($color-reunion, 0.15);
+  color: darken($color-reunion, 25%);
+}
+
+/* OTRO */
+.badge-otro {
+  background: rgba($color-otro, 0.15);
+  color: darken($color-otro, 25%);
+}

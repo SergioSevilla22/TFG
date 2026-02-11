@@ -106,14 +106,14 @@
 /* AVATAR STACK (7 ICONOS POR FILA) */
 .avatar-stack {
   display: grid; /* Cambiado a Grid para que respete la regla de 7 */
-  grid-template-columns: repeat(7, 1fr); 
+  grid-template-columns: repeat(5, 1fr); 
   gap: 8px;
   padding: 5px 0;
 }
 
 .avatar {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: #9ca3af;
   display: flex;
