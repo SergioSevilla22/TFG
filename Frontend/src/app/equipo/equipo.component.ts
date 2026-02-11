@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { EquipoService } from '../../services/equipos.service';
 import { HeaderComponent } from '../header/header.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { AddPlayersTeamModalComponent } from
   '../../shared/components/add-players-team-modal/add-players-team-modal.component';
 import { AssignCoachTeamModalComponent } from '../../shared/components/assign-coach-team-modal/assign-coach-team-modal.component';
@@ -31,7 +32,7 @@ interface Jugador {
 @Component({
   selector: 'app-equipo',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent, SidebarEquipoComponent, MiniCalendarioComponent],
+  imports: [CommonModule, RouterModule, HeaderComponent, SidebarEquipoComponent, MiniCalendarioComponent, MatIconModule],
   templateUrl: './equipo.component.html',
   styleUrls: ['./equipo.component.css']
 })
@@ -480,4 +481,28 @@ export class EquipoComponent implements OnInit {
     if (!this.equipo?.jugadores) return 0;
     return Math.max(this.equipo.jugadores.length - 8, 0);
   }
+
+  get proximoEvento() {
+  const ahora = new Date();
+  return this.eventos
+    .filter(e => new Date(e.fecha_inicio) > ahora)
+    .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())[0];
+}
+
+get proximaConvocatoria() {
+  const ahora = new Date();
+  return this.convocatorias
+    .filter(c => new Date(c.fecha_partido) > ahora)
+    .sort((a, b) => new Date(a.fecha_partido).getTime() - new Date(b.fecha_partido).getTime())[0];
+}
+
+hayEventosPendientes(): boolean {
+  if (!this.authService.hasRole('jugador')) return false;
+  return this.eventos.some(e => e.requiere_confirmacion && this.estaInvitado(e) && this.estadoJugadorEvento(e) === 'pendiente');
+}
+
+hayConvocatoriasPendientes(): boolean {
+  if (!this.authService.hasRole('jugador')) return false;
+  return this.convocatorias.some(c => this.estaInvitado(c) && this.estadoJugador(c) === 'pendiente' && !this.convocatoriaCerrada(c));
+}
 }
