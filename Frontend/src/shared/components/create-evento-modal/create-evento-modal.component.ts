@@ -16,8 +16,9 @@ import { AuthService } from '../../../services/auth.service';
     CommonModule,
     FormsModule,
     MatDialogModule,
-    MatButtonModule,
     MatIconModule,
+    MatButtonModule,
+    
     MatInputModule
   ],
   templateUrl: './create-evento-modal.component.html',

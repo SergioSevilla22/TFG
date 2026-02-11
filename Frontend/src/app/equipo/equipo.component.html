@@ -19,88 +19,94 @@
 ========================= -->
 <section class="resumen-grid" *ngIf="!loading && equipo">
 
-  <!-- PRÓXIMO EVENTO -->
-  <div class="resumen-card clickable"
-  [routerLink]="['/equipo', equipoId, 'eventos']">
-
-<h3>Eventos</h3>
-
-<ng-container *ngIf="eventos.length > 0; else sinEventos">
- <p class="titulo">{{ eventos[0].titulo }}</p>
- <p class="meta">
-   {{ eventos[0].fecha_inicio | date:'dd/MM HH:mm' }}
- </p>
-</ng-container>
-
-<ng-template #sinEventos>
- <p class="empty">No hay eventos próximos</p>
-</ng-template>
-
-<span class="cta">Ver eventos →</span>
-</div>
-
-<div class="resumen-card clickable"
-     [routerLink]="['/equipo', equipoId, 'convocatorias']">
-
-  <h3>Convocatorias</h3>
-
-  <p *ngIf="hayPendientes()" class="alerta">
-    Tienes convocatorias pendientes
-  </p>
-
-  <p *ngIf="!hayPendientes()" class="empty">
-    No tienes convocatorias pendientes 🎉
-  </p>
-
-  <span class="cta">Ver convocatorias →</span>
-</div>
-
-
-<div class="resumen-card clickable"
-     [routerLink]="['/equipo', equipoId, 'plantilla']">
-
-  <h3>Plantilla</h3>
-
-  <div class="plantilla-content">
-    <div class="plantilla-preview">
-      <ng-container *ngFor="let j of jugadoresPreview">
-        <div class="avatar">
-          <img *ngIf="j.foto"
-               [src]="'http://localhost:3000' + j.foto"
-               alt="{{ j.nombre }}" />
-          <span *ngIf="!j.foto">
-            {{ j.nombre[0] | uppercase }}
-          </span>
-        </div>
-      </ng-container>
-
-      <div class="avatar extra" *ngIf="jugadoresExtra > 0">
-        +{{ jugadoresExtra }}
-      </div>
+  <div class="resumen-card clickable highlight-card" [class.pending-border]="hayEventosPendientes()" [routerLink]="['/equipo', equipoId, 'eventos']">
+    <div class="card-header">
+      <h3>Eventos</h3>
+      <span class="badge-pendiente" *ngIf="hayEventosPendientes()">¡Tienes 1 pendiente!</span>
     </div>
+
+    <ng-container *ngIf="proximoEvento; else sinEventos">
+      <div class="main-info">
+        <p class="titulo">{{ proximoEvento.titulo }}</p>
+        <div class="info-block">
+          <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximoEvento.fecha_inicio | date:'EEEE dd/MM' | titlecase }}</p>
+          <p class="info-item"><mat-icon>schedule</mat-icon> {{ proximoEvento.fecha_inicio | date:'HH:mm' }}h - {{ proximoEvento.fecha_fin | date:'HH:mm' }}h</p>
+          <p class="info-item" *ngIf="proximoEvento.descripcion"><mat-icon>notes</mat-icon> {{ proximoEvento.descripcion }}</p>
+        </div>
+      </div>
+
+      <div class="quick-actions" *ngIf="authService.hasRole('jugador') && proximoEvento.requiere_confirmacion && estadoJugadorEvento(proximoEvento) === 'pendiente'">
+        <button class="btn-confirm" (click)="$event.stopPropagation(); responderEvento(proximoEvento, 'confirmado')">
+          Confirmar
+        </button>
+        <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoEvento(proximoEvento)">
+          Rechazar
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #sinEventos>
+      <p class="empty">No hay eventos programados</p>
+    </ng-template>
+    
+    <span class="cta" [routerLink]="['/equipo', equipoId, 'eventos']">Ver todos los eventos →</span>
   </div>
 
-  <!-- CTA ABAJO -->
-  <span class="cta">Ver plantilla →</span>
+  <div class="resumen-card clickable highlight-card" [class.pending-border]="hayConvocatoriasPendientes()" [routerLink]="['/equipo', equipoId, 'convocatorias']">
+    <div class="card-header">
+      <h3>Convocatorias</h3>
+      <span class="badge-pendiente" *ngIf="hayConvocatoriasPendientes()">Pendiente de respuesta</span>
+    </div>
 
-</div>
+    <ng-container *ngIf="proximaConvocatoria; else sinConvs">
+      <div class="main-info">
+        <p class="titulo">vs {{ proximaConvocatoria.rival || 'Rival' }}</p>
+        <div class="info-block">
+          <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximaConvocatoria.fecha_partido | date:'EEEE dd/MM' | titlecase }}</p>
+          <p class="info-item"><mat-icon>alarm</mat-icon> Quedada: {{ proximaConvocatoria.hora_quedada }}h</p>
+          <p class="info-item"><mat-icon>place</mat-icon> {{ proximaConvocatoria.lugar || 'Campo local' }}</p>
+        </div>
+      </div>
 
+      <div class="quick-actions" *ngIf="authService.hasRole('jugador') && estaInvitado(proximaConvocatoria) && estadoJugador(proximaConvocatoria) === 'pendiente' && !convocatoriaCerrada(proximaConvocatoria)">
+        <button class="btn-confirm" (click)="$event.stopPropagation(); responderConvocatoria(proximaConvocatoria, 'confirmado')">
+          Asistiré
+        </button>
+        <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoConvocatoria(proximaConvocatoria)">
+          No puedo
+        </button>
+      </div>
+    </ng-container>
 
+    <ng-template #sinConvs>
+      <p class="empty">No hay convocatorias abiertas</p>
+    </ng-template>
 
-  <div class="resumen-card clickable"  [routerLink]="['/equipo', equipoId, 'calendario']">
+    <span class="cta" [routerLink]="['/equipo', equipoId, 'convocatorias']">Ver todas →</span>
+  </div>
+
+  <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'plantilla']">
+    <h3>Plantilla</h3>
+    <div class="plantilla-preview">
+       <div class="avatar-stack">
+         <div class="avatar" *ngFor="let j of jugadoresPreview">
+           <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
+           <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
+         </div>
+       </div>
+    </div>
+    <span class="cta">Gestionar equipo →</span>
+  </div>
+
+  <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'calendario']">
     <h3>Calendario</h3>
-  
-    <app-mini-calendario
-      [eventos]="eventos"
-      [convocatorias]="convocatorias"
-      [equipoId]="equipoId">
-    </app-mini-calendario>
-  
+    <app-mini-calendario [eventos]="eventos" [convocatorias]="convocatorias" [equipoId]="equipoId"></app-mini-calendario>
   </div>
 
 </section>
 
-    <div *ngIf="!sinEquipo"><div class="equipo-wrapper" *ngIf="!loading && equipo && !sinEquipo; else loadingTpl">
+    <div *ngIf="!sinEquipo">
+      <div class="equipo-wrapper" *ngIf="!loading && equipo; else loadingTpl">
 
       <!-- =========================
            CABECERA
@@ -302,259 +308,13 @@
     
       </div>
     
-    <!-- =========================
-           GESTIÓN DEPORTIVA
-      ========================== -->
-      <div class="panel-card">
-        <h3>Gestión deportiva</h3>
+   
     
-        <div *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')">
-          <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'eventos']">
-            📅 Eventos del equipo
-          </button>
-    
-          <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'convocatorias']">
-            📣 Convocatorias
-          </button>
-    
-          <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'calendario']">
-            🗓️ Calendario del equipo
-          </button>
-        </div>
-    
-        <div *ngIf="authService.hasRole('jugador')">
-          <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'convocatorias']">
-            📣 Ver convocatorias
-          </button>
-    
-          <button class="action-btn" [routerLink]="['/equipo', equipo.id, 'calendario']">
-            🗓️ Ver calendario
-          </button>
-        </div>
-      </div>
-    
-    </div> <!-- 👈 ESTE DIV FALTABA -->
-    
-    <ng-template #loadingTpl>
-      <p class="loading">Cargando equipo...</p>
-    </ng-template>
-    
-    <!-- =========================
-         CONVOCATORIAS
-    ========================== -->
-    <div class="panel-card" style="margin-top: 18px;">
-      <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <h2 style="margin:0;">Convocatorias</h2>
-    
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button
-            class="cambiar primary"
-            *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
-            (click)="abrirModalCrearConvocatoria()">
-            + Nueva convocatoria
-          </button>
-        </div>
-      </div>
-    
-      <p *ngIf="loadingConvocatorias">Cargando convocatorias...</p>
-      <p *ngIf="!loadingConvocatorias && convocatorias.length === 0">No hay convocatorias todavía.</p>
-    
-      <div class="lista-convocatorias" *ngIf="!loadingConvocatorias && convocatorias.length > 0">
-        <div class="conv-card" *ngFor="let c of convocatorias">
-          <div class="conv-main">
-            <div class="conv-title">
-              <b>{{ c.fecha_partido | date:'dd/MM/yyyy' }}</b>
-              <span *ngIf="c.rival"> · vs {{ c.rival }}</span>
-            </div>
-    
-            <div class="conv-meta">
-              <span>Inicio: {{ c.hora_inicio }}</span>
-              <span>Quedada: {{ c.hora_quedada }}</span>
-              <span *ngIf="c.lugar">Lugar: {{ c.lugar }}</span>
-              <span>Límite: {{ c.fecha_limite_confirmacion | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-    
-            <div class="conv-actions" *ngIf="authService.hasRole('jugador')">
-    
-              <span class="estado-badge no-invitado" *ngIf="!estaInvitado(c)">
-                 No convocado
-              </span>
-    
-              <ng-container *ngIf="estaInvitado(c)">
-                <span class="estado-badge cerrada" *ngIf="convocatoriaCerrada(c)">
-                  Convocatoria cerrada · 
-                  <span class="estado-text">
-                    {{ estadoJugador(c) === 'confirmado' ? 'Confirmado' : (estadoJugador(c) === 'rechazado' ? 'Rechazado' : 'Sin respuesta') }}
-                  </span>
-                </span>
-    
-                <ng-container *ngIf="!convocatoriaCerrada(c)">
-                  <span class="estado-badge" *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'" [ngClass]="estadoJugador(c)">
-                    {{ estadoJugador(c) | uppercase }}
-                  </span>
-    
-                  <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
-                    <span class="estado">Estado: <b>pendiente</b></span>
-                    <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')"> Confirmar</button>
-                    <button class="rechazar" (click)="abrirModalMotivoConvocatoria(c)"> Rechazar</button>
-                  </ng-container>
-                </ng-container>
-              </ng-container>
-            </div>
-    
-            <div class="conv-actions" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')">
-              <span class="estado">
-                Convocados: <b>{{ c.jugadores?.length || 0 }}</b>
-                · ✅ {{ contarPorEstado(c, 'confirmado') }}
-                · ❌ {{ contarPorEstado(c, 'rechazado') }}
-                · ⏳ {{ contarPorEstado(c, 'pendiente') }}
-              </span>
-    
-              <button
-              class="cambiar"
-              *ngIf="!convocatoriaCerrada(c)"
-              (click)="enviarRecordatorio(c)">
-              🔔 Enviar recordatorio
-            </button>
-            
-            <!-- INDICADOR CERRADA -->
-            <span
-              class="estado-badge cerrada"
-              *ngIf="convocatoriaCerrada(c)">
-              Convocatoria cerrada
-            </span>
-            </div>
-    
-            <details class="conv-details">
-              <summary>Ver convocados</summary>
-              <div class="convocados">
-                <div class="conv-j" *ngFor="let j of c.jugadores">
-                  <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
-                  <span class="pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
-                  <div *ngIf="j.motivo" style="font-size:0.8rem;color:#6b7280;">
-                    Motivo: {{ j.motivo }}
-                  </div>
-                </div>
-              </div>
-            </details>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- =========================
-         EVENTOS
-    ========================== -->
-    <div class="panel-card" style="margin-top: 18px;">
-      <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <h2 style="margin:0;">Eventos</h2>
-    
-        <div style="display:flex; gap:10px; align-items:center;">
-          <button
-            class="cambiar primary"
-            *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')"
-            (click)="abrirModalCrearEvento()">
-            + Nuevo evento
-          </button>
-        </div>
-      </div>
-    
-      <p *ngIf="loadingEventos">Cargando eventos...</p>
-      <p *ngIf="!loadingEventos && eventos.length === 0">No hay eventos todavía.</p>
-    
-      <div class="lista-eventos" *ngIf="!loadingEventos && eventos.length > 0">
-        <div class="evento" *ngFor="let e of eventos" [class.evento-pasado]="esEventoPasado(e)">
-    
-          <div class="evento-main">
-            <div class="evento-title">
-              <b>{{ e.titulo }}</b>
-            </div>
-    
-            <div class="evento-meta">
-              <span *ngIf="e.descripcion">Descripción: {{ e.descripcion }}</span>
-              <span>Inicio: {{ e.fecha_inicio | date:'short' }}</span>
-              <span>Fin: {{ e.fecha_fin | date:'short' }}</span>
-              <span>Tipo: {{ e.tipo | titlecase }}</span>
-            </div>
-    
-            <!-- =========================
-                 RESPUESTA JUGADOR
-            ========================== -->
-            <div class="evento-actions" *ngIf="e.requiere_confirmacion && authService.hasRole('jugador')">
-    
-              <span class="estado-badge no-invitado" *ngIf="!estaInvitado(e)">
-                 No requerido
-              </span>
-    
-              <ng-container *ngIf="estaInvitado(e)">
-                <span class="estado-badge" *ngIf="estadoJugadorEvento(e) && estadoJugadorEvento(e) !== 'pendiente'" [ngClass]="estadoJugadorEvento(e)">
-                  {{ estadoJugadorEvento(e) | uppercase }}
-                </span>
-    
-                <ng-container *ngIf="!estadoJugadorEvento(e) || estadoJugadorEvento(e) === 'pendiente'">
-                  <span class="estado">Estado: <b>pendiente</b></span>
-                  <button class="cambiar" (click)="responderEvento(e, 'confirmado')">
-                    Confirmar
-                  </button>
-                  
-                  <button
-                    *ngIf="e.tipo !== 'partido'"
-                    class="cambiar"
-                    (click)="abrirModalLlegadaTarde(e)">
-                    Llegaré tarde
-                  </button>
-                  
-                  <button class="rechazar" (click)="abrirModalMotivoEvento(e)">
-                    Rechazar
-                  </button>
-                </ng-container>
-              </ng-container>
-            </div>
-    
-            <!-- =========================
-                 VISTA ADMIN / ENTRENADOR
-            ========================== -->
-            <div class="evento-actions" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')">
-              <span class="estado" *ngIf="e.requiere_confirmacion">
-                Confirmaciones:
-                ✅ {{ contarPorEstadoEvento(e, 'confirmado') }}
-                · ❌ {{ contarPorEstadoEvento(e, 'rechazado') }}
-                · ⏳ {{ contarPorEstadoEvento(e, 'pendiente') }}
-              </span>
-    
-              <button class="cambiar" *ngIf="!esEventoPasado(e)" (click)="enviarRecordatorioEvento(e)">
-                🔔 Enviar recordatorio
-              </button>
-    
-              <button class="delete" (click)="eliminarEvento(e)">🗑 Eliminar</button>
-    
-              <span class="estado-badge cerrada" *ngIf="esEventoPasado(e)">
-                Evento finalizado
-              </span>
-            </div>
-    
-            <!-- =========================
-                 DETALLES DE JUGADORES
-            ========================== -->
-            <details class="conv-details" *ngIf="e.requiere_confirmacion">
-              <summary>Ver jugadores</summary>
-              <div class="convocados">
-                <div class="conv-j" *ngFor="let j of e.jugadores">
-                  <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
-                  <span class="pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
-                  <div *ngIf="j.motivo" class="motivo">
-                    Motivo: {{ j.motivo }}
-                  </div>
-                  
-                </div>
-              </div>
-            </details>
-    
-          </div>
-        </div>
-      </div>
     </div>
     </div>
-    
+       <ng-template #loadingTpl>
+        <p class="loading">Cargando equipo...</p>
+      </ng-template>
   </main>
 
 </div>
