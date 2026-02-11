@@ -1,299 +1,129 @@
 <app-header></app-header>
+
 <div class="equipo-layout" *ngIf="!sinEquipo">
-  
-  <app-sidebar-equipo
-  [equipo]="equipo"
-  [equipoId]="equipoId"
-  activo="resumen">
+  <app-sidebar-equipo [equipo]="equipo" [equipoId]="equipoId" activo="resumen"></app-sidebar-equipo>
 
-</app-sidebar-equipo>
-
-
-  <!-- =========================
-       CONTENIDO PRINCIPAL
-  ========================== -->
   <main class="equipo-content">
-
-    <!-- =========================
-     RESUMEN DASHBOARD
-========================= -->
-<section class="resumen-grid" *ngIf="!loading && equipo">
-
-  <div class="resumen-card clickable highlight-card" [class.pending-border]="hayEventosPendientes()" [routerLink]="['/equipo', equipoId, 'eventos']">
-    <div class="card-header">
-      <h3>Eventos</h3>
-      <span class="badge-pendiente" *ngIf="hayEventosPendientes()">¡Tienes 1 pendiente!</span>
-    </div>
-
-    <ng-container *ngIf="proximoEvento; else sinEventos">
-      <div class="main-info">
-        <p class="titulo">{{ proximoEvento.titulo }}</p>
-        <div class="info-block">
-          <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximoEvento.fecha_inicio | date:'EEEE dd/MM' | titlecase }}</p>
-          <p class="info-item"><mat-icon>schedule</mat-icon> {{ proximoEvento.fecha_inicio | date:'HH:mm' }}h - {{ proximoEvento.fecha_fin | date:'HH:mm' }}h</p>
-          <p class="info-item" *ngIf="proximoEvento.descripcion"><mat-icon>notes</mat-icon> {{ proximoEvento.descripcion }}</p>
+    <section class="resumen-grid" *ngIf="!loading && equipo">
+      <div class="resumen-card clickable highlight-card" [class.pending-border]="hayEventosPendientes()" [routerLink]="['/equipo', equipoId, 'eventos']">
+        <div class="card-header">
+          <h3>Eventos</h3>
+          <span class="badge-pendiente" *ngIf="hayEventosPendientes()">¡Tienes 1 pendiente!</span>
         </div>
+
+        <ng-container *ngIf="proximoEvento; else sinEventos">
+          <div class="main-info">
+            <p class="titulo">{{ proximoEvento.titulo }}</p>
+            <div class="info-block">
+              <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximoEvento.fecha_inicio | date:'EEEE dd/MM' | titlecase }}</p>
+              <p class="info-item"><mat-icon>schedule</mat-icon> {{ proximoEvento.fecha_inicio | date:'HH:mm' }}h - {{ proximoEvento.fecha_fin | date:'HH:mm' }}h</p>
+              <p class="info-item" *ngIf="proximoEvento.descripcion"><mat-icon>notes</mat-icon> {{ proximoEvento.descripcion }}</p>
+            </div>
+          </div>
+          <div class="quick-actions" *ngIf="authService.hasRole('jugador') && proximoEvento.requiere_confirmacion && estadoJugadorEvento(proximoEvento) === 'pendiente'">
+            <button class="btn-confirm" (click)="$event.stopPropagation(); responderEvento(proximoEvento, 'confirmado')">Confirmar</button>
+            <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoEvento(proximoEvento)">Rechazar</button>
+          </div>
+        </ng-container>
+
+        <ng-template #sinEventos>
+          <p class="empty">No hay eventos programados</p>
+        </ng-template>
+        <span class="cta">Ver todos los eventos →</span>
       </div>
 
-      <div class="quick-actions" *ngIf="authService.hasRole('jugador') && proximoEvento.requiere_confirmacion && estadoJugadorEvento(proximoEvento) === 'pendiente'">
-        <button class="btn-confirm" (click)="$event.stopPropagation(); responderEvento(proximoEvento, 'confirmado')">
-          Confirmar
-        </button>
-        <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoEvento(proximoEvento)">
-          Rechazar
-        </button>
-      </div>
-    </ng-container>
-
-    <ng-template #sinEventos>
-      <p class="empty">No hay eventos programados</p>
-    </ng-template>
-    
-    <span class="cta" [routerLink]="['/equipo', equipoId, 'eventos']">Ver todos los eventos →</span>
-  </div>
-
-  <div class="resumen-card clickable highlight-card" [class.pending-border]="hayConvocatoriasPendientes()" [routerLink]="['/equipo', equipoId, 'convocatorias']">
-    <div class="card-header">
-      <h3>Convocatorias</h3>
-      <span class="badge-pendiente" *ngIf="hayConvocatoriasPendientes()">Pendiente de respuesta</span>
-    </div>
-
-    <ng-container *ngIf="proximaConvocatoria; else sinConvs">
-      <div class="main-info">
-        <p class="titulo">vs {{ proximaConvocatoria.rival || 'Rival' }}</p>
-        <div class="info-block">
-          <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximaConvocatoria.fecha_partido | date:'EEEE dd/MM' | titlecase }}</p>
-          <p class="info-item"><mat-icon>alarm</mat-icon> Quedada: {{ proximaConvocatoria.hora_quedada }}h</p>
-          <p class="info-item"><mat-icon>place</mat-icon> {{ proximaConvocatoria.lugar || 'Campo local' }}</p>
+      <div class="resumen-card clickable highlight-card" [class.pending-border]="hayConvocatoriasPendientes()" [routerLink]="['/equipo', equipoId, 'convocatorias']">
+        <div class="card-header">
+          <h3>Convocatorias</h3>
+          <span class="badge-pendiente" *ngIf="hayConvocatoriasPendientes()">Pendiente de respuesta</span>
         </div>
+
+        <ng-container *ngIf="proximaConvocatoria; else sinConvs">
+          <div class="main-info">
+            <p class="titulo">vs {{ proximaConvocatoria.rival || 'Rival' }}</p>
+            <div class="info-block">
+              <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximaConvocatoria.fecha_partido | date:'EEEE dd/MM' | titlecase }}</p>
+              <p class="info-item"><mat-icon>alarm</mat-icon> Quedada: {{ proximaConvocatoria.hora_quedada }}h</p>
+              <p class="info-item"><mat-icon>place</mat-icon> {{ proximaConvocatoria.lugar || 'Campo local' }}</p>
+            </div>
+          </div>
+          <div class="quick-actions" *ngIf="authService.hasRole('jugador') && estaInvitado(proximaConvocatoria) && estadoJugador(proximaConvocatoria) === 'pendiente' && !convocatoriaCerrada(proximaConvocatoria)">
+            <button class="btn-confirm" (click)="$event.stopPropagation(); responderConvocatoria(proximaConvocatoria, 'confirmado')">Asistiré</button>
+            <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoConvocatoria(proximaConvocatoria)">No puedo</button>
+          </div>
+        </ng-container>
+
+        <ng-template #sinConvs>
+          <p class="empty">No hay convocatorias abiertas</p>
+        </ng-template>
+        <span class="cta">Ver todas →</span>
       </div>
 
-      <div class="quick-actions" *ngIf="authService.hasRole('jugador') && estaInvitado(proximaConvocatoria) && estadoJugador(proximaConvocatoria) === 'pendiente' && !convocatoriaCerrada(proximaConvocatoria)">
-        <button class="btn-confirm" (click)="$event.stopPropagation(); responderConvocatoria(proximaConvocatoria, 'confirmado')">
-          Asistiré
-        </button>
-        <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoConvocatoria(proximaConvocatoria)">
-          No puedo
-        </button>
+      <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'plantilla']">
+        <h3>Plantilla</h3>
+        <div class="plantilla-preview">
+          <div class="avatar-stack">
+            <div class="avatar" *ngFor="let j of jugadoresPreview">
+              <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
+              <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
+            </div>
+          </div>
+        </div>
+        <span class="cta">Gestionar equipo →</span>
       </div>
-    </ng-container>
 
-    <ng-template #sinConvs>
-      <p class="empty">No hay convocatorias abiertas</p>
-    </ng-template>
+      <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'calendario']">
+        <h3>Calendario</h3>
+        <app-mini-calendario [eventos]="eventos" [convocatorias]="convocatorias" [equipoId]="equipoId"></app-mini-calendario>
+      </div>
+    </section>
 
-    <span class="cta" [routerLink]="['/equipo', equipoId, 'convocatorias']">Ver todas →</span>
-  </div>
-
-  <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'plantilla']">
-    <h3>Plantilla</h3>
-    <div class="plantilla-preview">
-       <div class="avatar-stack">
-         <div class="avatar" *ngFor="let j of jugadoresPreview">
-           <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
-           <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
-         </div>
-       </div>
-    </div>
-    <span class="cta">Gestionar equipo →</span>
-  </div>
-
-  <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'calendario']">
-    <h3>Calendario</h3>
-    <app-mini-calendario [eventos]="eventos" [convocatorias]="convocatorias" [equipoId]="equipoId"></app-mini-calendario>
-  </div>
-
-</section>
-
-    <div *ngIf="!sinEquipo">
-      <div class="equipo-wrapper" *ngIf="!loading && equipo; else loadingTpl">
-
-      <!-- =========================
-           CABECERA
-      ========================== -->
+    <div class="equipo-wrapper" *ngIf="!loading && equipo; else loadingTpl">
       <div class="equipo-header">
         <div class="left">
-          <img
-            *ngIf="equipo.club.escudo"
-            [src]="'http://localhost:3000' + equipo.club.escudo"
-            class="escudo"
-          />
+          <img *ngIf="equipo.club.escudo" [src]="'http://localhost:3000' + equipo.club.escudo" class="escudo" />
           <div class="texto">
             <h1>{{ equipo.nombre }}</h1>
             <p>{{ equipo.club.nombre }}</p>
             <p>{{ equipo.categoria.nombre }} · {{ equipo.temporada.nombre }}</p>
           </div>
         </div>
-    
-        <!-- VOLVER AL CLUB → SOLO ADMIN -->
-        <button
-          class="volver"
-          *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
-          (click)="volverAlClub()">
+        <button class="volver" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')" (click)="volverAlClub()">
           ← Volver al club
         </button>
       </div>
-    
-      <!-- =========================
-           GRID PRINCIPAL
-      ========================== -->
+
       <div class="grid-panel">
-    
-        <!-- =========================
-             ENTRENADORES
-        ========================== -->
-        <div class="panel-card entrenador-card">
+        <div class="panel-card">
           <h3>Entrenadores ({{ equipo.entrenadores?.length || 0 }})</h3>
-    
           <div *ngIf="equipo.entrenadores?.length; else noCoaches">
             <div class="jug-item" *ngFor="let e of equipo.entrenadores">
               <span class="round">
                 <img *ngIf="e.foto" [src]="'http://localhost:3000' + e.foto" />
                 <span *ngIf="!e.foto">{{ e.nombre[0] | uppercase }}</span>
               </span>
-    
               <div>
                 <h4>{{ e.nombre }}</h4>
                 <p class="meta">
                   <span class="meta-item">DNI: {{ e.DNI }}</span>
                   <span class="meta-item" *ngIf="e.telefono">Tel: {{ e.telefono }}</span>
-                  <span class="meta-item email" *ngIf="e.email">{{ e.email }}</span>
                 </p>
               </div>
-    
-              <!-- QUITAR ENTRENADOR → SOLO ADMIN -->
-              <button
-                class="delete"
-                *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
-                (click)="eliminarEntrenador(e.DNI)">
-                ✕
-              </button>
+              <button class="delete" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')" (click)="eliminarEntrenador(e.DNI)">✕</button>
             </div>
           </div>
-    
-          <ng-template #noCoaches>
-            <p class="empty">No hay entrenadores asignados</p>
-          </ng-template>
-    
-          <!-- AÑADIR ENTRENADOR → SOLO ADMIN -->
-          <button
-            class="cambiar primary"
-            *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
-            (click)="abrirModalEntrenadorEquipo()">
-            Añadir entrenador
-          </button>
+          <ng-template #noCoaches><p class="empty">No hay entrenadores</p></ng-template>
+          <button class="cambiar" *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')" (click)="abrirModalEntrenadorEquipo()">Añadir entrenador</button>
         </div>
-    
-        <!-- =========================
-             JUGADORES
-        ========================== -->
-    
-        <!-- ADMIN (con drag & drop) -->
-        <div
-          class="panel-card jugadores-card"
-          *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
-          (drop)="onDropJugador($event)"
-          (dragover)="allowDrop($event)">
-    
+
+        <div class="panel-card jugadores-card">
           <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
-    
           <div class="jug-list" *ngIf="equipo.jugadores.length; else noPlayers">
-            <div
-              class="jug-item"
-              *ngFor="let j of equipo.jugadores"
-              draggable="true"
-              (dragstart)="dragJugador($event, j.DNI)">
-    
-              <span class="round">
-                <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
-                <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
-              </span>
-    
-              <div>
-                <h4>{{ j.nombre }}</h4>
-                <p class="meta">
-                  <span class="meta-item">DNI: {{ j.DNI }}</span>
-                  <span class="meta-item" *ngIf="j.telefono">Tel: {{ j.telefono }}</span>
-                  <span class="meta-item email" *ngIf="j.email">{{ j.email }}</span>
-                </p>
-              </div>
-    
-              <!-- QUITAR JUGADOR → ADMIN -->
-              <button
-                class="delete"
-                (click)="eliminarJugador(j.DNI)">
-                ✕
-              </button>
-            </div>
-          </div>
-    
-          <ng-template #noPlayers>
-            <p class="empty">No hay jugadores en este equipo.</p>
-          </ng-template>
-    
-          <!-- AÑADIR JUGADORES → ADMIN -->
-          <button
-            class="cambiar primary"
-            (click)="abrirModalAddJugadores()">
-            Añadir jugadores
-          </button>
-        </div>
-    
-        <!-- ENTRENADOR (sin drag & drop) -->
-        <div
-          class="panel-card jugadores-card"
-          *ngIf="authService.hasRole('entrenador')">
-    
-          <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
-    
-          <div class="jug-list" *ngIf="equipo.jugadores.length">
-            <div class="jug-item" *ngFor="let j of equipo.jugadores">
-    
-              <span class="round">
-                <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
-                <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
-              </span>
-    
-              <div>
-                <h4>{{ j.nombre }}</h4>
-                <p class="meta">
-                  <span class="meta-item">DNI: {{ j.DNI }}</span>
-                  <span class="meta-item" *ngIf="j.telefono">Tel: {{ j.telefono }}</span>
-                  <span class="meta-item email" *ngIf="j.email">{{ j.email }}</span>
-                </p>
-              </div>
-    
-              <!-- QUITAR JUGADOR → ENTRENADOR -->
-              <button
-                class="delete"
-                (click)="eliminarJugador(j.DNI)">
-                ✕
-              </button>
-            </div>
-          </div>
-    
-          <!-- AÑADIR JUGADORES → ENTRENADOR -->
-          <button
-            class="cambiar primary"
-            (click)="abrirModalAddJugadores()">
-            Añadir jugadores
-          </button>
-        </div>
-    
-        <!-- JUGADOR (solo lectura) -->
-        <div
-          class="panel-card jugadores-card"
-          *ngIf="authService.hasRole('jugador')">
-    
-          <h3>Jugadores ({{ equipo.jugadores.length }})</h3>
-    
-          <div class="jug-list">
             <div class="jug-item" *ngFor="let j of equipo.jugadores">
               <span class="round">
                 <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
                 <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
               </span>
-    
               <div>
                 <h4>{{ j.nombre }}</h4>
                 <p class="meta">
@@ -302,25 +132,18 @@
                   <span class="meta-item email" *ngIf="j.email">{{ j.email }}</span>
                 </p>
               </div>
+              <button class="delete" *ngIf="!authService.hasRole('jugador')" (click)="eliminarJugador(j.DNI)">✕</button>
             </div>
           </div>
+          <ng-template #noPlayers><p class="empty">No hay jugadores.</p></ng-template>
+          <button class="cambiar" *ngIf="!authService.hasRole('jugador')" (click)="abrirModalAddJugadores()">Añadir jugadores</button>
         </div>
-    
       </div>
-    
-   
-    
     </div>
-    </div>
-       <ng-template #loadingTpl>
-        <p class="loading">Cargando equipo...</p>
-      </ng-template>
+
+    <ng-template #loadingTpl><p class="loading">Cargando equipo...</p></ng-template>
   </main>
-
 </div>
-
-
-
 
 
 
