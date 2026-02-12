@@ -1,7 +1,6 @@
 <app-header></app-header>
 
 <div class="equipo-layout" *ngIf="!sinEquipo">
-
   <app-sidebar-equipo
     [equipo]="equipo"
     [equipoId]="equipoId"
@@ -9,112 +8,136 @@
   </app-sidebar-equipo>
 
   <main class="equipo-content">
-
-    <div class="panel-card">
-      <div class="panel-header" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <h2 style="margin:0;">Convocatorias</h2>
+    <div class="panel-card main-panel">
+      
+      <div class="panel-header">
+        <div class="header-info">
+          <h2>Convocatorias</h2>
+          <p class="subtitle">Gestión de citaciones y asistencia para partidos</p>
+        </div>
 
         <button
-          class="cambiar primary"
+          class="btn-primary"
           *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
           (click)="abrirModalCrearConvocatoria()">
-          + Nueva convocatoria
+          <span class="plus-icon">+</span> Nueva convocatoria
         </button>
       </div>
 
-      <p *ngIf="loadingConvocatorias">Cargando convocatorias...</p>
-      <p *ngIf="!loadingConvocatorias && convocatorias.length === 0">No hay convocatorias todavía.</p>
-
-      <div class="lista-convocatorias" *ngIf="!loadingConvocatorias && convocatorias.length > 0">
-        <div class="conv-card" *ngFor="let c of convocatorias">
-          <div class="conv-main">
-
-            <div class="conv-title">
-              <b>{{ c.fecha_partido | date:'dd/MM/yyyy' }}</b>
-              <span *ngIf="c.rival"> · vs {{ c.rival }}</span>
-            </div>
-
-            <div class="conv-meta">
-              <span>Inicio: {{ c.hora_inicio }}</span>
-              <span>Quedada: {{ c.hora_quedada }}</span>
-              <span *ngIf="c.lugar">Lugar: {{ c.lugar }}</span>
-              <span>Límite: {{ c.fecha_limite_confirmacion | date:'dd/MM/yyyy HH:mm' }}</span>
-            </div>
-
-            <!-- JUGADOR -->
-            <div class="conv-actions" *ngIf="authService.hasRole('jugador')">
-
-              <span class="estado-badge no-invitado" *ngIf="!estaInvitado(c)">
-                No convocado
-              </span>
-
-              <ng-container *ngIf="estaInvitado(c)">
-                <span class="estado-badge cerrada" *ngIf="convocatoriaCerrada(c)">
-                  Convocatoria cerrada ·
-                  <span class="estado-text">
-                    {{ estadoJugador(c) === 'confirmado' ? 'Confirmado' :
-                      (estadoJugador(c) === 'rechazado' ? 'Rechazado' : 'Sin respuesta') }}
-                  </span>
-                </span>
-
-                <ng-container *ngIf="!convocatoriaCerrada(c)">
-                  <span class="estado-badge"
-                        *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'"
-                        [ngClass]="estadoJugador(c)">
-                    {{ estadoJugador(c) | uppercase }}
-                  </span>
-
-                  <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
-                    <span class="estado">Estado: <b>pendiente</b></span>
-                    <button class="cambiar" (click)="responderConvocatoria(c, 'confirmado')">Confirmar</button>
-                    <button class="rechazar" (click)="abrirModalMotivoConvocatoria(c)">Rechazar</button>
-                  </ng-container>
-                </ng-container>
-              </ng-container>
-
-            </div>
-
-            <!-- ADMIN / ENTRENADOR -->
-            <div class="conv-actions" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')">
-              <span class="estado">
-                Convocados: <b>{{ c.jugadores?.length || 0 }}</b>
-                · ✅ {{ contarPorEstado(c, 'confirmado') }}
-                · ❌ {{ contarPorEstado(c, 'rechazado') }}
-                · ⏳ {{ contarPorEstado(c, 'pendiente') }}
-              </span>
-
-              <button
-                class="cambiar"
-                *ngIf="!convocatoriaCerrada(c)"
-                (click)="enviarRecordatorio(c)">
-                🔔 Enviar recordatorio
-              </button>
-
-              <span class="estado-badge cerrada" *ngIf="convocatoriaCerrada(c)">
-                Convocatoria cerrada
-              </span>
-            </div>
-
-            <details class="conv-details">
-              <summary>Ver convocados</summary>
-
-              <div class="convocados">
-                <div class="conv-j" *ngFor="let j of c.jugadores">
-                  <span>{{ j.nombre }} <span style="color:#777;">({{ j.DNI }})</span></span>
-                  <span class="pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
-
-                  <div *ngIf="j.motivo" style="font-size:0.8rem;color:#6b7280;">
-                    Motivo: {{ j.motivo }}
-                  </div>
-                </div>
-              </div>
-            </details>
-
-          </div>
-        </div>
+      <div class="status-container" *ngIf="loadingConvocatorias">
+        <div class="spinner"></div>
+        <p>Cargando convocatorias...</p>
+      </div>
+      
+      <div *ngIf="!loadingConvocatorias && convocatorias.length === 0" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>Sin convocatorias</h3>
+        <p>No se han publicado convocatorias para los próximos encuentros.</p>
       </div>
 
-    </div>
+      <div class="lista-convocatorias" *ngIf="!loadingConvocatorias && convocatorias.length > 0">
+        <div class="conv-card" *ngFor="let c of convocatorias" [class.cerrada]="convocatoriaCerrada(c)">
+          
+          <div class="conv-header-row">
+            <div class="match-info">
+              <div class="match-date">
+                <span class="day">{{ c.fecha_partido | date:'dd' }}</span>
+                <span class="month">{{ c.fecha_partido | date:'MMM' }}</span>
+              </div>
+              <div class="match-details">
+                <h3 class="rival-name">{{ c.rival ? 'vs ' + c.rival : 'Partido de Entrenamiento' }}</h3>
+                <div class="match-meta">
+                  <span class="location" *ngIf="c.lugar">
+                    <span class="geo-icon">🗺️</span> {{ c.lugar }}
+                  </span>
+                  <span class="limit-tag" [class.danger]="convocatoriaCerrada(c)">
+                    ⏰ Límite: {{ c.fecha_limite_confirmacion | date:'dd/MM HH:mm' }}
+                  </span>
+                </div>
+              </div>
+            </div>
 
+            <div class="time-slots">
+              <div class="time-box">
+                <span class="label">Quedada</span>
+                <span class="value">{{ c.hora_quedada }}</span>
+              </div>
+              <div class="time-box highlight">
+                <span class="label">Inicio</span>
+                <span class="value">{{ c.hora_inicio }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="conv-body">
+            <div class="section-player" *ngIf="authService.hasRole('jugador')">
+              <div class="player-status-bar" *ngIf="!estaInvitado(c)">
+                <span class="status-pill gray">No convocado</span>
+              </div>
+
+              <div class="player-status-bar" *ngIf="estaInvitado(c)">
+                <div class="decision-zone" *ngIf="!convocatoriaCerrada(c)">
+                  <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
+                    <span class="pending-text">¿Confirmas tu asistencia?</span>
+                    <div class="btn-group">
+                      <button class="btn-action confirm" (click)="responderConvocatoria(c, 'confirmado')">Confirmar ✓</button>
+                      <button class="btn-action reject" (click)="abrirModalMotivoConvocatoria(c)">Rechazar ✕</button>
+                    </div>
+                  </ng-container>
+                  
+                  <div class="already-responded" *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'">
+                    <span class="status-pill" [ngClass]="estadoJugador(c)">
+                      Has respondido: {{ estadoJugador(c) | uppercase }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="closed-zone" *ngIf="convocatoriaCerrada(c)">
+                  <span class="status-pill closed">CONVOCATORIA FINALIZADA</span>
+                  <span class="final-answer" *ngIf="estaInvitado(c)">
+                    Tu estado: <b>{{ estadoJugador(c) | titlecase }}</b>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-admin" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')">
+              <div class="stats-pills">
+                <span class="pill total">👥 <b>{{ c.jugadores?.length || 0 }}</b></span>
+                <span class="pill confirm">✓ <b>{{ contarPorEstado(c, 'confirmado') }}</b></span>
+                <span class="pill reject">✕ <b>{{ contarPorEstado(c, 'rechazado') }}</b></span>
+                <span class="pill pending">? <b>{{ contarPorEstado(c, 'pendiente') }}</b></span>
+              </div>
+
+              <div class="admin-actions">
+                <button class="btn-icon reminder" *ngIf="!convocatoriaCerrada(c)" (click)="enviarRecordatorio(c)" title="Enviar recordatorio">🔔</button>
+                <button class="btn-icon delete" >🗑</button>
+              </div>
+            </div>
+          </div>
+
+          <details class="conv-players-list">
+            <summary>
+              <span class="summary-content">
+                Ver lista de convocados 
+                <span class="count-tag">{{ c.jugadores?.length }}</span>
+              </span>
+            </summary>
+            <div class="players-grid">
+              <div class="player-item" *ngFor="let j of c.jugadores">
+                <div class="player-info">
+                  <span class="player-name">{{ j.nombre }}</span>
+                  <span class="player-dni">{{ j.DNI }}</span>
+                </div>
+                <div class="player-status">
+                  <span class="mini-pill" [ngClass]="j.estado">{{ estadoLabel(j.estado) }}</span>
+                  <span class="reason" *ngIf="j.motivo" [title]="j.motivo">💬</span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
   </main>
 </div>

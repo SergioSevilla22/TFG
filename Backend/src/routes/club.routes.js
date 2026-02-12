@@ -15,7 +15,7 @@ import {
 
 import { registerUsuariosMasivoAdminClub } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-import { requireAdminPlataforma, requireAdminClub } from "../middlewares/roles.middleware.js";
+import { requireAdminPlataforma, requireAdminClub, requireGestionClub } from "../middlewares/roles.middleware.js";
 
 const router = express.Router();
 
@@ -116,23 +116,11 @@ router.get(
 router.get(
   "/clubes/:id/resumen",
   authMiddleware,
-  requireAdminClub,
-  (req, res, next) => {
-    if (req.user.club_id != req.params.id) {
-      return res.status(403).json({ message: "Acceso denegado" });
-    }
-    next();
-  },
+  requireGestionClub,
   obtenerResumenClub
 );
 
-router.get('/clubes/:id/jugadores-categoria', authMiddleware, requireAdminClub,
-  (req, res, next) => {
-    if (req.user.club_id != req.params.id) {
-      return res.status(403).json({ message: "Acceso denegado" });
-    }
-    next();
-  },
+router.get('/clubes/:id/jugadores-categoria', authMiddleware, requireGestionClub,
   obtenerJugadoresClubCategoria
 );
 
