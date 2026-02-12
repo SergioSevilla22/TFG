@@ -68,34 +68,50 @@ export class EquipoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const user = this.authService.getUser();
-  
-    // 🧑‍🦱 JUGADOR SIN EQUIPO
-    if (user?.Rol === 'jugador' && !user.equipo_id) {
-      this.sinEquipo = true;
-      this.loading = false;
-      return;
-    }
-  
-    // 🔗 Equipo por URL
-    const idParam = this.route.snapshot.paramMap.get('id');
-  
-    if (!idParam) {
-      this.sinEquipo = true;
-      this.loading = false;
-      return;
-    }
-  
-    const id = Number(idParam);
-  
-    if (isNaN(id)) {
-      this.sinEquipo = true;
-      this.loading = false;
-      return;
-    }
-  
-    this.equipoId = id;
-    this.cargarEquipo();
+    // Escuchamos los cambios de parámetros en la URL de forma activa
+    this.route.paramMap.subscribe(params => {
+      const user = this.authService.getUser();
+      const idParam = params.get('id');
+      const id = Number(idParam);
+
+      // 1. Resetear estados para evitar glitches visuales
+      this.loading = true;
+      this.equipo = null;
+      this.sinEquipo = false;
+
+      // 2. Seguridad básica
+      if (!user) {
+        this.router.navigate(['/login']);
+        return;
+      }
+
+      // 3. Validar ID
+      if (!idParam || isNaN(id)) {
+        this.sinEquipo = true;
+        this.loading = false;
+        return;
+      }
+
+      // 4. 🛡️ SEGURIDAD: Validación por Rol
+      if (user.Rol === 'jugador') {
+        if (!user.equipo_id) {
+          this.sinEquipo = true;
+          this.loading = false;
+          return;
+        }
+
+        if (id !== user.equipo_id) {
+          console.warn('Acceso denegado. Redirigiendo a su equipo...');
+          this.router.navigate(['/equipo', user.equipo_id]);
+          return; 
+          // Al navegar, el subscribe volverá a saltar con el ID correcto
+        }
+      }
+
+      // 5. Carga de datos
+      this.equipoId = id;
+      this.cargarEquipo();
+    });
   }
   
 

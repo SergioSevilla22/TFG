@@ -1,262 +1,331 @@
-:host {
-    display: block;
-    height: 100%;
-  }
+:host { display: block; height: 100%; }
+
+.equipo-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 65px);
+  background: #f1f5f9;
+}
+
+.equipo-content { padding: 32px; }
+
+.panel-card {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  padding: 35px;
+}
+
+.panel-header {
+  display: flex;             /* Asegura alineación horizontal */
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 35px;
+
+  h2 { font-size: 1.9rem; font-weight: 800; color: #0f172a; margin: 0; }
+  .subtitle { color: #64748b; margin-top: 5px; }
+}
+
+/* ESTILO DEL ICONO DE MAPA */
+.geo-icon {
+  font-size: 1rem;
+  margin-right: 4px;
+  filter: sepia(1) hue-rotate(190deg) saturate(2); /* Le da un tono azulado profesional */
+}
+
+/* BOTONES ADMIN ALINEADOS A LA DERECHA */
+.section-admin {
+  display: flex;
+  align-items: center;
+  gap: 24px; /* Más espacio entre stats y botones */
+  margin-left: auto; /* Empuja todo hacia la derecha si hay espacio */
+}
+
+.admin-actions {
+  display: flex;
+  gap: 12px;
+  border-left: 1px solid #e2e8f0; /* Separación visual opcional */
+  padding-left: 12px;
+}
+
+/* REFUERZO DE COLOR EN EL BOTÓN ELIMINAR */
+.btn-icon.delete {
+  background: #fee2e2; 
+  color: #b91c1c; 
+  border: 1px solid #fecaca;
   
-  /* =========================
-     LAYOUT GENERAL
-  ========================= */
-  .equipo-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: calc(100vh - 65px);
-    background: #f4f6f8;
+  &:hover { 
+    background: #ef4444; 
+    color: white; 
+    transform: scale(1.1);
   }
-  
-  .equipo-content {
-    padding: 32px;
-  }
-  
-  /* =========================
-     PANEL
-  ========================= */
-  .panel-card {
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 16px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-  
-  /* =========================
-     LISTA CONVOCATORIAS
-  ========================= */
-  .lista-convocatorias {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-  
-  .conv-card {
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
-    padding: 22px;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .conv-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(0,0,0,0.08);
-  }
-  
-  /* =========================
-     CABECERA CONVOCATORIA
-  ========================= */
-  .conv-title {
-    font-size: 1.15rem;
-    font-weight: 800;
-    margin-bottom: 8px;
-    color: #111827;
-  }
-  
-  .conv-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin-bottom: 14px;
-  }
-  
-  .conv-meta span {
-    background: #f3f4f6;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-weight: 500;
-  }
-  
-  /* =========================
-     ACCIONES
-  ========================= */
-  .conv-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-  
-  .conv-actions .estado {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #374151;
-  }
-  
-  /* =========================
-     BOTONES
-  ========================= */
-  .cambiar {
-    background: #1ea83a;
-    padding: 6px 14px;
-    border-radius: 10px;
-    color: white;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  
-  .cambiar:hover {
-    background: #16852d;
-    transform: translateY(-1px);
-  }
-  
-  .rechazar {
-    background: #ef4444;
-    padding: 6px 14px;
-    border-radius: 10px;
-    color: white;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .rechazar:hover {
-    background: #dc2626;
-  }
-  
-  /* =========================
-     DETALLES / JUGADORES
-  ========================= */
-  .conv-details summary {
-    cursor: pointer;
-    font-weight: 600;
-    color: #1ea83a;
-    list-style: none;
-  }
-  
-  .conv-details summary::-webkit-details-marker {
-    display: none;
-  }
-  
-  .conv-details summary::before {
-    content: "▸ ";
-    display: inline-block;
-    transition: transform 0.2s;
-  }
-  
-  .conv-details[open] summary::before {
-    transform: rotate(90deg);
-  }
-  
-  .convocados {
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .conv-j {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f9fafb;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-  }
-  
-  /* =========================
-     ESTADOS / BADGES
-  ========================= */
-  .estado-badge {
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 800;
-    text-transform: capitalize;
-  }
-  
-  .estado-badge.confirmado {
-    background: #dcfce7;
-    color: #166534;
-  }
-  
-  .estado-badge.rechazado {
-    background: #fee2e2;
-    color: #991b1b;
-  }
-  
-  .estado-badge.pendiente {
-    background: #fef9c3;
-    color: #854d0e;
-  }
-  
-  .estado-badge.cerrada {
-    background: #e5e7eb;
-    color: #374151;
-  }
-  
-  .estado-badge.no-invitado {
-    background: #f3f4f6;
-    color: #d62811;
-    border: 1px dashed #d1d5db;
-  }
-  
-  /* =========================
-     PÍLDORAS
-  ========================= */
+}
+
+.btn-primary {
+  background: #059669;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+  transition: all 0.3s;
+  &:hover { background: #047857; transform: translateY(-2px); }
+}
+
+.lista-convocatorias { display: flex; flex-direction: column; gap: 24px; }
+
+.conv-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+
+  &:hover { border-color: #94a3b8; box-shadow: 0 12px 20px rgba(0,0,0,0.04); }
+  &.cerrada { opacity: 0.85; }
+}
+
+/* HEADER DE LA CARD */
+.conv-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.match-info { display: flex; gap: 20px; align-items: center; }
+
+.match-date {
+  background: #f8fafc;
+  min-width: 65px;
+  height: 65px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  .day { font-size: 1.5rem; font-weight: 800; color: #0f172a; line-height: 1; }
+  .month { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+}
+
+.rival-name { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0 0 5px 0; }
+.match-meta { 
+  display: flex; 
+  gap: 15px; 
+  font-size: 0.85rem; 
+  color: #64748b;
+  .limit-tag { font-weight: 700; color: #059669; &.danger { color: #dc2626; } }
+}
+
+/* HORARIOS */
+.time-slots { display: flex; gap: 12px; }
+.time-box {
+  padding: 8px 15px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  text-align: center;
+  .label { display: block; font-size: 0.65rem; text-transform: uppercase; font-weight: 700; color: #64748b; }
+  .value { font-size: 1.1rem; font-weight: 800; color: #1e293b; }
+  &.highlight { background: #0f172a; .label { color: #94a3b8; } .value { color: white; } }
+}
+
+/* CUERPO Y ACCIONES */
+.conv-body {
+  padding: 20px 24px;
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-group { display: flex; gap: 10px; margin-top: 5px; }
+.pending-text { font-size: 0.9rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 5px; }
+
+.btn-action {
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  &.confirm { background: #10b981; color: white; }
+  &.reject { background: #ef4444; color: white; }
+}
+
+/* ADMIN PILLS */
+.section-admin { display: flex; align-items: center; gap: 20px; }
+.stats-pills {
+  display: flex;
+  gap: 8px;
   .pill {
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
     font-weight: 700;
+    background: white;
+    border: 1px solid #e2e8f0;
+    &.confirm { color: #059669; border-color: #dcfce7; }
+    &.reject { color: #dc2626; border-color: #fee2e2; }
+    &.pending { color: #ca8a04; border-color: #fefce8; }
   }
-  
-  .pill.confirmado {
-    background: #dcfce7;
-    color: #166534;
+}
+
+.admin-actions { display: flex; gap: 8px; }
+.btn-icon {
+  width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #e2e8f0;
+  &:hover { background: #f1f5f9; transform: scale(1.05); }
+  &.delete { color: #b91c1c; &:hover { background: #fee2e2; } }
+}
+
+/* LISTA DE JUGADORES */
+.conv-players-list {
+  background: white;
+  summary {
+    padding: 15px 24px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #475569;
+    border-top: 1px solid #f1f5f9;
+    list-style: none;
+    &::-webkit-details-marker { display: none; }
+    .count-tag { background: #f1f5f9; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; margin-left: 8px; }
   }
+  &[open] summary { color: #059669; }
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  padding: 0 24px 24px 24px;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+}
+
+.player-name { font-size: 0.9rem; font-weight: 700; color: #1e293b; display: block; }
+.player-dni { font-size: 0.75rem; color: #64748b; }
+
+.mini-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  &.confirmado { background: #dcfce7; color: #166534; }
+  &.rechazado { background: #fee2e2; color: #991b1b; }
+  &.pendiente { background: #fefce8; color: #854d0e; }
+}
+
+.status-pill {
+  padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 0.85rem;
+  &.confirmado { background: #10b981; color: white; }
+  &.rechazado { background: #ef4444; color: white; }
+  &.closed { background: #64748b; color: white; }
+}
+
+@media (max-width: 900px) {
+  .conv-header-row, .conv-body { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .time-slots { width: 100%; }
+  .section-admin { width: 100%; justify-content: space-between; }
+}
+.match-meta .location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #475569;
   
-  .pill.rechazado {
-    background: #fee2e2;
-    color: #991b1b;
+}
+
+.conv-body {
+  padding: 20px 24px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* CONTENEDOR ADMIN */
+.section-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Esto empuja los grupos a los extremos */
+  width: 100%;
+}
+
+.admin-group-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin-group-right {
+  margin-left: auto; /* Refuerzo para asegurar que va a la derecha */
+}
+
+/* BOTÓN RECORDAR (Ahora con texto y más profesional) */
+.btn-icon.reminder {
+  width: auto; /* Para que quepa el texto */
+  padding: 0 15px;
+  gap: 8px;
+  background: #f1f5f9;
+  color: #1e293b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid #e2e8f0;
+
+  &:hover {
+    background: #e0f2fe;
+    border-color: #bae6fd;
+    color: #0369a1;
   }
-  
-  .pill.pendiente {
-    background: #fef9c3;
-    color: #854d0e;
+}
+
+/* BOTÓN ELIMINAR (Solo icono a la derecha) */
+.btn-icon.delete {
+  width: 42px;
+  height: 42px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #ef4444;
+    color: white;
+    transform: scale(1.05);
   }
-  
-  /* =========================
-     ESTADOS GENERALES
-  ========================= */
-  .empty {
-    color: #9ca3af;
-    text-align: center;
-    padding: 14px 0;
+}
+
+/* Ajuste Responsive */
+@media (max-width: 900px) {
+  .section-admin {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
   }
-  
-  /* =========================
-     RESPONSIVE
-  ========================= */
-  @media (max-width: 900px) {
-    .equipo-layout {
-      grid-template-columns: 1fr;
-    }
-  
-    .equipo-content {
-      padding: 20px;
-    }
-  
-    .conv-actions {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  .admin-group-right {
+    margin-left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
   }
-  
+}

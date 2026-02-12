@@ -36,11 +36,12 @@
       Mi equipo
     </a>
 
-    <a *ngIf="authService.hasRole('entrenador')"
+    <!-- <a *ngIf="authService.hasRole('entrenador')"
        routerLink="/register"
        routerLinkActive="active">
-      Registrar
-    </a>
+      Registrar     ESTO ES EL REGISTER, VA UN POCO MAL Y NO SE SIQUIERA SI EL ENTRENADOR DEBERIA DE PODER REGISTRAR USUARIOS.
+    </a> -->
+    
 
     <!-- JUGADOR -->
     <a *ngIf="authService.hasRole('jugador')"
