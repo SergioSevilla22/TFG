@@ -110,8 +110,17 @@
               </div>
 
               <div class="admin-actions">
-                <button class="btn-icon reminder" *ngIf="!convocatoriaCerrada(c)" (click)="enviarRecordatorio(c)" title="Enviar recordatorio">🔔</button>
-                <button class="btn-icon delete" >🗑</button>
+                <button class="btn-icon reminder" *ngIf="!convocatoriaCerrada(c)" (click)="enviarRecordatorio(c)" matTooltip="Enviar recordatorio">🔔</button>
+                <button class="btn-icon delete" matTooltip="Eliminar" >🗑</button>
+                <button
+                class="btn-icon edit"
+                [disabled]="convocatoriaCerrada(c)"
+                [matTooltip]="convocatoriaCerrada(c) 
+                  ? 'No se puede editar porque ya ha finalizado' 
+                  : 'Editar convocatoria'"
+                (click)="abrirEditarConvocatoria(c)">
+                ✏️
+              </button>
               </div>
             </div>
           </div>

@@ -404,3 +404,101 @@ export const eliminarEvento = async (req, res) => {
   }
 };
 
+export const editarEvento = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      titulo,
+      descripcion,
+      fecha_inicio,
+      fecha_fin,
+      requiere_confirmacion,
+      fecha_limite_confirmacion,
+      tipo,
+      jugadores = []
+    } = req.body;
+
+    const [evento] = await query(
+      `SELECT fecha_inicio FROM eventos WHERE id = ?`,
+      [id]
+    );
+
+    if (!evento) {
+      return res.status(404).json({ message: "Evento no encontrado" });
+    }
+
+    const ahora = new Date();
+
+    // 🔒 BLOQUEO REAL
+    if (new Date(evento.fecha_inicio) <= ahora) {
+      return res.status(403).json({
+        message: "No se puede editar un evento ya iniciado"
+      });
+    }
+
+    const inicio = new Date(fecha_inicio);
+    const fin = new Date(fecha_fin);
+
+    if (fin <= inicio) {
+      return res.status(400).json({
+        message: "La fecha de fin debe ser posterior al inicio"
+      });
+    }
+
+    if (requiere_confirmacion && fecha_limite_confirmacion) {
+      const limite = new Date(fecha_limite_confirmacion);
+
+      if (limite >= inicio) {
+        return res.status(400).json({
+          message: "El límite debe ser anterior al inicio"
+        });
+      }
+    }
+
+    // UPDATE evento
+    await query(
+      `UPDATE eventos
+       SET titulo=?, descripcion=?, fecha_inicio=?, fecha_fin=?,
+           requiere_confirmacion=?, fecha_limite_confirmacion=?, tipo=?
+       WHERE id=?`,
+      [
+        titulo,
+        descripcion,
+        fecha_inicio,
+        fecha_fin,
+        requiere_confirmacion ? 1 : 0,
+        requiere_confirmacion ? fecha_limite_confirmacion : null,
+        tipo,
+        id
+      ]
+    );
+
+    // 🔄 actualizar jugadores
+    await query("DELETE FROM evento_jugadores WHERE evento_id=?", [id]);
+
+    if (jugadores.length > 0) {
+
+      const placeholders = jugadores.map(() => "(?, ?)").join(",");
+      const values = [];
+    
+      jugadores.forEach((dni) => {
+        values.push(id, dni);
+      });
+    
+      await query(
+        `INSERT INTO evento_jugadores (evento_id, jugador_dni)
+         VALUES ${placeholders}`,
+        values
+      );
+    }
+    
+
+    res.json({ message: "Evento actualizado correctamente" });
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+

@@ -12,11 +12,13 @@ import { ConvocatoriaService } from '../../services/convocatoria.service';
 
 import { CreateConvocatoriaModalComponent } from '../../shared/components/create-convocatoria-modal/create-convocatoria-modal.component';
 import { MotivoModalComponent } from '../../shared/components/motivo-modal/motivo-modal.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 @Component({
   selector: 'app-equipo-convocatorias',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent, SidebarEquipoComponent],
+  imports: [CommonModule, RouterModule, HeaderComponent, SidebarEquipoComponent,MatTooltipModule ],
   templateUrl: './equipo-convocatorias.component.html',
   styleUrls: ['./equipo-convocatorias.component.css']
 })
@@ -156,9 +158,29 @@ export class EquipoConvocatoriasComponent implements OnInit {
   }
 
   convocatoriaCerrada(c: any): boolean {
-    if (!c?.fecha_limite_confirmacion) return false;
-    return new Date() > new Date(c.fecha_limite_confirmacion);
+
+    const ahora = new Date();
+
+    const fechaBase = new Date(c.fecha_partido);
+
+    const year = fechaBase.getFullYear();
+    const month = fechaBase.getMonth();
+    const day = fechaBase.getDate();
+
+    const [hora, minutos] = c.hora_inicio.split(':');
+
+    const inicio = new Date(
+      year,
+      month,
+      day,
+      Number(hora),
+      Number(minutos)
+    );
+  
+    return ahora >= inicio;
   }
+  
+  
 
   estadoLabel(estado: string | null | undefined): string {
     switch (estado) {
@@ -168,5 +190,20 @@ export class EquipoConvocatoriasComponent implements OnInit {
       case 'pendiente':
       default: return 'Pendiente';
     }
+  }
+
+  abrirEditarConvocatoria(c: any) {
+    const ref = this.dialog.open(CreateConvocatoriaModalComponent, {
+      width: '700px',
+      data: {
+        equipoId: this.equipoId,
+        jugadoresEquipo: this.equipo?.jugadores || [],
+        convocatoria: c
+      }
+    });
+  
+    ref.afterClosed().subscribe(r => {
+      if (r) this.cargarConvocatorias();
+    });
   }
 }

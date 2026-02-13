@@ -1,5 +1,7 @@
 <div class="modal-header">
-  <h2 mat-dialog-title>Nueva Convocatoria</h2>
+  <h2 mat-dialog-title>
+    {{ modo === 'editar' ? 'Editar Convocatoria' : 'Nueva Convocatoria' }}
+  </h2>
   <p class="subtitle">Configura los detalles del partido y selecciona a los convocados.</p>
 </div>
 
@@ -50,7 +52,12 @@
     <div class="player-list">
       <label class="player-row" *ngFor="let j of jugadores">
         <div class="player-info">
-          <input type="checkbox" (change)="toggleJugador(j.DNI, $event)" class="custom-checkbox" />
+          <input
+          type="checkbox"
+          [checked]="seleccionados.has(j.DNI)"
+          (change)="toggleJugador(j.DNI, $event)"
+          class="custom-checkbox"
+        />
           <div class="avatar-mini">
             <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" alt="Foto" class="avatar-img" />
             <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
@@ -72,8 +79,12 @@
 
 <div mat-dialog-actions align="end" class="modal-actions">
   <button mat-button (click)="cerrar(false)" class="btn-cancel">Cancelar</button>
-  <button mat-flat-button color="primary" [disabled]="loading" (click)="publicar()" class="btn-publish">
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="guardar()" class="btn-publish">
     <mat-icon *ngIf="!loading">send</mat-icon>
-    {{ loading ? 'Publicando...' : 'Publicar Convocatoria' }}
+    {{ 
+      loading 
+        ? (modo === 'editar' ? 'Guardando...' : 'Publicando...') 
+        : (modo === 'editar' ? 'Guardar Cambios' : 'Publicar Convocatoria') 
+    }}
   </button>
 </div>

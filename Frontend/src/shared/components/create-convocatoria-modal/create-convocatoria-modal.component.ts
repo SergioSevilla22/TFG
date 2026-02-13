@@ -42,16 +42,45 @@ export class CreateConvocatoriaModalComponent implements OnInit {
   mensaje = '';
   loading = false;
 
+  modo: 'crear' | 'editar' = 'crear';
+
+
   constructor(
     private dialogRef: MatDialogRef<CreateConvocatoriaModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { equipoId: number; equipoNombre: string; jugadoresEquipo: any[] },
+    @Inject(MAT_DIALOG_DATA) public data: { equipoId: number; equipoNombre: string; jugadoresEquipo: any[], convocatoria?: any; },
     private convocatoriaService: ConvocatoriaService,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.jugadores = (this.data?.jugadoresEquipo || []).slice().sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+
+    this.jugadores = (this.data?.jugadoresEquipo || [])
+      .slice()
+      .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+  
+    // 🔥 SI VIENE CONVOCATORIA → ES EDICIÓN
+    if (this.data?.convocatoria) {
+  
+      this.modo = 'editar';
+  
+      const c = this.data.convocatoria;
+  
+      this.convocatoria = {
+        rival: c.rival || '',
+        lugar: c.lugar || '',
+        fecha_partido: c.fecha_partido?.split('T')[0],
+        hora_inicio: c.hora_inicio,
+        hora_quedada: c.hora_quedada,
+        fecha_limite_confirmacion: this.formatDatetimeLocal(c.fecha_limite_confirmacion)
+      };
+  
+      // marcar jugadores ya convocados
+      c.jugadores?.forEach((j: any) => {
+        this.seleccionados.add(j.DNI);
+      });
+    }
   }
+  
 
   toggleJugador(dni: string, event: Event) {
     const input = event.target as HTMLInputElement;
@@ -66,7 +95,7 @@ export class CreateConvocatoriaModalComponent implements OnInit {
     this.dialogRef.close(refresh);
   }
 
-  publicar() {
+  guardar() {
     const user = this.authService.getUser();
     if (!user?.DNI) {
       this.mensaje = 'No se encontró el usuario en sesión.';
@@ -125,8 +154,6 @@ export class CreateConvocatoriaModalComponent implements OnInit {
     this.mensaje = '';
   
     const payload = {
-      equipo_id: this.data.equipoId,
-      creador_dni: user.DNI,
       rival: this.convocatoria.rival,
       lugar: this.convocatoria.lugar,
       fecha_partido: this.convocatoria.fecha_partido,
@@ -136,21 +163,48 @@ export class CreateConvocatoriaModalComponent implements OnInit {
       jugadores: Array.from(this.seleccionados)
     };
   
-    this.convocatoriaService.crearConvocatoria(payload).subscribe({
-      next: () => {
-        this.loading = false;
-        this.cerrar(true);
-      },
-      error: (err) => {
-        this.loading = false;
+    this.loading = true;
+    this.errores = [];
   
-        if (Array.isArray(err?.error?.errors)) {
-          this.errores = err.error.errors;
-        } else {
-          this.errores = [err?.error?.message || 'No se pudo crear la convocatoria'];
-        }
-      }
-    });
+    if (this.modo === 'editar') {
+  
+      this.convocatoriaService
+        .editarConvocatoria(this.data.convocatoria.id, payload)
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            this.cerrar(true);
+          },
+          error: (err) => {
+            this.loading = false;
+            this.errores = err?.error?.errors || [err?.error?.message];
+          }
+        });
+  
+    } else {
+  
+      this.convocatoriaService
+        .crearConvocatoria({
+          equipo_id: this.data.equipoId,
+          creador_dni: user.DNI,
+          ...payload
+        })
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            this.cerrar(true);
+          },
+          error: (err) => {
+            this.loading = false;
+            this.errores = err?.error?.errors || [err?.error?.message];
+          }
+        });
+    }
+  }
+
+  formatDatetimeLocal(dateString: string) {
+    const d = new Date(dateString);
+    return d.toISOString().slice(0, 16);
   }
   
 

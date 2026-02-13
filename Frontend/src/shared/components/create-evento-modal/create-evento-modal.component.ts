@@ -40,16 +40,46 @@ export class CreateEventoModalComponent implements OnInit {
   loading = false;
   mensaje = '';
 
+  modo: 'crear' | 'editar' = 'crear';
+
+
   constructor(
     private dialogRef: MatDialogRef<CreateEventoModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { equipoId: number; jugadoresEquipo: any[] },
+    @Inject(MAT_DIALOG_DATA) public data: { equipoId: number; jugadoresEquipo: any[],   evento?: any; },
     private eventoService: EventoService,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.jugadores = (this.data?.jugadoresEquipo || []).slice().sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    this.jugadores = (this.data?.jugadoresEquipo || [])
+      .slice()
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+  
+    if (this.data?.evento) {
+  
+      this.modo = 'editar';
+  
+      const e = this.data.evento;
+  
+      this.evento = {
+        titulo: e.titulo,
+        descripcion: e.descripcion,
+        tipo: e.tipo,
+        fecha_inicio: this.formatDatetimeLocal(e.fecha_inicio),
+        fecha_fin: this.formatDatetimeLocal(e.fecha_fin),
+        requiere_confirmacion: !!e.requiere_confirmacion,
+        fecha_limite_confirmacion: e.fecha_limite_confirmacion
+          ? this.formatDatetimeLocal(e.fecha_limite_confirmacion)
+          : ''
+      };
+  
+      e.jugadores?.forEach((j: any) => {
+        this.seleccionados.add(j.DNI);
+      });
+    }
   }
+  
 
   toggleJugador(dni: string, event: Event) {
     const input = event.target as HTMLInputElement;
@@ -59,7 +89,7 @@ export class CreateEventoModalComponent implements OnInit {
 
   cerrar(refresh = false) { this.dialogRef.close(refresh); }
 
-  crear() {
+  guardar() {
     const user = this.authService.getUser();
     if (!user?.DNI) { this.mensaje = 'Usuario no encontrado'; return; }
 
@@ -69,22 +99,59 @@ export class CreateEventoModalComponent implements OnInit {
     }
 
     const payload = {
-      equipo_id: this.data.equipoId,
-      creador_dni: user.DNI,
       titulo: this.evento.titulo,
       descripcion: this.evento.descripcion,
       tipo: this.evento.tipo,
       fecha_inicio: this.evento.fecha_inicio,
       fecha_fin: this.evento.fecha_fin,
       requiere_confirmacion: this.evento.requiere_confirmacion,
-      fecha_limite_confirmacion: this.evento.requiere_confirmacion ? this.evento.fecha_limite_confirmacion : null,
+      fecha_limite_confirmacion: this.evento.requiere_confirmacion
+        ? this.evento.fecha_limite_confirmacion
+        : null,
       jugadores: Array.from(this.seleccionados)
     };
-
+  
     this.loading = true;
-    this.eventoService.crearEvento(payload).subscribe({
-      next: () => { this.loading = false; this.cerrar(true); },
-      error: (err) => { this.loading = false; this.mensaje = err?.error?.message || 'Error al crear evento'; }
-    });
+  
+    if (this.modo === 'editar') {
+  
+      this.eventoService
+        .editarEvento(this.data.evento.id, payload)
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            this.cerrar(true);
+          },
+          error: (err) => {
+            this.loading = false;
+            this.mensaje = err?.error?.message || 'Error actualizando evento';
+          }
+        });
+  
+    } else {
+  
+      this.eventoService
+        .crearEvento({
+          equipo_id: this.data.equipoId,
+          creador_dni: user.DNI,
+          ...payload
+        })
+        .subscribe({
+          next: () => {
+            this.loading = false;
+            this.cerrar(true);
+          },
+          error: (err) => {
+            this.loading = false;
+            this.mensaje = err?.error?.message || 'Error creando evento';
+          }
+        });
+    }
   }
+
+  formatDatetimeLocal(dateString: string) {
+    const d = new Date(dateString);
+    return d.toISOString().slice(0, 16);
+  }
+  
 }

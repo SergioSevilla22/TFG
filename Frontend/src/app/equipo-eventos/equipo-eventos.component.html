@@ -93,15 +93,35 @@
             <div class="actions-section admin-actions"
                  *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club') || authService.hasRole('entrenador')">
               
-              <div class="stats-pills" *ngIf="e.requiere_confirmacion">
-                <span class="pill confirm" title="Confirmados">✓ <b>{{ contarPorEstadoEvento(e, 'confirmado') }}</b></span>
-                <span class="pill reject" title="Rechazados">✕ <b>{{ contarPorEstadoEvento(e, 'rechazado') }}</b></span>
-                <span class="pill pending" title="Pendientes">? <b>{{ contarPorEstadoEvento(e, 'pendiente') }}</b></span>
-              </div>
+                 <div class="stats-pills" *ngIf="e.requiere_confirmacion">
+                  <span class="pill total">
+                    👥 <b>{{ e.jugadores?.length || 0 }}</b>
+                  </span>
+                
+                  <span class="pill confirm">
+                    ✓ <b>{{ contarPorEstadoEvento(e, 'confirmado') }}</b>
+                  </span>
+                
+                  <span class="pill reject">
+                    ✕ <b>{{ contarPorEstadoEvento(e, 'rechazado') }}</b>
+                  </span>
+                
+                  <span class="pill pending">
+                    ? <b>{{ contarPorEstadoEvento(e, 'pendiente') }}</b>
+                  </span>
+                </div>
 
               <div class="admin-btns">
-                <button class="btn-icon reminder" *ngIf="!esEventoPasado(e)" (click)="enviarRecordatorioEvento(e)" title="Enviar Recordatorio">🔔</button>
-                <button class="btn-icon delete" (click)="eliminarEvento(e)" title="Eliminar">🗑</button>
+                <button class="btn-icon reminder" *ngIf="!esEventoPasado(e)" (click)="enviarRecordatorioEvento(e)" matTooltip="Enviar recordatorio">🔔</button>
+                <button class="btn-icon delete" (click)="eliminarEvento(e)"  matTooltip="Eliminar">🗑</button>
+                <button
+                class="btn-icon edit"
+                [disabled]="esEventoPasado(e)"
+                [matTooltip]=" esEventoPasado(e) ? 'No se puede editar porque ya ha comenzado' : 'Editar evento'"
+                (click)="abrirEditarEvento(e)">
+                ✏️
+              </button>
+
               </div>
 
               <span class="event-closed" *ngIf="esEventoPasado(e)">Finalizado</span>
