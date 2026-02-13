@@ -304,3 +304,84 @@ export const enviarRecordatorio = async (req, res) => {
 
   res.json({ enviados: pendientes.length });
 };
+
+export const editarConvocatoria = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      rival,
+      lugar,
+      fecha_partido,
+      hora_inicio,
+      hora_quedada,
+      fecha_limite_confirmacion,
+      jugadores
+    } = req.body;
+
+    const [conv] = await query(
+      `SELECT fecha_limite_confirmacion, fecha_partido, hora_inicio 
+       FROM convocatorias 
+       WHERE id = ?`,
+      [id]
+    );
+
+    if (!conv) {
+      return res.status(404).json({ message: "Convocatoria no encontrada" });
+    }
+
+    const ahora = new Date();
+    const fechaInicioActual = new Date(`${conv.fecha_partido}T${conv.hora_inicio}`);
+    const fechaLimiteActual = new Date(conv.fecha_limite_confirmacion);
+
+    // 🔒 NO PERMITIR EDITAR SI YA PASÓ
+    if (ahora > fechaInicioActual || ahora > fechaLimiteActual) {
+      return res.status(403).json({
+        message: "No se puede editar una convocatoria ya iniciada o cerrada"
+      });
+    }
+
+    // VALIDACIONES NUEVAS FECHAS
+    const inicio = new Date(`${fecha_partido}T${hora_inicio}`);
+    const quedada = new Date(`${fecha_partido}T${hora_quedada}`);
+    const limite = new Date(fecha_limite_confirmacion);
+
+    const errores = [];
+
+    if (inicio < ahora)
+      errores.push("No se puede establecer una fecha pasada");
+
+    if (quedada > inicio)
+      errores.push("La hora de quedada no puede ser posterior al inicio");
+
+    if (limite > inicio)
+      errores.push("El límite no puede ser posterior al inicio");
+
+    if (errores.length)
+      return res.status(400).json({ errors: errores });
+
+    // UPDATE convocatoria
+    await query(
+      `UPDATE convocatorias 
+       SET rival=?, lugar=?, fecha_partido=?, hora_inicio=?, hora_quedada=?, fecha_limite_confirmacion=?
+       WHERE id=?`,
+      [rival, lugar, fecha_partido, hora_inicio, hora_quedada, fecha_limite_confirmacion, id]
+    );
+
+    // 🔁 Actualizar jugadores
+    await query("DELETE FROM convocatoria_jugadores WHERE convocatoria_id=?", [id]);
+
+    for (const dni of jugadores) {
+      await query(
+        `INSERT INTO convocatoria_jugadores (convocatoria_id, jugador_dni)
+         VALUES (?, ?)`,
+        [id, dni]
+      );
+    }
+
+    res.json({ message: "Convocatoria actualizada" });
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+

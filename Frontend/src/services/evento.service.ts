@@ -32,4 +32,9 @@ export class EventoService {
     return this.http.delete(`${this.base}/${id}`);
   }
 
+  editarEvento(id: number, data: any) {
+    return this.http.put(`${this.base}/${id}`, data);
+  }
+  
+
 }

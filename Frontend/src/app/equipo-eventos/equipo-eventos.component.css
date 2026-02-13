@@ -164,38 +164,38 @@
 .stats-pills {
   display: flex;
   gap: 8px;
-  
+
   .pill {
-    padding: 6px 14px;
-    border-radius: 12px;
+    padding: 6px 12px;
+    border-radius: 10px;
     font-size: 0.85rem;
-    font-weight: 600;
-    
-    &.confirm { color: #15803d; background: #f0fdf4; border: 1px solid #dcfce7; }
-    &.reject { color: #b91c1c; background: #fef2f2; border: 1px solid #fee2e2; }
-    &.pending { color: #a16207; background: #fefce8; border: 1px solid #fef08a; }
+    font-weight: 700;
+    background: white;
+    border: 1px solid #e2e8f0;
+  }
+
+  .pill.total {
+    color: #334155;
+    border-color: #e2e8f0;
+  }
+
+  .pill.confirm {
+    color: #059669;
+    border-color: #dcfce7;
+  }
+
+  .pill.reject {
+    color: #dc2626;
+    border-color: #fee2e2;
+  }
+
+  .pill.pending {
+    color: #ca8a04;
+    border-color: #fefce8;
   }
 }
 
 .admin-btns { display: flex; gap: 12px; }
-
-.btn-icon {
-  background: #f1f5f9;
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  font-size: 1.1rem;
-
-  &:hover { transform: scale(1.1); }
-  &.reminder:hover { background: #e0f2fe; }
-  &.delete { background: #fee2e2; color: #b91c1c; &:hover { background: #fecaca; } }
-}
 
 .event-closed { font-size: 0.85rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
 
@@ -206,5 +206,66 @@
     width: 100%; 
     border-top: 1px solid #f1f5f9; 
     padding-top: 20px; 
+  }
+}
+
+.btn-icon.delete {
+  width: 42px;
+  height: 42px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #ef4444;
+    color: white;
+    transform: scale(1.05);
+  }
+}
+
+.btn-icon.reminder {
+  padding: 0 15px;
+  gap: 8px;
+  background: #f1f5f9;
+  color: #1e293b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+
+  &:hover {
+    background: #e0f2fe;
+    border-color: #bae6fd;
+    color: #0369a1;
+  }
+}
+
+.btn-icon.edit {
+  width: 42px;
+  height: 42px;
+  background: #fffefe;
+  border: 1px solid #d4d2d2;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #8b8a8a;
+    color: white;
+    transform: scale(1.05);
   }
 }

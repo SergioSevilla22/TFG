@@ -27,4 +27,8 @@ export class ConvocatoriaService {
   enviarRecordatorio(id: number) {
     return this.http.post(`${this.base}/${id}/recordatorio`, {});
   }
+
+  editarConvocatoria(id: number, data: any) {
+    return this.http.put(`${this.base}/${id}`, data);
+  }
 }

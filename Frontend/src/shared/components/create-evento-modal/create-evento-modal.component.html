@@ -71,7 +71,11 @@
       <div class="player-list">
         <label class="player-row" *ngFor="let j of jugadores">
           <div class="player-info">
-            <input type="checkbox" (change)="toggleJugador(j.DNI, $event)" class="custom-checkbox">
+            <input
+            type="checkbox"
+            [checked]="seleccionados.has(j.DNI)"
+            (change)="toggleJugador(j.DNI, $event)">
+          
             
             <div class="avatar-mini">
               <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" alt="Foto" class="avatar-img">
@@ -94,8 +98,12 @@
 
 <div mat-dialog-actions align="end" class="modal-actions">
   <button mat-button (click)="cerrar()" class="btn-cancel">Cancelar</button>
-  <button mat-flat-button color="primary" [disabled]="loading" (click)="crear()" class="btn-publish">
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="guardar()" class="btn-publish">
     <mat-icon *ngIf="!loading">add_task</mat-icon>
-    {{ loading ? 'Creando...' : 'Crear Evento' }}
+    {{ 
+      loading 
+        ? (modo === 'editar' ? 'Guardando...' : 'Creando...') 
+        : (modo === 'editar' ? 'Guardar Cambios' : 'Crear Evento') 
+    }}
   </button>
 </div>

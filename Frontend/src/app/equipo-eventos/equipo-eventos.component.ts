@@ -14,6 +14,7 @@ import { CreateEventoModalComponent } from
   '../../shared/components/create-evento-modal/create-evento-modal.component';
 import { MotivoModalComponent } from
   '../../shared/components/motivo-modal/motivo-modal.component';
+  import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-equipo-eventos',
@@ -22,7 +23,7 @@ import { MotivoModalComponent } from
     CommonModule,
     RouterModule,
     HeaderComponent,
-    SidebarEquipoComponent
+    SidebarEquipoComponent,MatTooltipModule
   ],
   templateUrl: './equipo-eventos.component.html',
   styleUrls: ['./equipo-eventos.component.css']
@@ -224,4 +225,21 @@ export class EquipoEventosComponent implements OnInit {
       return j.estado === estado;
     }).length;
   }
+
+  abrirEditarEvento(e: any) {
+
+    const ref = this.dialog.open(CreateEventoModalComponent, {
+      width: '700px',
+      data: {
+        equipoId: this.equipoId,
+        jugadoresEquipo: this.equipo.jugadores,
+        evento: e // 👈 clave
+      }
+    });
+  
+    ref.afterClosed().subscribe(refresh => {
+      if (refresh) this.cargarEventos();
+    });
+  }
+  
 }
