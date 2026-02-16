@@ -18,6 +18,7 @@ import { ClubsComponent } from './clubs/clubs.component';
 import { EquipoConvocatoriasComponent } from './equipo-convocatorias/equipo-convocatorias.component';
 import { EquipoEventosComponent } from './equipo-eventos/equipo-eventos.component';
 import { PlantillaComponent } from './plantilla/plantilla.component';
+import { JugadorFichaComponent } from './jugador-ficha/jugador-ficha.component';
 
 
 
@@ -54,11 +55,12 @@ export const routes: Routes = [
   {
     path: 'equipo/:id/plantilla',
     component: PlantillaComponent
+  },
+  {
+    path: 'equipo/:equipoId/jugador/:dni',
+    component: JugadorFichaComponent
   }
   
-  
-
-
 ];
 
 export default routes;

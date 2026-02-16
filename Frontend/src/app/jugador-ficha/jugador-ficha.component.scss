@@ -1,0 +1,231 @@
+.equipo-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 65px);
+    background: #f4f6f8;
+  }
+  
+  .ficha-content {
+    padding: 35px 50px;
+  }
+  
+  /* =========================
+     PERFIL CARD
+  ========================= */
+  
+  .perfil-card {
+    display: flex;
+    gap: 40px;
+    background: white;
+    padding: 35px 50px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    align-items: center;
+  }
+  
+  /* FOTO */
+  
+  .foto-perfil {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1e7c45, #2dbd6e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .foto-perfil img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* =========================
+     PERFIL RIGHT
+  ========================= */
+  
+  .perfil-right {
+    flex: 1;
+  }
+  
+  /* NOMBRE + BADGES EN MISMA LINEA */
+  
+  .nombre-row {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+  }
+  
+  .nombre-row h1 {
+    font-size: 30px;
+    margin: 0;
+    font-weight: 700;
+  }
+  
+  /* BADGES */
+  
+  .badges {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .badge-rol {
+    background: #eaf7f0;
+    color: #1e7c45;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  .badge-light {
+    background: #f1f3f5;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    color: #555;
+    font-weight: 500;
+  }
+  
+  /* DIVIDER */
+  
+  .perfil-divider {
+    height: 1px;
+    background: #eee;
+    margin: 25px 0;
+  }
+  
+  /* =========================
+     DATOS GRID
+  ========================= */
+  
+  .datos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  
+  .datos-grid div {
+    background: #f8fafc;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid #eef1f4;
+  }
+  
+  .datos-grid strong {
+    display: block;
+    font-size: 10px;
+    color: #999;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .datos-grid p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* =========================
+   SECTIONS GENERALES
+========================= */
+
+.section-card {
+    margin-top: 30px;
+    background: white;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  }
+  
+  .section-header {
+    margin-bottom: 20px;
+  }
+  
+  .section-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+/* =========================
+   BLOQUE INFERIOR 2 COLUMNAS
+========================= */
+
+.ficha-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+  
+  /* =========================
+     SECTION CARD
+  ========================= */
+  
+  .section-card {
+    background: white;
+    padding: 30px 35px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* =========================
+     OBSERVACIONES
+  ========================= */
+  
+  .observaciones-box {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #eef1f4;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #444;
+    min-height: 150px;
+  }
+  
+  /* =========================
+     ESTADÍSTICAS
+  ========================= */
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .stat-box {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #eef1f4;
+    transition: 0.2s ease;
+  }
+  
+  .stat-box:hover {
+    background: white;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
+  
+  .stat-number {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e7c45;
+    margin-bottom: 5px;
+  }
+  
+  .stat-label {
+    font-size: 13px;
+    color: #777;
+  }
+  
+  

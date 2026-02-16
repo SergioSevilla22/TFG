@@ -18,6 +18,11 @@ const formatDate = (d) =>
     timeStyle: "short"
   });
 
+  const formatDateOnly = (d) => {
+    const date = new Date(d);
+    return date.toLocaleDateString("es-ES");
+  };
+
 /* =========================
    EMAIL
 ========================= */
@@ -30,7 +35,7 @@ const sendConvocatoriaEmail = async ({ to, jugadorNombre, equipoNombre, convocat
     <p>Equipo: <b>${equipoNombre}</b></p>
     <ul>
       ${convocatoria.rival ? `<li>Rival: ${convocatoria.rival}</li>` : ""}
-      <li>Fecha: ${formatDate(convocatoria.fecha_partido)}</li>
+      <li>Fecha: ${formatDateOnly(convocatoria.fecha_partido)}</li>
       <li>Inicio: ${convocatoria.hora_inicio}</li>
       <li>Quedada: ${convocatoria.hora_quedada}</li>
       <li>Límite: ${formatDate(convocatoria.fecha_limite_confirmacion)}</li>
@@ -253,7 +258,8 @@ export const responderConvocatoria = async (req, res) => {
       message: "Debes indicar el motivo de la ausencia"
     });
   }
-
+  
+  console.log("Affected rows:", r.affectedRows);
   if (new Date() > new Date(conv.fecha_limite_confirmacion)) {
     return res.status(403).json({ message: "Plazo cerrado" });
   }

@@ -65,11 +65,8 @@
       <div class="grid-personas jugadores">
 
         <div class="card-persona"
-             *ngFor="let j of equipo.jugadores"
-             draggable="true"
-             (dragstart)="dragJugador($event, j.DNI)"
-             (drop)="onDropJugador($event)"
-             (dragover)="allowDrop($event)">
+          *ngFor="let j of equipo.jugadores"
+          (click)="irAFicha(j.DNI)">
 
           <div class="foto grande">
             <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
@@ -81,12 +78,12 @@
 
           <button
             *ngIf="authService.hasRole('admin_plataforma') || 
-                   authService.hasRole('admin_club') || 
-                   authService.hasRole('entrenador')"
+                  authService.hasRole('admin_club') || 
+                  authService.hasRole('entrenador')"
             class="btn-delete"
-            (click)="eliminarJugador(j.DNI)">
+            (click)="eliminarJugador(j.DNI); $event.stopPropagation()">
             Eliminar
-          </button>
+        </button>
         </div>
 
       </div>
