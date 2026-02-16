@@ -7,7 +7,7 @@
     <section class="resumen-grid" *ngIf="!loading && equipo">
       <div class="resumen-card clickable highlight-card" [class.pending-border]="hayEventosPendientes()" [routerLink]="['/equipo', equipoId, 'eventos']">
         <div class="card-header">
-          <h3>Eventos</h3>
+          <h2>Eventos</h2>
           <span class="badge-pendiente" *ngIf="hayEventosPendientes()">¡Tienes 1 pendiente!</span>
         </div>
 
@@ -34,7 +34,7 @@
 
       <div class="resumen-card clickable highlight-card" [class.pending-border]="hayConvocatoriasPendientes()" [routerLink]="['/equipo', equipoId, 'convocatorias']">
         <div class="card-header">
-          <h3>Convocatorias</h3>
+          <h2>Convocatorias</h2>
           <span class="badge-pendiente" *ngIf="hayConvocatoriasPendientes()">Pendiente de respuesta</span>
         </div>
 
@@ -60,7 +60,7 @@
       </div>
 
       <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'plantilla']">
-        <h3>Plantilla</h3>
+        <h2>Plantilla</h2>
         <div class="plantilla-preview">
           <div class="avatar-stack">
             <div class="avatar" *ngFor="let j of jugadoresPreview">
@@ -73,7 +73,7 @@
       </div>
 
       <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'calendario']">
-        <h3>Calendario</h3>
+        <h2>Calendario</h2>
         <app-mini-calendario [eventos]="eventos" [convocatorias]="convocatorias" [equipoId]="equipoId"></app-mini-calendario>
       </div>
     </section>

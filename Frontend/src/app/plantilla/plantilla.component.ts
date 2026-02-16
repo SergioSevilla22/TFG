@@ -156,30 +156,16 @@ export class PlantillaComponent implements OnInit {
   }
 
   /* ================================
-        DRAG & DROP
-  =================================*/
-  onDropJugador(event: any) {
-    const jugadorDNI = event.dataTransfer.getData("text/dni");
-
-    this.equipoService.moverJugador(jugadorDNI, this.equipoId).subscribe({
-      next: () => this.cargarEquipo(),
-      error: () => alert("Error moviendo jugador")
-    });
-  }
-
-  allowDrop(event: any) {
-    event.preventDefault();
-  }
-
-  dragJugador(event: any, dni: string) {
-    event.dataTransfer.setData("text/dni", dni);
-  }
-
-  /* ================================
         VOLVER AL CLUB (ADMIN)
   =================================*/
   volverAlClub() {
     this.router.navigate(['/club', this.equipo.club.id]);
+  }
+
+  irAFicha(dni: string) {
+    this.router.navigate(
+      ['/equipo', this.equipoId, 'jugador', dni]
+    );
   }
 
 }

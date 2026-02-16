@@ -1,0 +1,123 @@
+<app-header></app-header>
+
+<div class="equipo-layout">
+
+  <app-sidebar-equipo
+  [equipo]="equipo"
+  [equipoId]="equipoId"
+  activo="plantilla">
+  </app-sidebar-equipo>
+
+  <main class="ficha-content" *ngIf="!loading && jugador">
+
+    <section class="perfil-card">
+  
+      <div class="perfil-left">
+        <div class="foto-perfil">
+          <img *ngIf="jugador.foto"
+               [src]="'http://localhost:3000' + jugador.foto">
+          <span *ngIf="!jugador.foto">
+            {{ jugador.nombre[0] }}
+          </span>
+        </div>
+      </div>
+  
+      <div class="perfil-right">
+  
+        <div class="perfil-top">
+          <div class="nombre-row">
+            <h1>{{ jugador.nombre }}</h1>
+        
+            <div class="badges">
+              <span class="badge-rol">{{ jugador.Rol | titlecase }}</span>
+              <span class="badge-light">{{ edad }} años</span>
+              <span class="badge-light" *ngIf="jugador.equipo_nombre">
+                 {{ jugador.equipo_nombre }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+  
+        <div class="perfil-divider"></div>
+  
+        <div class="datos-grid">
+          <div>
+            <strong>DNI</strong>
+            <p>{{ jugador.DNI }}</p>
+          </div>
+  
+          <div>
+            <strong>Email</strong>
+            <p>{{ jugador.email }}</p>
+          </div>
+  
+          <div>
+            <strong>Teléfono</strong>
+            <p>{{ jugador.telefono }}</p>
+          </div>
+  
+          <div>
+            <strong>Año nacimiento</strong>
+            <p>{{ jugador.anio_nacimiento }}</p>
+          </div>
+        </div>
+  
+      </div>
+  
+    </section>
+
+
+<div class="ficha-bottom">
+
+  <!-- OBSERVACIONES -->
+  <section class="section-card">
+    <div class="section-header">
+      <h2>Observaciones del entrenador</h2>
+    </div>
+
+    <div class="observaciones-box">
+      <p *ngIf="!jugador.observaciones">
+        No hay observaciones registradas.
+      </p>
+
+      <p *ngIf="jugador.observaciones">
+        {{ jugador.observaciones }}
+      </p>
+    </div>
+  </section>
+
+  <!-- ESTADÍSTICAS -->
+  <section class="section-card">
+    <div class="section-header">
+      <h2>Estadísticas</h2>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span class="stat-number">12</span>
+        <span class="stat-label">Partidos</span>
+      </div>
+
+      <div class="stat-box">
+        <span class="stat-number">5</span>
+        <span class="stat-label">Goles</span>
+      </div>
+
+      <div class="stat-box">
+        <span class="stat-number">3</span>
+        <span class="stat-label">Asistencias</span>
+      </div>
+
+      <div class="stat-box">
+        <span class="stat-number">1</span>
+        <span class="stat-label">Tarjetas</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+  
+  </main>
+</div>

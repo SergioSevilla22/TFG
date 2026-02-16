@@ -303,19 +303,31 @@ export const getUsuario = (req, res) => {
     return res.status(400).json({ message: "Debes proporcionar un DNI" });
   }
 
-  db.query(
-    "SELECT DNI, nombre, email, telefono, anio_nacimiento, Rol, foto FROM usuarios WHERE DNI = ?",
-    [dni],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
+  const sql = `
+    SELECT 
+      u.DNI,
+      u.nombre,
+      u.email,
+      u.telefono,
+      u.anio_nacimiento,
+      u.Rol,
+      u.foto,
+      u.equipo_id,
+      e.nombre AS equipo_nombre
+    FROM usuarios u
+    LEFT JOIN equipos e ON u.equipo_id = e.id
+    WHERE u.DNI = ?
+  `;
 
-      if (results.length === 0) {
-        return res.status(404).json({ message: "Usuario no encontrado" });
-      }
+  db.query(sql, [dni], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-      res.json(results[0]);
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
-  );
+
+    res.json(results[0]);
+  });
 };
 
 export const updateRolUsuario = (req, res) => {

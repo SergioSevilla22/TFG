@@ -122,6 +122,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
   }
 
   responderConvocatoria(c: any, estado: string) {
+    console.log("Convocatoria:", c);
     const u = this.authService.getUser();
     this.convocatoriaService.responderConvocatoria(c.id, {
       jugador_dni: u.DNI,
@@ -158,30 +159,14 @@ export class EquipoConvocatoriasComponent implements OnInit {
   }
 
   convocatoriaCerrada(c: any): boolean {
-
-    const ahora = new Date();
-
-    const fechaBase = new Date(c.fecha_partido);
-
-    const year = fechaBase.getFullYear();
-    const month = fechaBase.getMonth();
-    const day = fechaBase.getDate();
-
-    const [hora, minutos] = c.hora_inicio.split(':');
-
-    const inicio = new Date(
-      year,
-      month,
-      day,
-      Number(hora),
-      Number(minutos)
-    );
+    if (!c.fecha_limite_confirmacion) return false;
   
-    return ahora >= inicio;
+    const ahora = new Date();
+    const limite = new Date(c.fecha_limite_confirmacion);
+  
+    return ahora > limite;
   }
   
-  
-
   estadoLabel(estado: string | null | undefined): string {
     switch (estado) {
       case 'confirmado': return 'Confirmado';
