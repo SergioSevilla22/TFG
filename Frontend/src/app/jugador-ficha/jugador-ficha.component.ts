@@ -1,3 +1,4 @@
+import { EstadisticasService } from './../../services/estadisticas.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -20,11 +21,13 @@ export class JugadorFichaComponent implements OnInit {
   equipoId!: number;
   loading = true;
   equipo: any = null;
+  totales: any = {};
 
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
-    private equipoService: EquipoService
+    private equipoService: EquipoService,
+    private estadisticasService: EstadisticasService
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +50,9 @@ export class JugadorFichaComponent implements OnInit {
         }
       });
     }
+    this.estadisticasService.getTotalesJugador(dni!).subscribe(data => {
+      this.totales = data;
+    });
   }
 
   get edad(): number {

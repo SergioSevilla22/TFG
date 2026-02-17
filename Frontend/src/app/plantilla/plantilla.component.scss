@@ -1,14 +1,16 @@
 /* Layout */
 .equipo-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: calc(100vh - 65px);
-    background: #f4f6f8;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: calc(100vh - 100px); 
+  background: #f1f5f9;
+  overflow: hidden;
   }
   
   .plantilla-content {
-    padding: 40px;
-    max-width: 1400px;
+    padding: 32px;
+  overflow-y: auto;
+  height: 100%; 
   }
   
   /* Header */
