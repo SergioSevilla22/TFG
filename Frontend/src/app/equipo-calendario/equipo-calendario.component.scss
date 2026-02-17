@@ -14,8 +14,9 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 .equipo-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: calc(100vh - 65px); // altura real bajo el header
-  background: #f4f6f8;
+  height: calc(100vh - 100px); 
+  background: #f1f5f9;
+  overflow: hidden;
 }
 
 /* Cabecera */

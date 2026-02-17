@@ -6,8 +6,9 @@
 .equipo-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: calc(100vh - 65px);
+  height: calc(100vh - 100px); 
   background: #f1f5f9;
+  overflow: hidden;
 }
 
 .equipo-content { padding: 32px; }

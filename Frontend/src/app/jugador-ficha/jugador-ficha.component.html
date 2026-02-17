@@ -95,23 +95,33 @@
 
     <div class="stats-grid">
       <div class="stat-box">
-        <span class="stat-number">12</span>
+        <span class="stat-number">{{ totales.partidos || 0 }}</span>
         <span class="stat-label">Partidos</span>
       </div>
 
       <div class="stat-box">
-        <span class="stat-number">5</span>
+        <span class="stat-number">{{ totales.goles || 0 }}</span>
         <span class="stat-label">Goles</span>
       </div>
 
       <div class="stat-box">
-        <span class="stat-number">3</span>
+        <span class="stat-number">{{ totales.asistencias || 0 }}</span>
         <span class="stat-label">Asistencias</span>
       </div>
 
       <div class="stat-box">
-        <span class="stat-number">1</span>
-        <span class="stat-label">Tarjetas</span>
+        <span class="stat-number">{{ totales.amarillas || 0 }}</span>
+        <span class="stat-label">Tarjetas Amarillas</span>
+      </div>
+
+      <div class="stat-box">
+        <span class="stat-number">{{ totales.rojas || 0 }}</span>
+        <span class="stat-label">Tarjetas Rojas</span>
+      </div>
+
+      <div class="stat-box">
+        <span class="stat-number">{{ totales.minutos || 0 }}</span>
+        <span class="stat-label">Minutos Jugados</span>
       </div>
     </div>
   </section>

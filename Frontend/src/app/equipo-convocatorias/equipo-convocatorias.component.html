@@ -121,6 +121,15 @@
                 (click)="abrirEditarConvocatoria(c)">
                 ✏️
               </button>
+              <button
+                class="btn-icon stats"
+                [disabled]="!convocatoriaCerrada(c)"
+                [matTooltip]="convocatoriaCerrada(c) 
+                  ? 'Cargar estadísticas del partido' 
+                  : 'Las estadísticas se pueden cargar una vez que la convocatoria ha finalizado'"
+                (click)="abrirModalEstadisticas(c)">
+                📊
+              </button>
               </div>
             </div>
           </div>

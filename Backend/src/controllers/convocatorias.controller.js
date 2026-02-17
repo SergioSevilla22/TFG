@@ -221,7 +221,7 @@ export const obtenerConvocatoriasPorEquipo = async (req, res) => {
 
   const ids = convocatorias.map(c => c.id);
   const jugadores = await query(
-    `SELECT cj.*, u.nombre, u.DNI
+    `SELECT cj.*, u.nombre, u.DNI, u.foto
      FROM convocatoria_jugadores cj
      JOIN usuarios u ON u.DNI = cj.jugador_dni
      WHERE cj.convocatoria_id IN (${ids.map(() => "?").join(",")})`,
@@ -258,8 +258,6 @@ export const responderConvocatoria = async (req, res) => {
       message: "Debes indicar el motivo de la ausencia"
     });
   }
-  
-  console.log("Affected rows:", r.affectedRows);
   if (new Date() > new Date(conv.fecha_limite_confirmacion)) {
     return res.status(403).json({ message: "Plazo cerrado" });
   }

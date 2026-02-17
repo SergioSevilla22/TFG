@@ -1,12 +1,14 @@
 .equipo-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: calc(100vh - 65px);
-    background: #f4f6f8;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: calc(100vh - 100px); 
+  background: #f1f5f9;
+  overflow: hidden;
   }
   
   .ficha-content {
     padding: 35px 50px;
+    overflow-y: auto;
   }
   
   /* =========================

@@ -13,6 +13,7 @@ import { ConvocatoriaService } from '../../services/convocatoria.service';
 import { CreateConvocatoriaModalComponent } from '../../shared/components/create-convocatoria-modal/create-convocatoria-modal.component';
 import { MotivoModalComponent } from '../../shared/components/motivo-modal/motivo-modal.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LoadEstadisticasModalComponent } from '../../shared/components/load-estadisticas-modal/load-estadisticas-modal.component';
 
 
 @Component({
@@ -191,4 +192,21 @@ export class EquipoConvocatoriasComponent implements OnInit {
       if (r) this.cargarConvocatorias();
     });
   }
+
+  abrirModalEstadisticas(c: any) {
+    const ref = this.dialog.open(LoadEstadisticasModalComponent, {
+      width: '1100px',
+      maxWidth: '98vw',
+      height: 'auto',
+      autoFocus: false,
+      panelClass: 'stats-dialog',
+      data: {
+        convocatoriaId: c.id,
+        jugadores: c.jugadores
+      }
+    });
+    console.log(c.jugadores);
+    ref.afterClosed().subscribe();
+  }
+  
 }
