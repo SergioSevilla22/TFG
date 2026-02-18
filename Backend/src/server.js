@@ -13,7 +13,7 @@ import eventosRoutes from "./routes/eventos.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import calendarioRoutes from "./routes/calendario.routes.js";
 import estadisticasRoutes from "./routes/estadisticas.routes.js";
-
+import observacionesRoutes from "./routes/observaciones.routes.js"
 
 dotenv.config();
 
@@ -37,6 +37,7 @@ app.use('/api/eventos', eventosRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/calendario", calendarioRoutes);
 app.use("/api/estadisticas", estadisticasRoutes);
+app.use("/api/observaciones", observacionesRoutes);
 
 
 // Servidor

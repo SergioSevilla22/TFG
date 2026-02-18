@@ -71,21 +71,56 @@
 <div class="ficha-bottom">
 
   <!-- OBSERVACIONES -->
-  <section class="section-card">
-    <div class="section-header">
-      <h2>Observaciones del entrenador</h2>
-    </div>
+  <section class="bloque">
+  <div class="bloque-header">
+    <h2>Historial de Observaciones</h2>
+    <button *ngIf="authService.getUserRole() === 'entrenador'" 
+            class="btn-add" 
+            (click)="abrirModalObservacion()">
+      <mat-icon>add_comment</mat-icon>
+      Añadir Nota
+    </button>
+  </div>
 
-    <div class="observaciones-box">
-      <p *ngIf="!jugador.observaciones">
-        No hay observaciones registradas.
-      </p>
-
-      <p *ngIf="jugador.observaciones">
-        {{ jugador.observaciones }}
-      </p>
-    </div>
-  </section>
+  <div class="timeline-container">
+    @for (item of observaciones(); track item.id) {
+      <div class="timeline-card" [attr.data-cat]="item.categoria">
+        <div class="timeline-aside">
+          <span class="date">{{ item.fecha | date:'dd MMM' }}</span>
+          <span class="year">{{ item.fecha | date:'yyyy' }}</span>
+          <div class="line"></div>
+        </div>
+        
+        <div class="timeline-main">
+          <div class="card-header">
+            <span class="badge" [ngClass]="item.categoria">{{ item.categoria }}</span>
+            <span class="visibilidad-tag" *ngIf="authService.getUserRole() === 'entrenador'">
+              {{ item.visibilidad }}
+            </span>
+            <h3>{{ item.titulo }}</h3>
+          </div>
+          
+          <p class="content">{{ item.contenido }}</p>
+          
+          <div class="card-footer">
+            <div class="author-info">
+              <div class="avatar-mini">
+                <img *ngIf="item.foto_autor" [src]="'http://localhost:3000' + item.foto_autor" alt="Autor">
+                <span *ngIf="!item.foto_autor">{{ item.nombre_autor[0] }}</span>
+              </div>
+              <span>Por <strong>{{ item.nombre_autor }}</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <mat-icon>history_edu</mat-icon>
+        <p>No hay observaciones registradas para este jugador aún.</p>
+      </div>
+    }
+  </div>
+</section>
 
   <!-- ESTADÍSTICAS -->
   <section class="section-card">
