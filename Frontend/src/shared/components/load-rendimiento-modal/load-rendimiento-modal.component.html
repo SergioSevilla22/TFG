@@ -1,0 +1,82 @@
+<div class="modal-header">
+    <h2 mat-dialog-title>Cargar rendimiento del entrenamiento</h2>
+    <p class="subtitle">
+      Introduce los datos individuales de cada jugador.
+    </p>
+  </div>
+  
+  <div mat-dialog-content class="modal-content">
+  
+    <div class="section-title">
+      <mat-icon>bar_chart</mat-icon>
+      <span>Rendimiento por Jugador</span>
+    </div>
+  
+    <div class="stats-container">
+  
+        <div class="stats-header">
+            <span class="player-col">Jugador</span>
+            <span>Asistencia</span>
+            <span>Nota</span>
+            <span>Intensidad</span>
+            <span>Actitud</span>
+          </div>
+          
+          <div class="stats-row" *ngFor="let j of jugadores">
+          
+            <div class="player-info">
+              <div class="avatar-mini">
+                <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" class="avatar-img" />
+                <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
+              </div>
+              <span class="name">{{ j.nombre }}</span>
+            </div>
+          
+            <select [(ngModel)]="j.estado_asistencia" class="custom-select">
+              <option value="presente">Presente</option>
+              <option value="tarde">Tarde</option>
+              <option value="ausente">Ausente</option>
+              <option value="excusado">Excusado</option>
+            </select>
+          
+            <input type="number"
+                min="0"
+                max="10"
+                step="0.1"
+                [(ngModel)]="j.nota_general"
+                (input)="limitarNumero(j, 'nota_general', 0, 10)"
+                class="custom-input small" />
+          
+            <input type="number"
+            min="0"
+            max="10"
+            [(ngModel)]="j.intensidad"
+            (input)="limitarNumero(j, 'intensidad', 0, 10)"
+            class="custom-input small" />
+          
+            <input type="number"
+            min="0"
+            max="10"
+            [(ngModel)]="j.actitud"
+            (input)="limitarNumero(j, 'actitud', 0, 10)"
+            class="custom-input small" />
+
+          
+          </div>
+  
+    </div>
+  </div>
+  
+  <div mat-dialog-actions align="end" class="modal-actions">
+    <button mat-button (click)="cerrar(false)" class="btn-cancel">
+      Cancelar
+    </button>
+  
+    <button mat-flat-button
+            color="primary"
+            (click)="guardar()"
+            class="btn-publish">
+      <mat-icon>save</mat-icon>
+      Guardar Rendimiento
+    </button>
+  </div>

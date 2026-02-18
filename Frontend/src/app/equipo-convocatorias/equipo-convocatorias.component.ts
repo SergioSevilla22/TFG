@@ -14,12 +14,16 @@ import { CreateConvocatoriaModalComponent } from '../../shared/components/create
 import { MotivoModalComponent } from '../../shared/components/motivo-modal/motivo-modal.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { LoadEstadisticasModalComponent } from '../../shared/components/load-estadisticas-modal/load-estadisticas-modal.component';
+import { EstadisticasService } from '../../services/estadisticas.service';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from "@angular/material/icon";
+
 
 
 @Component({
   selector: 'app-equipo-convocatorias',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent, SidebarEquipoComponent,MatTooltipModule ],
+  imports: [CommonModule, RouterModule, HeaderComponent, SidebarEquipoComponent, MatTooltipModule, FormsModule, MatIconModule],
   templateUrl: './equipo-convocatorias.component.html',
   styleUrls: ['./equipo-convocatorias.component.css']
 })
@@ -33,13 +37,27 @@ export class EquipoConvocatoriasComponent implements OnInit {
 
   sinEquipo = false;
   convocatorias: any[] = [];
+  estadisticasJugador: { [key: number]: any } = {};
+  statsAbiertas: { [key: number]: boolean } = {};
+
+  filtroEstado: 'todas' | 'abiertas' | 'cerradas' = 'todas';
+  filtroMes: number | null = null;
+  filtroAnio: number | null = new Date().getFullYear();
+  filtroTexto: string = '';
+
+  paginaActual = 1;
+  itemsPorPagina = 5;
+
+
 
   constructor(
     private route: ActivatedRoute,
     private equipoService: EquipoService,
     private convocatoriaService: ConvocatoriaService,
     private dialog: MatDialog,
-    public authService: AuthService
+    public authService: AuthService,
+    private estadisticasService: EstadisticasService,
+
   ) {}
 
   ngOnInit(): void {
@@ -208,5 +226,76 @@ export class EquipoConvocatoriasComponent implements OnInit {
     console.log(c.jugadores);
     ref.afterClosed().subscribe();
   }
+
+  toggleEstadisticasJugador(convocatoriaId: number) {
+    const user = this.authService.getUser();
+  
+    if (this.statsAbiertas[convocatoriaId]) {
+      this.statsAbiertas[convocatoriaId] = false;
+      return;
+    }
+  
+    if (!this.estadisticasJugador[convocatoriaId]) {
+      this.estadisticasService
+        .getEstadisticasJugadorConvocatoria(convocatoriaId, user.DNI)
+        .subscribe(data => {
+          this.estadisticasJugador[convocatoriaId] = data;
+          this.statsAbiertas[convocatoriaId] = true;
+        });
+    } else {
+      this.statsAbiertas[convocatoriaId] = true;
+    }
+  }
+
+  get convocatoriasFiltradas() {
+    let data = [...this.convocatorias];
+  
+    if (this.filtroEstado === 'abiertas') {
+      data = data.filter(c => !this.convocatoriaCerrada(c));
+    }
+  
+    if (this.filtroEstado === 'cerradas') {
+      data = data.filter(c => this.convocatoriaCerrada(c));
+    }
+  
+    if (this.filtroMes !== null) {
+      data = data.filter(c => {
+        const fecha = new Date(c.fecha_partido);
+        return fecha.getMonth() === this.filtroMes;
+      });
+    }
+  
+    if (this.filtroAnio) {
+      data = data.filter(c => {
+        const fecha = new Date(c.fecha_partido);
+        return fecha.getFullYear() === this.filtroAnio;
+      });
+    }
+  
+    if (this.filtroTexto.trim()) {
+      data = data.filter(c =>
+        c.rival?.toLowerCase().includes(this.filtroTexto.toLowerCase())
+      );
+    }
+  
+    return data;
+  }
+  
+  get totalPaginas() {
+    return Math.ceil(this.convocatoriasFiltradas.length / this.itemsPorPagina);
+  }
+  
+  get convocatoriasPaginadas() {
+    const start = (this.paginaActual - 1) * this.itemsPorPagina;
+    return this.convocatoriasFiltradas.slice(start, start + this.itemsPorPagina);
+  }
+  
+  cambiarPagina(p: number) {
+    if (p >= 1 && p <= this.totalPaginas) {
+      this.paginaActual = p;
+    }
+  }
+  
+  
   
 }

@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-sidebar-equipo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './sidebar-equipo.component.html',
   styleUrls: ['./sidebar-equipo.component.css']
 })

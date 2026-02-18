@@ -18,35 +18,40 @@
         class="nav-item"
         [class.active]="activo === 'resumen'"
         (click)="navegar('')">
-        📊 Resumen
+        <mat-icon>dashboard</mat-icon>
+        <span>Resumen</span>
       </button>
   
       <button
         class="nav-item"
         [class.active]="activo === 'plantilla'"
         (click)="navegar('plantilla')">
-        👥 Plantilla
+        <mat-icon>group</mat-icon>
+        <span>Plantilla</span>
       </button>
   
       <button
         class="nav-item"
         [class.active]="activo === 'calendario'"
         (click)="navegar('calendario')">
-        📆 Calendario
+        <mat-icon>calendar_month</mat-icon>
+        <span>Calendario</span>
       </button>
   
       <button
         class="nav-item"
         [class.active]="activo === 'eventos'"
         (click)="navegar('eventos')">
-        📅 Eventos
+        <mat-icon>fitness_center</mat-icon>
+        <span>Eventos</span>
       </button>
   
       <button
         class="nav-item"
         [class.active]="activo === 'convocatorias'"
         (click)="navegar('convocatorias')">
-        📣 Convocatorias
+        <mat-icon>event</mat-icon>
+        <span>Convocatorias</span>
       </button>
     </nav>
   
