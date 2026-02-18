@@ -29,13 +29,31 @@ html, body {
 }
 
 .panel-header {
-  display: flex;             /* Asegura alineación horizontal */
-  justify-content: space-between; 
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
   margin-bottom: 35px;
+}
 
-  h2 { font-size: 1.9rem; font-weight: 800; color: #0f172a; margin: 0; }
-  .subtitle { color: #64748b; margin-top: 5px; }
+/* Fila superior */
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-info h2 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.header-info .subtitle {
+  color: #64748b;
+  margin-top: 6px;
+  font-size: 0.95rem;
 }
 
 /* ESTILO DEL ICONO DE MAPA */
@@ -77,13 +95,18 @@ html, body {
   background: #059669;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 12px 22px;
   border-radius: 14px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
-  transition: all 0.3s;
-  &:hover { background: #047857; transform: translateY(-2px); }
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background: #047857;
+  transform: translateY(-2px);
 }
 
 .lista-convocatorias { display: flex; flex-direction: column; gap: 24px; }
@@ -164,8 +187,22 @@ html, body {
   font-weight: 700;
   border: none;
   cursor: pointer;
-  &.confirm { background: #10b981; color: white; }
-  &.reject { background: #ef4444; color: white; }
+  &.confirm { 
+    background: #10b981; 
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 6px;
+  }
+  &.reject { 
+    background: #ef4444; 
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 6px; 
+  }
 }
 
 /* ADMIN PILLS */
@@ -179,7 +216,10 @@ html, body {
     font-size: 0.85rem;
     font-weight: 700;
     background: white;
+    display: inline-flex;
+    align-items: center;
     border: 1px solid #e2e8f0;
+    gap: 6px; 
     &.confirm { color: #059669; border-color: #dcfce7; }
     &.reject { color: #dc2626; border-color: #fee2e2; }
     &.pending { color: #ca8a04; border-color: #fefce8; }
@@ -283,7 +323,6 @@ html, body {
 
 /* BOTÓN RECORDAR (Ahora con texto y más profesional) */
 .btn-icon.reminder {
-  padding: 0 15px;
   gap: 8px;
   background: #f1f5f9;
   color: #1e293b;
@@ -362,6 +401,144 @@ html, body {
     transform: scale(1.05);
   }
 }
+
+.player-stats-zone {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.btn-ver-stats {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.btn-ver-stats:hover {
+  background: #e0f2fe;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+
+.stats-box {
+  margin-top: 12px;
+  width: 100%;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+
+  animation: fadeSlide 0.25s ease;
+}
+
+.stat-item {
+  font-size: 0.9rem;
+  color: #334155;
+  text-align: center;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   FILTROS
+========================= */
+
+.filtros-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 22px;
+  background: #f8fafc;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+}
+
+.filtro-item label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.filtro-item select,
+.filtro-item input {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.filtro-item select:focus,
+.filtro-item input:focus {
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+}
+
+.filtro-busqueda {
+  flex: 1;
+  min-width: 220px;
+}
+
+/* =========================
+   PAGINACIÓN
+========================= */
+
+.paginacion {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.paginacion button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.paginacion button:hover {
+  background: #f1f5f9;
+}
+
+.paginacion button.activa {
+  background: #059669;
+  color: white;
+  border-color: #059669;
+}
+
+
+
 
 /* Ajuste Responsive */
 @media (max-width: 900px) {

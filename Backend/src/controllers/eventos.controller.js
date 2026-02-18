@@ -212,7 +212,7 @@ export const obtenerEventosPorEquipo = async (req, res) => {
 
     const ids = eventos.map((e) => e.id);
     const jugadores = await query(
-      `SELECT ej.*, u.nombre, u.DNI
+      `SELECT ej.*, u.nombre, u.DNI, u.foto
        FROM evento_jugadores ej
        JOIN usuarios u ON u.DNI = ej.jugador_dni
        WHERE ej.evento_id IN (${ids.map(() => "?").join(",")})`,

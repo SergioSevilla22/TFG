@@ -98,3 +98,24 @@ export const getTotalesJugador = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
+
+/* =========================
+   OBTENER ESTADÍSTICAS DE UN JUGADOR EN UNA CONVOCATORIA
+========================= */
+export const getEstadisticasJugadorConvocatoria = async (req, res) => {
+  const { convocatoriaId, dni } = req.params;
+
+  try {
+    const [data] = await query(
+      `SELECT minutos, goles, asistencias, amarillas, rojas, estado_asistencia
+       FROM estadisticas_convocatoria
+       WHERE convocatoria_id = ? AND jugador_dni = ?`,
+      [convocatoriaId, dni]
+    );
+
+    res.json(data || {});
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+

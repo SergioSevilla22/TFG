@@ -19,4 +19,11 @@ export class EstadisticasService {
   getTotalesJugador(dni: string) {
     return this.http.get<any>(`${this.base}/jugador/${dni}`);
   }
+
+  getEstadisticasJugadorConvocatoria(convocatoriaId: number, dni: string) {
+    return this.http.get<any>(
+      `http://localhost:3000/api/estadisticas/convocatoria/${convocatoriaId}/jugador/${dni}`
+    );
+  }
+  
 }

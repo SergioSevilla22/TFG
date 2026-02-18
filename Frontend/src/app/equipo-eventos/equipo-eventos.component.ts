@@ -15,6 +15,9 @@ import { CreateEventoModalComponent } from
 import { MotivoModalComponent } from
   '../../shared/components/motivo-modal/motivo-modal.component';
   import { MatTooltipModule } from '@angular/material/tooltip';
+import { LoadRendimientoModalComponent } from '../../shared/components/load-rendimiento-modal/load-rendimiento-modal.component';
+import { MatIconModule } from "@angular/material/icon";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-equipo-eventos',
@@ -23,8 +26,10 @@ import { MotivoModalComponent } from
     CommonModule,
     RouterModule,
     HeaderComponent,
-    SidebarEquipoComponent,MatTooltipModule
-  ],
+    SidebarEquipoComponent, MatTooltipModule,
+    MatIconModule,
+    FormsModule
+],
   templateUrl: './equipo-eventos.component.html',
   styleUrls: ['./equipo-eventos.component.css']
 })
@@ -40,6 +45,12 @@ export class EquipoEventosComponent implements OnInit {
   loadingEventos = false;
 
   sinEquipo = false;
+  paginaActual = 1;
+  itemsPorPagina = 5;
+
+filtroTipo: 'todos' | 'partido' | 'entrenamiento' | 'reunion' = 'todos';
+filtroMes: number | null = null;
+filtroAnio: number | null = new Date().getFullYear();
 
   constructor(
     private route: ActivatedRoute,
@@ -241,5 +252,64 @@ export class EquipoEventosComponent implements OnInit {
       if (refresh) this.cargarEventos();
     });
   }
+
+  abrirModalRendimiento(e: any) {
+    const ref = this.dialog.open(LoadRendimientoModalComponent, {
+      width: '900px',
+      maxWidth: '90vw',
+      height: 'auto',
+      data: {
+        eventoId: e.id,
+        jugadores: e.jugadores
+      }
+    });
+  
+    ref.afterClosed().subscribe();
+  }
+
+  get eventosFiltrados() {
+    let data = [...this.eventos];
+  
+    // Filtrar por tipo
+    if (this.filtroTipo !== 'todos') {
+      data = data.filter(e => e.tipo === this.filtroTipo);
+    }
+  
+    // Filtrar por mes
+    if (this.filtroMes !== null) {
+      data = data.filter(e => {
+        const fecha = new Date(e.fecha_inicio);
+        return fecha.getMonth() === this.filtroMes;
+      });
+    }
+  
+    // Filtrar por año
+    if (this.filtroAnio) {
+      data = data.filter(e => {
+        const fecha = new Date(e.fecha_inicio);
+        return fecha.getFullYear() === this.filtroAnio;
+      });
+    }
+  
+    return data;
+  }
+
+  get totalPaginas() {
+    return Math.ceil(this.eventosFiltrados.length / this.itemsPorPagina);
+  }
+  
+  get eventosPaginados() {
+    const start = (this.paginaActual - 1) * this.itemsPorPagina;
+    return this.eventosFiltrados.slice(start, start + this.itemsPorPagina);
+  }
+  
+  cambiarPagina(p: number) {
+    if (p >= 1 && p <= this.totalPaginas) {
+      this.paginaActual = p;
+    }
+  }
+  
+  
+  
   
 }
