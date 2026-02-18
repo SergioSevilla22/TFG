@@ -1,0 +1,71 @@
+<div class="modal-header">
+  <h2 mat-dialog-title>Nueva Observación</h2>
+  <p class="subtitle">Añade feedback técnico o personal para los jugadores.</p>
+</div>
+
+<div mat-dialog-content class="modal-content">
+  <div class="form-grid">
+    <div class="field full-width">
+      <label>Título *</label>
+      <input type="text" [(ngModel)]="obs.titulo" placeholder="Ej: Mejora en control orientado" class="custom-input">
+    </div>
+
+    <div class="field">
+      <label>Categoría</label>
+      <select [(ngModel)]="obs.categoria" class="custom-input">
+        <option value="general">General</option>
+        <option value="técnica">Técnica</option>
+        <option value="táctica">Táctica</option>
+        <option value="física">Física</option>
+        <option value="actitud">Actitud</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Visibilidad</label>
+      <select [(ngModel)]="obs.visibilidad" class="custom-input">
+        <option value="jugador">Visible para el jugador</option>
+        <option value="club">Solo Club/Entrenadores</option>
+        <option value="privado">Privado (Solo yo)</option>
+      </select>
+    </div>
+
+    <div class="field full-width">
+      <label>Contenido de la observación *</label>
+      <textarea [(ngModel)]="obs.contenido" rows="4" class="custom-input" placeholder="Escribe aquí tu análisis..."></textarea>
+    </div>
+  </div>
+
+  <div class="section-title margin-top" *ngIf="!data.dniIndividual">
+    <mat-icon>groups</mat-icon>
+    <span>Seleccionar Jugadores ({{seleccionados.size}})</span>
+  </div>
+
+  <div class="player-selection-container" *ngIf="!data.dniIndividual">
+    <div class="player-list">
+      <label class="player-row" *ngFor="let j of jugadores">
+        <div class="player-info">
+          <input type="checkbox" [checked]="seleccionados.has(j.DNI)" (change)="toggleJugador(j.DNI)">
+          <div class="avatar-mini">
+            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" class="avatar-img">
+            <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
+          </div>
+          <span class="name">{{ j.nombre }}</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="error-container" *ngIf="mensaje">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ mensaje }}</span>
+  </div>
+</div>
+
+<div mat-dialog-actions align="end" class="modal-actions">
+  <button mat-button (click)="dialogRef.close()" class="btn-cancel">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="loading" (click)="guardar()" class="btn-publish">
+    <mat-icon *ngIf="!loading">save</mat-icon>
+    {{ loading ? 'Enviando...' : 'Registrar Observación' }}
+  </button>
+</div>
