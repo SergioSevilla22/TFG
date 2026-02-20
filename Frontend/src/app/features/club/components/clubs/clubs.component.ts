@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClubService } from '../../../../../services/club/club.service';
 import { HeaderComponent } from '../../../../layout/header/header.component';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-clubs',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, MatIcon],
   templateUrl: './clubs.component.html',
   styleUrls: ['./clubs.component.css'],
 })

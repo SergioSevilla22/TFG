@@ -6,13 +6,14 @@ import { TemporadaService } from '../../../../../services/admin/temporada.servic
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { CommonModule } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-equipos-club',
   templateUrl: './equipos-club.component.html',
   styleUrls: ['./equipos-club.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, MatIcon],
 })
 export class EquiposClubComponent implements OnInit {
   clubId!: number;
