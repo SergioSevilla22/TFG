@@ -1,8 +1,8 @@
 /* Variables de diseño */
-$color-partido: #ef4444;        // Rojo
-$color-entrenamiento: #10b981;  // Verde
-$color-reunion: #0ea5e9;        // Azul
-$color-otro: #a855f7;           // Violeta
+$color-partido: #ef4444; // Rojo
+$color-entrenamiento: #10b981; // Verde
+$color-reunion: #0ea5e9; // Azul
+$color-otro: #a855f7; // Violeta
 $color-hoy: #1ea83a;
 $primary-green: #1ea83a;
 $secondary-blue: #0ea5e9;
@@ -10,14 +10,6 @@ $dark-gray: #111827;
 $light-gray: #6b7280;
 $bg-card: #ffffff;
 $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-
-.equipo-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  height: calc(100vh - 100px); 
-  background: #f1f5f9;
-  overflow: hidden;
-}
 
 /* Cabecera */
 .page-header {
@@ -31,8 +23,17 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   box-shadow: $shadow;
 
   .header-info {
-    h1 { margin: 0; font-size: 1.8rem; font-weight: 800; color: $dark-gray; }
-    .subtitle { margin: 5px 0 0; color: $light-gray; font-size: 0.95rem; }
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: $dark-gray;
+    }
+    .subtitle {
+      margin: 5px 0 0;
+      color: $light-gray;
+      font-size: 0.95rem;
+    }
   }
 
   .header-actions {
@@ -54,12 +55,28 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   align-items: center;
   gap: 8px;
 
-  &:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
-  &.primary { background: $primary-green; color: white; }
-  &.secondary { background: $secondary-blue; color: white; }
-  &.outline { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+  &.primary {
+    background: $primary-green;
+    color: white;
+  }
+  &.secondary {
+    background: $secondary-blue;
+    color: white;
+  }
+  &.outline {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+  }
 }
 
 /* Contenedor Calendario */
@@ -75,11 +92,11 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 ::ng-deep {
   .fc {
     --fc-border-color: #f1f5f9;
-    
+
     /* Resaltado del día actual (HOY) */
     .fc-day-today {
       background-color: rgba(30, 168, 58, 0.05) !important; // Un verde muy sutil de fondo
-      
+
       .fc-daygrid-day-number {
         background-color: #1ea83a; // Círculo verde en el número
         color: white;
@@ -90,14 +107,19 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       }
     }
 
-    .fc-toolbar-title { font-weight: 800; color: #111827; }
-    
+    .fc-toolbar-title {
+      font-weight: 800;
+      color: #111827;
+    }
+
     .fc-button-primary {
       background-color: white !important;
       border-color: #e2e8f0 !important;
       color: #475569 !important;
       font-weight: 600 !important;
-      &:hover { background-color: #f8fafc !important; }
+      &:hover {
+        background-color: #f8fafc !important;
+      }
     }
 
     .fc-button-active {
@@ -110,40 +132,40 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       background-color: rgba($color-partido, 0.12) !important;
       border-left: 4px solid $color-partido !important;
       color: darken($color-partido, 25%) !important;
-    
+
       .fc-daygrid-event-dot {
         border-color: $color-partido !important;
       }
     }
-    
+
     /* --- ENTRENAMIENTO --- */
     .tipo-entrenamiento {
       background-color: rgba($color-entrenamiento, 0.12) !important;
       border-left: 4px solid $color-entrenamiento !important;
       color: darken($color-entrenamiento, 25%) !important;
-    
+
       .fc-daygrid-event-dot {
         border-color: $color-entrenamiento !important;
       }
     }
-    
+
     /* --- REUNION --- */
     .tipo-reunion {
       background-color: rgba($color-reunion, 0.12) !important;
       border-left: 4px solid $color-reunion !important;
       color: darken($color-reunion, 25%) !important;
-    
+
       .fc-daygrid-event-dot {
         border-color: $color-reunion !important;
       }
     }
-    
+
     /* --- OTRO --- */
     .tipo-otro {
       background-color: rgba($color-otro, 0.12) !important;
       border-left: 4px solid $color-otro !important;
       color: darken($color-otro, 25%) !important;
-    
+
       .fc-daygrid-event-dot {
         border-color: $color-otro !important;
       }
@@ -156,12 +178,12 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       padding: 2px 5px !important;
       font-weight: 700 !important;
       margin-bottom: 2px !important;
-      
+
       .fc-daygrid-event-dot {
         border-width: 4px !important;
         margin-right: 6px !important;
       }
-    }  
+    }
   }
 }
 

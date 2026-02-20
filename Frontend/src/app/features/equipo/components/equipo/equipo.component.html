@@ -1,86 +1,12 @@
 <app-header></app-header>
 
-<div class="equipo-layout" *ngIf="!sinEquipo">
-  <app-sidebar-equipo [equipo]="equipo" [equipoId]="equipoId" activo="resumen"></app-sidebar-equipo>
+<div class="equipo-layout" *ngIf="!sinEquipo && equipo">
+  <app-sidebar-equipo [equipo]="equipo" [dni]="dniActivo" [equipoId]="equipoId">
+  </app-sidebar-equipo>
 
   <main class="equipo-content">
-    <section class="resumen-grid" *ngIf="!loading && equipo">
-      <div class="resumen-card clickable highlight-card" [class.pending-border]="hayEventosPendientes()" [routerLink]="['/equipo', equipoId, 'eventos']">
-        <div class="card-header">
-          <h2>Eventos</h2>
-          <span class="badge-pendiente" *ngIf="hayEventosPendientes()">¡Tienes 1 pendiente!</span>
-        </div>
-
-        <ng-container *ngIf="proximoEvento; else sinEventos">
-          <div class="main-info">
-            <p class="titulo">{{ proximoEvento.titulo }}</p>
-            <div class="info-block">
-              <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximoEvento.fecha_inicio | date:'EEEE dd/MM' | titlecase }}</p>
-              <p class="info-item"><mat-icon>schedule</mat-icon> {{ proximoEvento.fecha_inicio | date:'HH:mm' }}h - {{ proximoEvento.fecha_fin | date:'HH:mm' }}h</p>
-              <p class="info-item" *ngIf="proximoEvento.descripcion"><mat-icon>notes</mat-icon> {{ proximoEvento.descripcion }}</p>
-            </div>
-          </div>
-          <div class="quick-actions" *ngIf="authService.hasRole('jugador') && proximoEvento.requiere_confirmacion && estadoJugadorEvento(proximoEvento) === 'pendiente'">
-            <button class="btn-confirm" (click)="$event.stopPropagation(); responderEvento(proximoEvento, 'confirmado')">Confirmar</button>
-            <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoEvento(proximoEvento)">Rechazar</button>
-          </div>
-        </ng-container>
-
-        <ng-template #sinEventos>
-          <p class="empty">No hay eventos programados</p>
-        </ng-template>
-        <span class="cta">Ver todos los eventos →</span>
-      </div>
-
-      <div class="resumen-card clickable highlight-card" [class.pending-border]="hayConvocatoriasPendientes()" [routerLink]="['/equipo', equipoId, 'convocatorias']">
-        <div class="card-header">
-          <h2>Convocatorias</h2>
-          <span class="badge-pendiente" *ngIf="hayConvocatoriasPendientes()">Pendiente de respuesta</span>
-        </div>
-
-        <ng-container *ngIf="proximaConvocatoria; else sinConvs">
-          <div class="main-info">
-            <p class="titulo">vs {{ proximaConvocatoria.rival || 'Rival' }}</p>
-            <div class="info-block">
-              <p class="info-item"><mat-icon>calendar_today</mat-icon> {{ proximaConvocatoria.fecha_partido | date:'EEEE dd/MM' | titlecase }}</p>
-              <p class="info-item"><mat-icon>alarm</mat-icon> Quedada: {{ proximaConvocatoria.hora_quedada }}h</p>
-              <p class="info-item"><mat-icon>place</mat-icon> {{ proximaConvocatoria.lugar || 'Campo local' }}</p>
-            </div>
-          </div>
-          <div class="quick-actions" *ngIf="authService.hasRole('jugador') && estaInvitado(proximaConvocatoria) && estadoJugador(proximaConvocatoria) === 'pendiente' && !convocatoriaCerrada(proximaConvocatoria)">
-            <button class="btn-confirm" (click)="$event.stopPropagation(); responderConvocatoria(proximaConvocatoria, 'confirmado')">Asistiré</button>
-            <button class="btn-reject" (click)="$event.stopPropagation(); abrirModalMotivoConvocatoria(proximaConvocatoria)">No puedo</button>
-          </div>
-        </ng-container>
-
-        <ng-template #sinConvs>
-          <p class="empty">No hay convocatorias abiertas</p>
-        </ng-template>
-        <span class="cta">Ver todas →</span>
-      </div>
-
-      <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'plantilla']">
-        <h2>Plantilla</h2>
-        <div class="plantilla-preview">
-          <div class="avatar-stack">
-            <div class="avatar" *ngFor="let j of jugadoresPreview">
-              <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
-              <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
-            </div>
-          </div>
-        </div>
-        <span class="cta">Gestionar equipo →</span>
-      </div>
-
-      <div class="resumen-card clickable" [routerLink]="['/equipo', equipoId, 'calendario']">
-        <h2>Calendario</h2>
-        <app-mini-calendario [eventos]="eventos" [convocatorias]="convocatorias" [equipoId]="equipoId"></app-mini-calendario>
-      </div>
-    </section>
-
-    <ng-template #loadingTpl><p class="loading">Cargando equipo...</p></ng-template>
+    <router-outlet></router-outlet>
   </main>
 </div>
 
-
-
+<div *ngIf="loading" class="loading">Cargando equipo...</div>

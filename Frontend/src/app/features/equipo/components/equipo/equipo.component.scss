@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.equipo-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: calc(100vh - 100px);
+  background: #f1f5f9;
+  overflow: hidden;
+}
+
+.equipo-content {
+  padding: 32px;
+  overflow-y: auto;
+  height: 100%;
+}

@@ -1,45 +1,32 @@
-<app-header></app-header>
-
 <div class="equipo-layout">
-
-  <!-- SIDEBAR REUTILIZABLE -->
-  <app-sidebar-equipo
-    [equipo]="equipo"
-    [equipoId]="equipoId"
-    activo="calendario">
-  </app-sidebar-equipo>
-
   <!-- CONTENIDO PRINCIPAL -->
   <main class="equipo-content">
-
     <header class="page-header">
       <div class="header-info">
         <h1>Calendario del equipo</h1>
-        <p class="subtitle" *ngIf="equipo">
-          {{ equipo.nombre }} · Gestión de temporada
-        </p>
+        <p class="subtitle" *ngIf="equipo">{{ equipo.nombre }} · Gestión de temporada</p>
       </div>
 
       <div class="header-actions">
-        <button 
-          class="btn-action primary" 
+        <button
+          class="btn-action primary"
           *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
           [disabled]="!equipo"
-          (click)="abrirModalCrearConvocatoria()">
+          (click)="abrirModalCrearConvocatoria()"
+        >
           + Convocatoria
         </button>
 
-        <button 
-          class="btn-action primary" 
+        <button
+          class="btn-action primary"
           *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
           [disabled]="!equipo"
-          (click)="abrirModalCrearEvento()">
+          (click)="abrirModalCrearEvento()"
+        >
           + Evento
         </button>
 
-        <button class="btn-action outline" (click)="descargarICal()">
-          🔗 Exportar iCal
-        </button>
+        <button class="btn-action outline" (click)="descargarICal()">🔗 Exportar iCal</button>
       </div>
     </header>
 
@@ -50,12 +37,8 @@
       </div>
 
       <ng-container *ngIf="isBrowser">
-        <full-calendar
-          *ngIf="!loading"
-          [options]="calendarOptions">
-        </full-calendar>
+        <full-calendar *ngIf="!loading" [options]="calendarOptions"> </full-calendar>
       </ng-container>
     </section>
-
   </main>
 </div>

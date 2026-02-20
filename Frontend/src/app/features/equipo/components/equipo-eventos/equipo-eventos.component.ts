@@ -72,7 +72,7 @@ export class EquipoEventosComponent implements OnInit {
     }
 
     // 📌 ID equipo desde URL
-    const idParam = this.route.snapshot.paramMap.get('id');
+    const idParam = this.route.parent?.snapshot.paramMap.get('id');
     if (!idParam) {
       this.sinEquipo = true;
       return;

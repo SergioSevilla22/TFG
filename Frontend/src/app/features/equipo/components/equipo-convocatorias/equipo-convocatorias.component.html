@@ -1,36 +1,27 @@
-<app-header></app-header>
-
 <div class="equipo-layout" *ngIf="!sinEquipo">
-  <app-sidebar-equipo
-    [equipo]="equipo"
-    [equipoId]="equipoId"
-    activo="convocatorias">
-  </app-sidebar-equipo>
-
   <main class="equipo-content">
     <div class="panel-card main-panel">
-      
       <div class="panel-header">
-
         <!-- FILA 1: Título -->
         <div class="header-top">
           <div class="header-info">
             <h2>Convocatorias</h2>
-            <p class="subtitle">
-              Gestión de citaciones y asistencia para partidos
-            </p>
+            <p class="subtitle">Gestión de citaciones y asistencia para partidos</p>
           </div>
-      
+
           <button
             class="btn-primary"
-            *ngIf="authService.hasRole('entrenador') || 
-                   authService.hasRole('admin_plataforma') || 
-                   authService.hasRole('admin_club')"
-            (click)="abrirModalCrearConvocatoria()">
+            *ngIf="
+              authService.hasRole('entrenador') ||
+              authService.hasRole('admin_plataforma') ||
+              authService.hasRole('admin_club')
+            "
+            (click)="abrirModalCrearConvocatoria()"
+          >
             <span class="plus-icon">+</span> Nueva convocatoria
           </button>
         </div>
-      
+
         <!-- FILA 2: Filtros -->
         <div class="filtros-bar">
           <div class="filtro-item">
@@ -41,38 +32,49 @@
               <option value="cerradas">Cerradas</option>
             </select>
           </div>
-      
+
           <div class="filtro-item">
             <label>Mes</label>
             <select [(ngModel)]="filtroMes">
               <option [ngValue]="null">Todos</option>
-              <option *ngFor="let m of [0,1,2,3,4,5,6,7,8,9,10,11]" [ngValue]="m">
-                {{ ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][m] }}
+              <option *ngFor="let m of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]" [ngValue]="m">
+                {{
+                  [
+                    'Enero',
+                    'Febrero',
+                    'Marzo',
+                    'Abril',
+                    'Mayo',
+                    'Junio',
+                    'Julio',
+                    'Agosto',
+                    'Septiembre',
+                    'Octubre',
+                    'Noviembre',
+                    'Diciembre',
+                  ][m]
+                }}
               </option>
             </select>
           </div>
-      
+
           <div class="filtro-item">
             <label>Año</label>
-            <input type="number" [(ngModel)]="filtroAnio">
+            <input type="number" [(ngModel)]="filtroAnio" />
           </div>
-      
+
           <div class="filtro-item filtro-busqueda">
             <label>Buscar rival</label>
-            <input type="text"
-                   [(ngModel)]="filtroTexto"
-                   placeholder="Ej: Real Madrid">
+            <input type="text" [(ngModel)]="filtroTexto" placeholder="Ej: Real Madrid" />
           </div>
         </div>
-      
       </div>
-      
 
       <div class="status-container" *ngIf="loadingConvocatorias">
         <div class="spinner"></div>
         <p>Cargando convocatorias...</p>
       </div>
-      
+
       <div *ngIf="!loadingConvocatorias && convocatorias.length === 0" class="empty-state">
         <div class="empty-icon">📋</div>
         <h3>Sin convocatorias</h3>
@@ -80,22 +82,25 @@
       </div>
 
       <div class="lista-convocatorias" *ngIf="!loadingConvocatorias && convocatorias.length > 0">
-        <div class="conv-card" *ngFor="let c of convocatoriasPaginadas" [class.cerrada]="convocatoriaCerrada(c)">
-          
+        <div
+          class="conv-card"
+          *ngFor="let c of convocatoriasPaginadas"
+          [class.cerrada]="convocatoriaCerrada(c)"
+        >
           <div class="conv-header-row">
             <div class="match-info">
               <div class="match-date">
-                <span class="day">{{ c.fecha_partido | date:'dd' }}</span>
-                <span class="month">{{ c.fecha_partido | date:'MMM' }}</span>
+                <span class="day">{{ c.fecha_partido | date: 'dd' }}</span>
+                <span class="month">{{ c.fecha_partido | date: 'MMM' }}</span>
               </div>
               <div class="match-details">
-                <h3 class="rival-name">{{ c.rival ? 'vs ' + c.rival : 'Partido de Entrenamiento' }}</h3>
+                <h3 class="rival-name">
+                  {{ c.rival ? 'vs ' + c.rival : 'Partido de Entrenamiento' }}
+                </h3>
                 <div class="match-meta">
-                  <span class="location" *ngIf="c.lugar">
-                    Lugar: {{ c.lugar }}
-                  </span>
+                  <span class="location" *ngIf="c.lugar"> Lugar: {{ c.lugar }} </span>
                   <span class="limit-tag" [class.danger]="convocatoriaCerrada(c)">
-                     Límite: {{ c.fecha_limite_confirmacion | date:'dd/MM HH:mm' }}
+                    Límite: {{ c.fecha_limite_confirmacion | date: 'dd/MM HH:mm' }}
                   </span>
                 </div>
               </div>
@@ -124,12 +129,22 @@
                   <ng-container *ngIf="!estadoJugador(c) || estadoJugador(c) === 'pendiente'">
                     <span class="pending-text">¿Confirmas tu asistencia?</span>
                     <div class="btn-group">
-                      <button class="btn-action confirm" (click)="responderConvocatoria(c, 'confirmado')">Confirmar <mat-icon>check</mat-icon></button>
-                      <button class="btn-action reject" (click)="abrirModalMotivoConvocatoria(c)">Rechazar <mat-icon>cancel</mat-icon></button>
+                      <button
+                        class="btn-action confirm"
+                        (click)="responderConvocatoria(c, 'confirmado')"
+                      >
+                        Confirmar <mat-icon>check</mat-icon>
+                      </button>
+                      <button class="btn-action reject" (click)="abrirModalMotivoConvocatoria(c)">
+                        Rechazar <mat-icon>cancel</mat-icon>
+                      </button>
                     </div>
                   </ng-container>
-                  
-                  <div class="already-responded" *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'">
+
+                  <div
+                    class="already-responded"
+                    *ngIf="estadoJugador(c) && estadoJugador(c) !== 'pendiente'"
+                  >
                     <span class="status-pill" [ngClass]="estadoJugador(c)">
                       Has respondido: {{ estadoJugador(c) | uppercase }}
                     </span>
@@ -142,75 +157,96 @@
                     Tu estado: <b>{{ estadoJugador(c) | titlecase }}</b>
                   </span>
                   <div *ngIf="convocatoriaCerrada(c) && estaInvitado(c)" class="player-stats-zone">
-
-                    <button class="btn-ver-stats"
-                            (click)="toggleEstadisticasJugador(c.id)">
+                    <button class="btn-ver-stats" (click)="toggleEstadisticasJugador(c.id)">
                       {{ statsAbiertas[c.id] ? 'Ocultar estadísticas' : 'Ver estadísticas' }}
                     </button>
-                  
-                    <div class="stats-box"
-                         *ngIf="statsAbiertas[c.id] && estadisticasJugador[c.id]">
-                  
+
+                    <div class="stats-box" *ngIf="statsAbiertas[c.id] && estadisticasJugador[c.id]">
                       <div class="stat-item">
                         Minutos: <b>{{ estadisticasJugador[c.id]?.minutos || 0 }}</b>
                       </div>
-                  
+
                       <div class="stat-item">
                         Goles: <b>{{ estadisticasJugador[c.id]?.goles || 0 }}</b>
                       </div>
-                  
+
                       <div class="stat-item">
                         Asistencias: <b>{{ estadisticasJugador[c.id]?.asistencias || 0 }}</b>
                       </div>
-                  
+
                       <div class="stat-item">
                         Amarillas: <b>{{ estadisticasJugador[c.id]?.amarillas || 0 }}</b>
                       </div>
-                  
+
                       <div class="stat-item">
                         Rojas: <b>{{ estadisticasJugador[c.id]?.rojas || 0 }}</b>
                       </div>
-                  
                     </div>
-                  
-                  </div>                  
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="section-admin" *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')">
+            <div
+              class="section-admin"
+              *ngIf="
+                authService.hasRole('entrenador') ||
+                authService.hasRole('admin_plataforma') ||
+                authService.hasRole('admin_club')
+              "
+            >
               <div class="stats-pills">
-                <span class="pill total"><mat-icon>group</mat-icon> <b>{{ c.jugadores?.length || 0 }}</b></span>
-                <span class="pill confirm"><mat-icon>check</mat-icon> <b>{{ contarPorEstado(c, 'confirmado') }}</b></span>
-                <span class="pill reject"><mat-icon>cancel</mat-icon> <b>{{ contarPorEstado(c, 'rechazado') }}</b></span>
-                <span class="pill pending"><mat-icon>question_mark</mat-icon> <b>{{ contarPorEstado(c, 'pendiente') }}</b></span>
+                <span class="pill total"
+                  ><mat-icon>group</mat-icon> <b>{{ c.jugadores?.length || 0 }}</b></span
+                >
+                <span class="pill confirm"
+                  ><mat-icon>check</mat-icon> <b>{{ contarPorEstado(c, 'confirmado') }}</b></span
+                >
+                <span class="pill reject"
+                  ><mat-icon>cancel</mat-icon> <b>{{ contarPorEstado(c, 'rechazado') }}</b></span
+                >
+                <span class="pill pending"
+                  ><mat-icon>question_mark</mat-icon>
+                  <b>{{ contarPorEstado(c, 'pendiente') }}</b></span
+                >
               </div>
 
               <div class="admin-actions">
-                <button class="btn-icon reminder" *ngIf="!convocatoriaCerrada(c)" (click)="enviarRecordatorio(c)" matTooltip="Enviar recordatorio">
+                <button
+                  class="btn-icon reminder"
+                  *ngIf="!convocatoriaCerrada(c)"
+                  (click)="enviarRecordatorio(c)"
+                  matTooltip="Enviar recordatorio"
+                >
                   <mat-icon>alarm</mat-icon>
                 </button>
-                <button class="btn-icon delete" matTooltip="Eliminar" >
+                <button class="btn-icon delete" matTooltip="Eliminar">
                   <mat-icon>delete</mat-icon>
                 </button>
                 <button
-                class="btn-icon edit"
-                [disabled]="convocatoriaCerrada(c)"
-                [matTooltip]="convocatoriaCerrada(c) 
-                  ? 'No se puede editar porque ya ha finalizado' 
-                  : 'Editar convocatoria'"
-                (click)="abrirEditarConvocatoria(c)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button
-                class="btn-icon stats"
-                [disabled]="!convocatoriaCerrada(c)"
-                [matTooltip]="convocatoriaCerrada(c) 
-                  ? 'Cargar estadísticas del partido' 
-                  : 'Las estadísticas se pueden cargar una vez que la convocatoria ha finalizado'"
-                (click)="abrirModalEstadisticas(c)">
-                <mat-icon>bar_chart</mat-icon>
-              </button>
+                  class="btn-icon edit"
+                  [disabled]="convocatoriaCerrada(c)"
+                  [matTooltip]="
+                    convocatoriaCerrada(c)
+                      ? 'No se puede editar porque ya ha finalizado'
+                      : 'Editar convocatoria'
+                  "
+                  (click)="abrirEditarConvocatoria(c)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  class="btn-icon stats"
+                  [disabled]="!convocatoriaCerrada(c)"
+                  [matTooltip]="
+                    convocatoriaCerrada(c)
+                      ? 'Cargar estadísticas del partido'
+                      : 'Las estadísticas se pueden cargar una vez que la convocatoria ha finalizado'
+                  "
+                  (click)="abrirModalEstadisticas(c)"
+                >
+                  <mat-icon>bar_chart</mat-icon>
+                </button>
               </div>
             </div>
           </div>
@@ -218,7 +254,7 @@
           <details class="conv-players-list">
             <summary>
               <span class="summary-content">
-                Ver lista de convocados 
+                Ver lista de convocados
                 <span class="count-tag">{{ c.jugadores?.length }}</span>
               </span>
             </summary>
@@ -238,24 +274,23 @@
         </div>
       </div>
       <div class="paginacion" *ngIf="totalPaginas > 1">
+        <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">←</button>
 
-    <button (click)="cambiarPagina(paginaActual - 1)" 
-            [disabled]="paginaActual === 1">
-      ←
-    </button>
-  
-    <button *ngFor="let p of [].constructor(totalPaginas); let i = index"
-            (click)="cambiarPagina(i + 1)"
-            [class.activa]="paginaActual === i + 1">
-      {{ i + 1 }}
-    </button>
-  
-    <button (click)="cambiarPagina(paginaActual + 1)"
-            [disabled]="paginaActual === totalPaginas">
-      →
-    </button>
-  
-  </div>
+        <button
+          *ngFor="let p of [].constructor(totalPaginas); let i = index"
+          (click)="cambiarPagina(i + 1)"
+          [class.activa]="paginaActual === i + 1"
+        >
+          {{ i + 1 }}
+        </button>
+
+        <button
+          (click)="cambiarPagina(paginaActual + 1)"
+          [disabled]="paginaActual === totalPaginas"
+        >
+          →
+        </button>
+      </div>
     </div>
   </main>
 </div>

@@ -1,59 +1,68 @@
 <aside class="sidebar" *ngIf="equipo">
+  <!-- HEADER -->
+  <div class="sidebar-header">
+    <img
+      *ngIf="equipo.club?.escudo"
+      [src]="'http://localhost:3000' + equipo.club.escudo"
+      class="sidebar-escudo"
+    />
 
-    <!-- HEADER -->
-    <div class="sidebar-header">
-      <img
-        *ngIf="equipo.club?.escudo"
-        [src]="'http://localhost:3000' + equipo.club.escudo"
-        class="sidebar-escudo"
-      />
-  
-      <h2>{{ equipo.nombre }}</h2>
-      <p>{{ equipo.categoria?.nombre }} · {{ equipo.temporada?.nombre }}</p>
-    </div>
-  
-    <!-- NAV -->
-    <nav class="sidebar-nav">
-      <button
-        class="nav-item"
-        [class.active]="activo === 'resumen'"
-        (click)="navegar('')">
-        <mat-icon>dashboard</mat-icon>
-        <span>Resumen</span>
-      </button>
-  
-      <button
-        class="nav-item"
-        [class.active]="activo === 'plantilla'"
-        (click)="navegar('plantilla')">
-        <mat-icon>group</mat-icon>
-        <span>Plantilla</span>
-      </button>
-  
-      <button
-        class="nav-item"
-        [class.active]="activo === 'calendario'"
-        (click)="navegar('calendario')">
-        <mat-icon>calendar_month</mat-icon>
-        <span>Calendario</span>
-      </button>
-  
-      <button
-        class="nav-item"
-        [class.active]="activo === 'eventos'"
-        (click)="navegar('eventos')">
-        <mat-icon>fitness_center</mat-icon>
-        <span>Eventos</span>
-      </button>
-  
-      <button
-        class="nav-item"
-        [class.active]="activo === 'convocatorias'"
-        (click)="navegar('convocatorias')">
-        <mat-icon>event</mat-icon>
-        <span>Convocatorias</span>
-      </button>
-    </nav>
-  
-  </aside>
-  
+    <h2>{{ equipo.nombre }}</h2>
+    <p>{{ equipo.categoria?.nombre }} · {{ equipo.temporada?.nombre }}</p>
+  </div>
+
+  <!-- NAV -->
+  <nav class="sidebar-nav">
+    <a
+      class="nav-item"
+      [routerLink]="['/equipo', equipoId]"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>dashboard</mat-icon>
+      Resumen
+    </a>
+
+    <a
+      class="nav-item"
+      [class.active]="plantillaActiva"
+      [routerLink]="['/equipo', equipoId, 'plantilla']"
+    >
+      <mat-icon>group</mat-icon>
+      Plantilla
+    </a>
+
+    <a
+      class="nav-item"
+      [routerLink]="['/equipo', equipoId, 'calendario']"
+      routerLinkActive="active"
+    >
+      <mat-icon>calendar_month</mat-icon>
+      Calendario
+    </a>
+
+    <a class="nav-item" [routerLink]="['/equipo', equipoId, 'eventos']" routerLinkActive="active">
+      <mat-icon>fitness_center</mat-icon>
+      Eventos
+    </a>
+
+    <a
+      class="nav-item"
+      [routerLink]="['/equipo', equipoId, 'convocatorias']"
+      routerLinkActive="active"
+    >
+      <mat-icon>event</mat-icon>
+      Convocatorias
+    </a>
+
+    <a
+      *ngIf="dni"
+      class="nav-item"
+      [class.active]="miFichaActiva"
+      [routerLink]="['/equipo', equipoId, 'jugador', dni]"
+    >
+      <mat-icon>person</mat-icon>
+      Mi ficha
+    </a>
+  </nav>
+</aside>

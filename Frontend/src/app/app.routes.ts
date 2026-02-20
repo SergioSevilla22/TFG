@@ -13,10 +13,11 @@ import { adminGuard } from './core/guards/admin.guard';
 import { TutorPanelComponent } from './features/tutor/tutor-panel/tutor-panel.component';
 import { EquiposClubComponent } from './features/club/components/equipos-club/equipos-club.component';
 import { ClubComponent } from './features/club/components/club/club.component';
-import { EquipoComponent } from './features/equipo/components/equipo/equipo.component';
+import { ResumenComponent } from './features/equipo/components/resumen/resumen.component';
 import { ClubsComponent } from './features/club/components/clubs/clubs.component';
 import { EquipoConvocatoriasComponent } from './features/equipo/components/equipo-convocatorias/equipo-convocatorias.component';
 import { EquipoEventosComponent } from './features/equipo/components/equipo-eventos/equipo-eventos.component';
+import { EquipoComponent } from './features/equipo/components/equipo/equipo.component';
 import { PlantillaComponent } from './features/equipo/components/plantilla/plantilla.component';
 import { JugadorFichaComponent } from './features/jugador/jugador-ficha/jugador-ficha.component';
 
@@ -34,31 +35,31 @@ export const routes: Routes = [
   { path: 'tutor-panel', component: TutorPanelComponent, title: 'tutor-panel' },
   { path: 'club/:id', component: ClubComponent, title: 'Club' },
   { path: 'club/:id/equipos', component: EquiposClubComponent, title: 'Equipos' },
-  { path: 'equipo/:id', component: EquipoComponent, title: 'Equipo' },
+  {
+    path: 'equipo/:id',
+    component: EquipoComponent,
+    title: 'Equipo',
+    children: [
+      { path: '', component: ResumenComponent },
+
+      { path: 'convocatorias', component: EquipoConvocatoriasComponent },
+
+      { path: 'eventos', component: EquipoEventosComponent },
+
+      {
+        path: 'calendario',
+        loadComponent: () =>
+          import('./features/equipo/components/equipo-calendario/equipo-calendario.component').then(
+            (m) => m.EquipoCalendarioComponent,
+          ),
+      },
+
+      { path: 'plantilla', component: PlantillaComponent },
+
+      { path: 'jugador/:dni', component: JugadorFichaComponent },
+    ],
+  },
   { path: 'clubes', component: ClubsComponent, title: 'Search Clubs', canActivate: [adminGuard] },
-  {
-    path: 'equipo/:id/calendario',
-    loadComponent: () =>
-      import('./features/equipo/components/equipo-calendario/equipo-calendario.component').then(
-        (m) => m.EquipoCalendarioComponent,
-      ),
-  },
-  {
-    path: 'equipo/:id/convocatorias',
-    component: EquipoConvocatoriasComponent,
-  },
-  {
-    path: 'equipo/:id/eventos',
-    component: EquipoEventosComponent,
-  },
-  {
-    path: 'equipo/:id/plantilla',
-    component: PlantillaComponent,
-  },
-  {
-    path: 'equipo/:equipoId/jugador/:dni',
-    component: JugadorFichaComponent,
-  },
 ];
 
 export default routes;
