@@ -1,113 +1,211 @@
 .clubs-page {
-    max-width: 1100px;
-    margin: auto;
-    padding: 40px 20px;
-  }
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Cabecera */
+.page-header {
+  margin-bottom: 32px;
   
   .page-title {
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 800;
-    margin-bottom: 6px;
-  }
-  
-  .page-subtitle {
-    color: #6b7280;
-    margin-bottom: 25px;
-  }
-  
-  /* ===== FILTROS ===== */
-  
-  .filters-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-    border: 1px solid #e5e7eb;
-    margin-bottom: 30px;
-  }
-  
-  .filters-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
-    gap: 14px;
-    align-items: center;
-  }
-  
-  .filters-grid input {
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    font-size: 0.95rem;
-  }
-  
-  .filters-grid input:focus {
-    outline: none;
-    border-color: #1ea83a;
-    box-shadow: 0 0 0 2px rgba(30,168,58,0.15);
-  }
-  
-  .btn-search {
-    background: #1ea83a;
-    color: white;
-    border: none;
-    padding: 12px 22px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  
-  .btn-search:hover {
-    background: #16852d;
-    transform: translateY(-1px);
-  }
-  
-  /* ===== RESULTADOS ===== */
-  
-  .results {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  
-  .club-card {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    cursor: pointer;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    transition: 0.25s;
-  }
-  
-  .club-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.12);
-  }
-  
-  .club-card img {
-    width: 150px;
-    height: 110px;
-    object-fit: contain;
-  }
-  
-  .club-card h3 {
+    color: #1e293b;
     margin: 0;
-    font-size: 1.2rem;
-    font-weight: 700;
+    letter-spacing: -0.025em;
   }
-  
-  .club-card p {
-    margin: 4px 0 0;
-    color: #6b7280;
+
+  .page-subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-top: 8px;
   }
-  
-  .empty {
-    text-align: center;
-    color: #9ca3af;
-    padding: 40px 0;
+}
+
+/* Filtros Estilo Premium */
+.filters-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f5f9;
+  margin-bottom: 40px;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 16px;
+  align-items: center;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
-  
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  mat-icon {
+    position: absolute;
+    left: 12px;
+    color: #94a3b8;
+    font-size: 20px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.95rem;
+    color: #1e293b;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      background: #ffffff;
+      border-color: #1ea83a;
+      box-shadow: 0 0 0 4px rgba(30, 168, 58, 0.1);
+    }
+  }
+}
+
+.btn-search {
+  background: #1ea83a;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: #16852d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(30, 168, 58, 0.25);
+  }
+}
+
+/* Cuadrícula de Clubes */
+.clubs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.club-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #1ea83a;
+  }
+
+  .card-image {
+    height: 180px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    border-bottom: 1px solid #f1f5f9;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+    }
+
+    .no-shield mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: #cbd5e1;
+    }
+  }
+
+  .card-info {
+    padding: 20px;
+    flex-grow: 1;
+
+    h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+
+    .location-info {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748b;
+      font-size: 0.9rem;
+
+      .separator { color: #cbd5e1; }
+      .provincia { font-weight: 500; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+    }
+  }
+
+  .card-footer {
+    padding: 15px 20px;
+    background: #fcfcfd;
+    border-top: 1px solid #f1f5f9;
+
+    .view-more {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      color: #1ea83a;
+      font-weight: 700;
+      font-size: 0.85rem;
+      gap: 4px;
+
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    }
+  }
+}
+
+/* Estado Vacío */
+.empty-state {
+  text-align: center;
+  padding: 80px 0;
+  background: #f8fafc;
+  border-radius: 20px;
+  border: 2px dashed #e2e8f0;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #94a3b8;
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+}

@@ -1,80 +1,100 @@
 <app-header></app-header>
 
-<div class="equipos-wrapper">
-
-  <h2 class="section-title">Equipos del Club</h2>
-
-  <!-- FORMULARIO NUEVO EQUIPO -->
-  <div class="panel-card nuevo-equipo-form">
-    <h3>Crear nuevo equipo</h3>
-
-    <div class="form-group">
-      <input type="text"
-             placeholder="Nombre del equipo (Alevín B, Cadete A...)"
-             [(ngModel)]="nuevoEquipo.nombre">
+<div class="gestion-container">
+  <header class="gestion-header">
+    <div class="title-group">
+      <h1>Panel de Equipos</h1>
+      <p>Organiza la estructura deportiva de la entidad</p>
     </div>
-
-    <div class="form-group">
-      <select [(ngModel)]="nuevoEquipo.categoria_id">
-        <option [ngValue]="null" disabled selected>
-          Seleccionar categoría...
-        </option>
-        <option *ngFor="let cat of categorias" [value]="cat.id">
-          {{ cat.nombre }}
-        </option>
-      </select>
+    <div class="header-stats">
+      <div class="mini-stat">
+        <span class="num">{{ equiposPorCategoria.length }}</span>
+        <span class="lab">Categorías</span>
+      </div>
     </div>
+  </header>
 
-    <button class="cambiar primary" (click)="crearEquipo()">Crear equipo</button>
-
-    <p class="form-message" *ngIf="mensaje">{{ mensaje }}</p>
-  </div>
-
-  <h3 class="subsection-title">Equipos registrados</h3>
-
-<div class="categoria-card"
-     *ngFor="let grupo of equiposPorCategoria">
-
-  <!-- CABECERA CATEGORÍA -->
-  <div class="categoria-header clickable"
-     (click)="categoriaAbierta = categoriaAbierta === grupo.categoria ? null : grupo.categoria">
-
-  <div class="categoria-title">
-    <span class="arrow"
-          [class.open]="categoriaAbierta === grupo.categoria">
-      ▶
-    </span>
-
-    <h4>{{ grupo.categoria }}</h4>
-  </div>
-
-  <span class="contador">
-    {{ grupo.equipos.length }} equipos
-  </span>
-</div>
-
-  <!-- LISTA EQUIPOS -->
-  <div class="categoria-content"
-       *ngIf="categoriaAbierta === grupo.categoria">
-
-    <div class="equipo-card clickable"
-         *ngFor="let eq of grupo.equipos"
-         (click)="abrirEquipo(eq.id)">
-
-      <div class="info-group">
-        <h4>{{ eq.nombre }}</h4>
-        <p class="meta">
-          <span class="meta-item">Temporada: {{ eq.temporada }}</span>
-        </p>
+  <div class="main-grid">
+    
+    <div class="list-section">
+      <div class="section-top">
+        <h3><mat-icon>account_tree</mat-icon> Estructura Actual</h3>
       </div>
 
-      <button class="delete-btn"
-              (click)="eliminarEquipo(eq.id); $event.stopPropagation()">
-        Eliminar
-      </button>
+      <div class="categories-stack">
+        <div class="cat-group" *ngFor="let grupo of equiposPorCategoria">
+          <div class="cat-header" 
+               [class.is-open]="categoriaAbierta === grupo.categoria"
+               (click)="categoriaAbierta = categoriaAbierta === grupo.categoria ? null : grupo.categoria">
+            <div class="cat-title">
+              <mat-icon class="folder-icon">{{ categoriaAbierta === grupo.categoria ? 'keyboard_arrow_down' : 'keyboard_arrow_right' }}</mat-icon>
+              <span>{{ grupo.categoria }}</span>
+            </div>
+            <span class="cat-count">{{ grupo.equipos.length }} equipos</span>
+          </div>
 
+          <div class="cat-body" *ngIf="categoriaAbierta === grupo.categoria">
+            <div class="team-grid">
+              <div class="team-card-modern" *ngFor="let eq of grupo.equipos" (click)="abrirEquipo(eq.id)">
+                <div class="team-initials">{{ eq.nombre.substring(0,2) | uppercase }}</div>
+                <div class="team-data">
+                  <h4>{{ eq.nombre }}</h4>
+                  <span class="season-tag">{{ eq.temporada }}</span>
+                </div>
+                <button class="btn-trash" (click)="eliminarEquipo(eq.id); $event.stopPropagation()">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+            
+            <div class="empty-state-mini" *ngIf="grupo.equipos.length === 0">
+              <p>No hay equipos en esta categoría</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-  </div>
+    <aside class="form-section">
+      <div class="sticky-form">
+        <div class="create-card">
+          <div class="card-head">
+            <mat-icon>add_box</mat-icon>
+            <h3>Nuevo Equipo</h3>
+          </div>
+          
+          <div class="card-body">
+            <div class="form-field">
+              <label>Nombre identificativo</label>
+              <input type="text" placeholder="Ej: Juvenil A" [(ngModel)]="nuevoEquipo.nombre">
+            </div>
 
+            <div class="form-field">
+              <label>Categoría</label>
+              <select [(ngModel)]="nuevoEquipo.categoria_id">
+                <option [ngValue]="null" disabled>Seleccionar categoría...</option>
+                <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+              </select>
+            </div>
+
+            <button class="btn-submit" (click)="crearEquipo()">
+              Crear Equipo
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+
+            <div class="success-alert" *ngIf="mensaje">
+              <mat-icon>check_circle</mat-icon>
+              {{ mensaje }}
+            </div>
+          </div>
+        </div>
+
+        <div class="help-card">
+          <mat-icon>lightbulb</mat-icon>
+          <p>Los equipos creados aparecerán automáticamente en el directorio del club.</p>
+        </div>
+      </div>
+    </aside>
+
+  </div>
 </div>

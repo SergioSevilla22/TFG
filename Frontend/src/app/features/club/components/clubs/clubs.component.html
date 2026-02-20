@@ -1,67 +1,92 @@
 <app-header></app-header>
-<div class="clubs-page">
 
-    <h1 class="page-title">Clubes</h1>
-    <p class="page-subtitle">
-      Busca clubes registrados utilizando los filtros disponibles
-    </p>
-  
-    <!-- FILTROS -->
+<div class="clubs-page">
+  <header class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Directorio de Clubes</h1>
+      <p class="page-subtitle">
+        Gestiona y explora las entidades registradas en la plataforma
+      </p>
+    </div>
+  </header>
+
+  <section class="filters-section">
     <div class="filters-card">
-  
       <div class="filters-grid">
-        <input
-          type="text"
-          placeholder="Nombre del club"
-          [(ngModel)]="filtros.nombre"
-          (input)="onInputChange()"
-        />
-  
-        <input
-          type="text"
-          placeholder="Provincia"
-          [(ngModel)]="filtros.provincia"
-          (input)="onInputChange()"
-        />
-  
-        <input
-          type="text"
-          placeholder="Población"
-          [(ngModel)]="filtros.poblacion"
-          (input)="onInputChange()"
-        />
-  
+        <div class="input-group">
+          <mat-icon>search</mat-icon>
+          <input
+            type="text"
+            placeholder="Nombre del club..."
+            [(ngModel)]="filtros.nombre"
+            (input)="onInputChange()"
+          />
+        </div>
+
+        <div class="input-group">
+          <mat-icon>map</mat-icon>
+          <input
+            type="text"
+            placeholder="Provincia"
+            [(ngModel)]="filtros.provincia"
+            (input)="onInputChange()"
+          />
+        </div>
+
+        <div class="input-group">
+          <mat-icon>location_on</mat-icon>
+          <input
+            type="text"
+            placeholder="Población"
+            [(ngModel)]="filtros.poblacion"
+            (input)="onInputChange()"
+          />
+        </div>
+
         <button class="btn-search" (click)="buscar()">
+          <mat-icon>filter_alt</mat-icon>
           Buscar
         </button>
       </div>
-  
     </div>
-  
-    <!-- RESULTADOS -->
-    <div class="results">
-  
-      <div *ngIf="clubes.length === 0" class="empty">
-        No se encontraron clubes con los filtros seleccionados.
-      </div>
-  
+  </section>
+
+  <section class="results-section">
+    <div *ngIf="clubes.length === 0" class="empty-state">
+      <mat-icon>domain_disabled</mat-icon>
+      <p>No se han encontrado clubes con los criterios seleccionados.</p>
+    </div>
+
+    <div class="clubs-grid" *ngIf="clubes.length > 0">
       <div
         class="club-card"
         *ngFor="let club of clubes"
         (click)="abrirClub(club.id)"
       >
-        <img
-          *ngIf="club.escudo"
-          [src]="'http://localhost:3000' + club.escudo"
-        />
-  
-        <div class="info">
+        <div class="card-image">
+          <img
+            *ngIf="club.escudo"
+            [src]="'http://localhost:3000' + club.escudo"
+            alt="Escudo {{ club.nombre }}"
+          />
+          <div *ngIf="!club.escudo" class="no-shield">
+            <mat-icon>shield</mat-icon>
+          </div>
+        </div>
+
+        <div class="card-info">
           <h3>{{ club.nombre }}</h3>
-          <p>{{ club.poblacion }} · {{ club.provincia }}</p>
+          <div class="location-info">
+            <span class="poblacion">{{ club.poblacion }}</span>
+            <span class="separator">•</span>
+            <span class="provincia">{{ club.provincia }}</span>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <span class="view-more">Ver equipos <mat-icon>chevron_right</mat-icon></span>
         </div>
       </div>
-  
     </div>
-  
-  </div>
-  
+  </section>
+</div>

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ClubService } from '../../../../../services/club/club.service';
 import { EquipoService } from '../../../../../services/equipo/equipos.service';
 import { HeaderComponent } from '../../../../layout/header/header.component';
@@ -13,7 +14,7 @@ import { TransferUserModalComponent } from '../../modals/transfer-user-modal/tra
 @Component({
   selector: 'app-club',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent, FormsModule],
+  imports: [CommonModule, RouterModule, HeaderComponent, FormsModule, MatIcon, MatProgressSpinnerModule],
   templateUrl: './club.component.html',
   styleUrls: ['./club.component.css'],
 })
