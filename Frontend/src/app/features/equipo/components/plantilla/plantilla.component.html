@@ -1,15 +1,5 @@
-<app-header></app-header>
-
 <div class="equipo-layout">
-
-  <app-sidebar-equipo
-    [equipo]="equipo"
-    [equipoId]="equipoId"
-    activo="plantilla">
-  </app-sidebar-equipo>
-
   <main class="plantilla-content" *ngIf="!loading && equipo">
-
     <!-- =========================
          ENTRENADORES
     ========================== -->
@@ -20,14 +10,14 @@
         <button
           *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
           class="btn-add"
-          (click)="abrirModalEntrenadorEquipo()">
+          (click)="abrirModalEntrenadorEquipo()"
+        >
           + Añadir entrenador
         </button>
       </div>
 
       <div class="grid-personas entrenadores">
         <div class="card-persona" *ngFor="let e of equipo.entrenadores">
-
           <div class="foto">
             <img *ngIf="e.foto" [src]="'http://localhost:3000' + e.foto" />
             <span *ngIf="!e.foto">{{ e.nombre[0] }}</span>
@@ -38,7 +28,8 @@
           <button
             *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
             class="btn-delete"
-            (click)="eliminarEntrenador(e.DNI)">
+            (click)="eliminarEntrenador(e.DNI)"
+          >
             Eliminar
           </button>
         </div>
@@ -53,42 +44,40 @@
         <h1>Jugadores: {{ equipo.jugadores.length }}</h1>
 
         <button
-          *ngIf="authService.hasRole('admin_plataforma') || 
-                 authService.hasRole('admin_club') || 
-                 authService.hasRole('entrenador')"
+          *ngIf="
+            authService.hasRole('admin_plataforma') ||
+            authService.hasRole('admin_club') ||
+            authService.hasRole('entrenador')
+          "
           class="btn-add"
-          (click)="abrirModalAddJugadores()">
+          (click)="abrirModalAddJugadores()"
+        >
           + Añadir jugador
         </button>
       </div>
 
       <div class="grid-personas jugadores">
-
-        <div class="card-persona"
-          *ngFor="let j of equipo.jugadores"
-          (click)="irAFicha(j.DNI)">
-
+        <div class="card-persona" *ngFor="let j of equipo.jugadores" (click)="irAFicha(j.DNI)">
           <div class="foto grande">
             <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" />
             <span *ngIf="!j.foto">{{ j.nombre[0] }}</span>
           </div>
 
           <h3>{{ j.nombre }}</h3>
-          
 
           <button
-            *ngIf="authService.hasRole('admin_plataforma') || 
-                  authService.hasRole('admin_club') || 
-                  authService.hasRole('entrenador')"
+            *ngIf="
+              authService.hasRole('admin_plataforma') ||
+              authService.hasRole('admin_club') ||
+              authService.hasRole('entrenador')
+            "
             class="btn-delete"
-            (click)="eliminarJugador(j.DNI); $event.stopPropagation()">
+            (click)="eliminarJugador(j.DNI); $event.stopPropagation()"
+          >
             Eliminar
-        </button>
+          </button>
         </div>
-
       </div>
     </section>
-
   </main>
-
 </div>

@@ -66,7 +66,7 @@ export class EquipoCalendarioComponent implements OnInit {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = Number(this.route.parent?.snapshot.paramMap.get('id'));
     this.equipoId = id;
     this.cargarDatosEquipo();
     this.cargarCalendario();

@@ -4,22 +4,19 @@ import { isPlatformBrowser } from '@angular/common';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const platformId = inject(PLATFORM_ID);
-
   let token: string | null = null;
 
   if (isPlatformBrowser(platformId)) {
     token = localStorage.getItem('token');
+    console.log('Token:', token ? 'PRESENTE' : 'AUSENTE', '| URL:', req.url); // ← aquí
   }
 
   if (token) {
     const authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
+      setHeaders: { Authorization: `Bearer ${token}` },
     });
     return next(authReq);
   }
 
   return next(req);
 };
-

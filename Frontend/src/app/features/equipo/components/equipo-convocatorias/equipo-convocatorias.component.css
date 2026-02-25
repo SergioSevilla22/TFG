@@ -1,23 +1,8 @@
-:host { display: block; height: 100%; }
-
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-}
-
-.equipo-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  height: calc(100vh - 100px); 
-  background: #f1f5f9;
-  overflow: hidden;
-}
-
-.equipo-content { 
-  padding: 32px;
-  overflow-y: auto;
-  height: 100%; 
 }
 
 .panel-card {
@@ -80,13 +65,13 @@ html, body {
 
 /* REFUERZO DE COLOR EN EL BOTÓN ELIMINAR */
 .btn-icon.delete {
-  background: #fee2e2; 
-  color: #b91c1c; 
+  background: #fee2e2;
+  color: #b91c1c;
   border: 1px solid #fecaca;
-  
-  &:hover { 
-    background: #ef4444; 
-    color: white; 
+
+  &:hover {
+    background: #ef4444;
+    color: white;
     transform: scale(1.1);
   }
 }
@@ -109,7 +94,11 @@ html, body {
   transform: translateY(-2px);
 }
 
-.lista-convocatorias { display: flex; flex-direction: column; gap: 24px; }
+.lista-convocatorias {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
 .conv-card {
   background: #ffffff;
@@ -118,8 +107,13 @@ html, body {
   overflow: hidden;
   transition: all 0.25s ease;
 
-  &:hover { border-color: #94a3b8; box-shadow: 0 12px 20px rgba(0,0,0,0.04); }
-  &.cerrada { opacity: 0.85; }
+  &:hover {
+    border-color: #94a3b8;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.04);
+  }
+  &.cerrada {
+    opacity: 0.85;
+  }
 }
 
 /* HEADER DE LA CARD */
@@ -132,7 +126,11 @@ html, body {
   border-bottom: 1px solid #f1f5f9;
 }
 
-.match-info { display: flex; gap: 20px; align-items: center; }
+.match-info {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
 
 .match-date {
   background: #f8fafc;
@@ -144,29 +142,71 @@ html, body {
   align-items: center;
   justify-content: center;
   border: 1px solid #e2e8f0;
-  .day { font-size: 1.5rem; font-weight: 800; color: #0f172a; line-height: 1; }
-  .month { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+  .day {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1;
+  }
+  .month {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+  }
 }
 
-.rival-name { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0 0 5px 0; }
-.match-meta { 
-  display: flex; 
-  gap: 15px; 
-  font-size: 0.85rem; 
+.rival-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 5px 0;
+}
+.match-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
   color: #64748b;
-  .limit-tag { font-weight: 700; color: #059669; &.danger { color: #dc2626; } }
+  .limit-tag {
+    font-weight: 700;
+    color: #059669;
+    &.danger {
+      color: #dc2626;
+    }
+  }
 }
 
 /* HORARIOS */
-.time-slots { display: flex; gap: 12px; }
+.time-slots {
+  display: flex;
+  gap: 12px;
+}
 .time-box {
   padding: 8px 15px;
   background: #f1f5f9;
   border-radius: 12px;
   text-align: center;
-  .label { display: block; font-size: 0.65rem; text-transform: uppercase; font-weight: 700; color: #64748b; }
-  .value { font-size: 1.1rem; font-weight: 800; color: #1e293b; }
-  &.highlight { background: #0f172a; .label { color: #94a3b8; } .value { color: white; } }
+  .label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #64748b;
+  }
+  .value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1e293b;
+  }
+  &.highlight {
+    background: #0f172a;
+    .label {
+      color: #94a3b8;
+    }
+    .value {
+      color: white;
+    }
+  }
 }
 
 /* CUERPO Y ACCIONES */
@@ -178,8 +218,18 @@ html, body {
   align-items: center;
 }
 
-.btn-group { display: flex; gap: 10px; margin-top: 5px; }
-.pending-text { font-size: 0.9rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 5px; }
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+.pending-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: block;
+  margin-bottom: 5px;
+}
 
 .btn-action {
   padding: 8px 18px;
@@ -187,26 +237,30 @@ html, body {
   font-weight: 700;
   border: none;
   cursor: pointer;
-  &.confirm { 
-    background: #10b981; 
+  &.confirm {
+    background: #10b981;
     color: white;
     display: inline-flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     gap: 6px;
   }
-  &.reject { 
-    background: #ef4444; 
+  &.reject {
+    background: #ef4444;
     color: white;
     display: inline-flex;
     align-items: center;
-    justify-content: center; 
-    gap: 6px; 
+    justify-content: center;
+    gap: 6px;
   }
 }
 
 /* ADMIN PILLS */
-.section-admin { display: flex; align-items: center; gap: 20px; }
+.section-admin {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 .stats-pills {
   display: flex;
   gap: 8px;
@@ -219,14 +273,26 @@ html, body {
     display: inline-flex;
     align-items: center;
     border: 1px solid #e2e8f0;
-    gap: 6px; 
-    &.confirm { color: #059669; border-color: #dcfce7; }
-    &.reject { color: #dc2626; border-color: #fee2e2; }
-    &.pending { color: #ca8a04; border-color: #fefce8; }
+    gap: 6px;
+    &.confirm {
+      color: #059669;
+      border-color: #dcfce7;
+    }
+    &.reject {
+      color: #dc2626;
+      border-color: #fee2e2;
+    }
+    &.pending {
+      color: #ca8a04;
+      border-color: #fefce8;
+    }
   }
 }
 
-.admin-actions { display: flex; gap: 8px; }
+.admin-actions {
+  display: flex;
+  gap: 8px;
+}
 
 /* LISTA DE JUGADORES */
 .conv-players-list {
@@ -238,10 +304,20 @@ html, body {
     color: #475569;
     border-top: 1px solid #f1f5f9;
     list-style: none;
-    &::-webkit-details-marker { display: none; }
-    .count-tag { background: #f1f5f9; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; margin-left: 8px; }
+    &::-webkit-details-marker {
+      display: none;
+    }
+    .count-tag {
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      margin-left: 8px;
+    }
   }
-  &[open] summary { color: #059669; }
+  &[open] summary {
+    color: #059669;
+  }
 }
 
 .players-grid {
@@ -261,8 +337,16 @@ html, body {
   border: 1px solid #f1f5f9;
 }
 
-.player-name { font-size: 0.9rem; font-weight: 700; color: #1e293b; display: block; }
-.player-dni { font-size: 0.75rem; color: #64748b; }
+.player-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: block;
+}
+.player-dni {
+  font-size: 0.75rem;
+  color: #64748b;
+}
 
 .mini-pill {
   font-size: 0.65rem;
@@ -270,29 +354,59 @@ html, body {
   padding: 3px 8px;
   border-radius: 6px;
   text-transform: uppercase;
-  &.confirmado { background: #dcfce7; color: #166534; }
-  &.rechazado { background: #fee2e2; color: #991b1b; }
-  &.pendiente { background: #fefce8; color: #854d0e; }
+  &.confirmado {
+    background: #dcfce7;
+    color: #166534;
+  }
+  &.rechazado {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  &.pendiente {
+    background: #fefce8;
+    color: #854d0e;
+  }
 }
 
 .status-pill {
-  padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 0.85rem;
-  &.confirmado { background: #10b981; color: white; }
-  &.rechazado { background: #ef4444; color: white; }
-  &.closed { background: #64748b; color: white; }
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  &.confirmado {
+    background: #10b981;
+    color: white;
+  }
+  &.rechazado {
+    background: #ef4444;
+    color: white;
+  }
+  &.closed {
+    background: #64748b;
+    color: white;
+  }
 }
 
 @media (max-width: 900px) {
-  .conv-header-row, .conv-body { flex-direction: column; align-items: flex-start; gap: 15px; }
-  .time-slots { width: 100%; }
-  .section-admin { width: 100%; justify-content: space-between; }
+  .conv-header-row,
+  .conv-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .time-slots {
+    width: 100%;
+  }
+  .section-admin {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 .match-meta .location {
   display: flex;
   align-items: center;
   gap: 5px;
   color: #475569;
-  
 }
 
 .conv-body {
@@ -383,7 +497,7 @@ html, body {
   }
 }
 
-.btn-icon.stats{
+.btn-icon.stats {
   width: 42px;
   height: 42px;
   background: #fffefe;
@@ -498,7 +612,7 @@ html, body {
 .filtro-item input:focus {
   outline: none;
   border-color: #059669;
-  box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
 }
 
 .filtro-busqueda {
@@ -536,9 +650,6 @@ html, body {
   color: white;
   border-color: #059669;
 }
-
-
-
 
 /* Ajuste Responsive */
 @media (max-width: 900px) {

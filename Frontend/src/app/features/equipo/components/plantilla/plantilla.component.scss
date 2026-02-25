@@ -1,159 +1,142 @@
-/* Layout */
-.equipo-layout {
+/* Header */
+.plantilla-header {
+  margin-bottom: 40px;
+}
+
+.plantilla-header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.plantilla-header p {
+  margin: 4px 0;
+  color: #6b7280;
+}
+
+.plantilla-header span {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* Bloques */
+.bloque {
+  margin-bottom: 60px;
+}
+
+.bloque-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.bloque-header .btn-add {
+  position: absolute;
+  right: 0;
+}
+
+.bloque-header h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.grid-personas {
   display: grid;
-  grid-template-columns: 260px 1fr;
-  height: calc(100vh - 100px); 
-  background: #f1f5f9;
+  gap: 24px;
+  justify-content: start;
+  column-gap: 50px;
+}
+
+.entrenadores,
+.jugadores {
+  grid-template-columns: repeat(auto-fill, 180px);
+}
+
+.card-persona {
+  width: 180px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: 0.25s;
+}
+
+.card-persona:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+}
+
+.foto {
+  width: 85px;
+  height: 85px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
   overflow: hidden;
-  }
-  
-  .plantilla-content {
-    padding: 32px;
-  overflow-y: auto;
-  height: 100%; 
-  }
-  
-  /* Header */
-  .plantilla-header {
-    margin-bottom: 40px;
-  }
-  
-  .plantilla-header h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin: 0;
-  }
-  
-  .plantilla-header p {
-    margin: 4px 0;
-    color: #6b7280;
-  }
-  
-  .plantilla-header span {
-    font-size: 0.9rem;
-    color: #9ca3af;
-  }
-  
-  /* Bloques */
-  .bloque {
-    margin-bottom: 60px;
-  }
-  
-  .bloque-header {
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    position: relative;
-    margin-bottom: 25px;
-  }
-  
-  .bloque-header .btn-add {
-    position: absolute;
-    right: 0;
-  }
-  
-  .bloque-header h2 {
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin: 0;
-  }
-  
-  .grid-personas {
-    display: grid;
-    gap: 24px;
-    justify-content: start; 
-    column-gap: 50px;
-  }
-  
-  .entrenadores,
-  .jugadores {
-    grid-template-columns: repeat(auto-fill, 180px); 
-  }
-  
-  .card-persona {
-    width: 180px;
-    background: white;
-    border-radius: 16px;
-    padding: 20px 16px;
-    text-align: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    transition: 0.25s;
-  }
-  
-  
-  .card-persona:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
-  }
-  
-  .foto {
-    width: 85px;
-    height: 85px;
-    margin: 0 auto 12px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #9ca3af;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: white;
-  }
-  
-  .foto.grande {
-    width: 95px;
-    height: 95px;
-  }
-  
-  .foto img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  /* Nombre */
-  .card-persona h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-  }
-  
-  .card-persona p {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin: 6px 0 12px;
-  }
-  
-  /* Botones */
-  .btn-add {
-    background: #1ea83a;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 10px;
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  
-  .btn-add:hover {
-    background: #16852d;
-  }
-  
-  .btn-delete {
-    margin-top: 8px;
-    background: #ef4444;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 8px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  
-  .btn-delete:hover {
-    background: #dc2626;
-  }
-  
+  background: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+}
+
+.foto.grande {
+  width: 95px;
+  height: 95px;
+}
+
+.foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Nombre */
+.card-persona h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.card-persona p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 6px 0 12px;
+}
+
+/* Botones */
+.btn-add {
+  background: #1ea83a;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-add:hover {
+  background: #16852d;
+}
+
+.btn-delete {
+  margin-top: 8px;
+  background: #ef4444;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+}

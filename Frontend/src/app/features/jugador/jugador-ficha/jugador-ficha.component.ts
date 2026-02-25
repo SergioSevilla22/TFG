@@ -37,14 +37,20 @@ export class JugadorFichaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.equipoId = Number(this.route.snapshot.paramMap.get('equipoId'));
-    const dni = this.route.snapshot.paramMap.get('dni');
-    this.equipoService.getEquipoById(this.equipoId).subscribe({
-      next: (data) => {
-        this.equipo = data;
-      },
-    });
-    if (dni) {
+    this.equipoId = Number(this.route.parent?.snapshot.paramMap.get('id'));
+
+    this.route.paramMap.subscribe((params) => {
+      const dni = params.get('dni');
+      if (!dni) return;
+
+      this.loading = true;
+      this.jugador = null;
+      this.observaciones.set([]);
+
+      this.equipoService.getEquipoById(this.equipoId).subscribe({
+        next: (data) => (this.equipo = data),
+      });
+
       this.authService.getUserByDni(dni).subscribe({
         next: (data) => {
           this.jugador = data;
@@ -56,9 +62,11 @@ export class JugadorFichaComponent implements OnInit {
           alert('Error cargando jugador');
         },
       });
-    }
-    this.estadisticasService.getTotalesJugador(dni!).subscribe((data) => {
-      this.totales = data;
+
+      this.estadisticasService.getTotalesJugador(dni).subscribe({
+        next: (data) => (this.totales = data),
+        error: (err) => console.error('Error estadísticas:', err),
+      });
     });
   }
 
@@ -68,8 +76,9 @@ export class JugadorFichaComponent implements OnInit {
   }
 
   cargarObservaciones(dni: string) {
-    this.obsService.getPorJugador(dni).subscribe((data) => {
-      this.observaciones.set(data);
+    this.obsService.getPorJugador(dni).subscribe({
+      next: (data) => this.observaciones.set(data),
+      error: (err) => console.error('Error observaciones:', err),
     });
   }
 

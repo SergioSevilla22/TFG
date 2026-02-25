@@ -71,7 +71,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
       return;
     }
 
-    const idParam = this.route.snapshot.paramMap.get('id');
+    const idParam = this.route.parent?.snapshot.paramMap.get('id');
     if (!idParam) {
       this.sinEquipo = true;
       this.loading = false;
