@@ -1,4 +1,7 @@
 <div class="equipo-layout" *ngIf="!sinEquipo">
+  <app-sidebar-equipo [equipo]="equipo" [equipoId]="equipoId" activo="convocatorias">
+  </app-sidebar-equipo>
+
   <main class="equipo-content">
     <div class="panel-card main-panel">
       <div class="panel-header">
@@ -220,7 +223,11 @@
                 >
                   <mat-icon>alarm</mat-icon>
                 </button>
-                <button class="btn-icon delete" matTooltip="Eliminar">
+                <button
+                  class="btn-icon delete"
+                  matTooltip="Eliminar"
+                  (click)="eliminarConvocatoria(c)"
+                >
                   <mat-icon>delete</mat-icon>
                 </button>
                 <button

@@ -1,153 +1,172 @@
-<main class="ficha-content" *ngIf="!loading && jugador">
-  <section class="perfil-card">
-    <div class="perfil-left">
-      <div class="foto-perfil">
-        <img *ngIf="jugador.foto" [src]="'http://localhost:3000' + jugador.foto" />
-        <span *ngIf="!jugador.foto">
-          {{ jugador.nombre[0] }}
-        </span>
+<app-header></app-header>
+
+<div class="equipo-layout">
+  <app-sidebar-equipo [equipo]="equipo" [equipoId]="equipoId" activo="plantilla">
+  </app-sidebar-equipo>
+
+  <main class="ficha-content" *ngIf="!loading && jugador">
+    <section class="perfil-card">
+      <div class="perfil-left">
+        <div class="foto-perfil">
+          <img *ngIf="jugador.foto" [src]="'http://localhost:3000' + jugador.foto" />
+          <span *ngIf="!jugador.foto">
+            {{ jugador.nombre[0] }}
+          </span>
+        </div>
       </div>
-    </div>
 
-    <div class="perfil-right">
-      <div class="perfil-top">
-        <div class="nombre-row">
-          <h1>{{ jugador.nombre }}</h1>
+      <div class="perfil-right">
+        <div class="perfil-top">
+          <div class="nombre-row">
+            <h1>{{ jugador.nombre }}</h1>
 
-          <div class="badges">
-            <span class="badge-rol">{{ jugador.Rol | titlecase }}</span>
-            <span class="badge-light">{{ edad }} años</span>
-            <span class="badge-light" *ngIf="jugador.equipo_nombre">
-              {{ jugador.equipo_nombre }}
-            </span>
+            <div class="badges">
+              <span class="badge-rol">{{ jugador.Rol | titlecase }}</span>
+              <span class="badge-light">{{ edad }} años</span>
+              <span class="badge-light" *ngIf="jugador.equipo_nombre">
+                {{ jugador.equipo_nombre }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="perfil-divider"></div>
+
+        <div class="datos-grid">
+          <div>
+            <strong>DNI</strong>
+            <p>{{ jugador.DNI }}</p>
+          </div>
+
+          <div>
+            <strong>Email</strong>
+            <p>{{ jugador.email }}</p>
+          </div>
+
+          <div>
+            <strong>Teléfono</strong>
+            <p>{{ jugador.telefono }}</p>
+          </div>
+
+          <div>
+            <strong>Año nacimiento</strong>
+            <p>{{ jugador.anio_nacimiento }}</p>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="perfil-divider"></div>
-
-      <div class="datos-grid">
-        <div>
-          <strong>DNI</strong>
-          <p>{{ jugador.DNI }}</p>
+    <div class="ficha-bottom">
+      <!-- OBSERVACIONES -->
+      <section
+        class="bloque"
+        *ngIf="
+          authService.getUserRole() !== 'admin_club' &&
+          authService.getUserRole() !== 'admin_plataforma'
+        "
+      >
+        <div class="bloque-header">
+          <h2>Historial de Observaciones</h2>
+          <button
+            *ngIf="authService.getUserRole() === 'entrenador'"
+            class="btn-add"
+            (click)="abrirModalObservacion()"
+          >
+            <mat-icon>add_comment</mat-icon>
+            Añadir Nota
+          </button>
         </div>
 
-        <div>
-          <strong>Email</strong>
-          <p>{{ jugador.email }}</p>
-        </div>
-
-        <div>
-          <strong>Teléfono</strong>
-          <p>{{ jugador.telefono }}</p>
-        </div>
-
-        <div>
-          <strong>Año nacimiento</strong>
-          <p>{{ jugador.anio_nacimiento }}</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="ficha-bottom">
-    <!-- OBSERVACIONES -->
-    <section class="bloque">
-      <div class="bloque-header">
-        <h2>Historial de Observaciones</h2>
-        <button
-          *ngIf="authService.getUserRole() === 'entrenador'"
-          class="btn-add"
-          (click)="abrirModalObservacion()"
-        >
-          <mat-icon>add_comment</mat-icon>
-          Añadir Nota
-        </button>
-      </div>
-
-      <div class="timeline-container">
-        @for (item of observaciones(); track item.id) {
-          <div class="timeline-card" [attr.data-cat]="item.categoria">
-            <div class="timeline-aside">
-              <span class="date">{{ item.fecha | date: 'dd MMM' }}</span>
-              <span class="year">{{ item.fecha | date: 'yyyy' }}</span>
-              <div class="line"></div>
-            </div>
-
-            <div class="timeline-main">
-              <div class="card-header">
-                <span class="badge" [ngClass]="item.categoria">{{ item.categoria }}</span>
-                <span class="visibilidad-tag" *ngIf="authService.getUserRole() === 'entrenador'">
-                  {{ item.visibilidad }}
-                </span>
-                <h3>{{ item.titulo }}</h3>
+        <div class="timeline-container">
+          @for (item of observaciones(); track item.id) {
+            <div class="timeline-card" [attr.data-cat]="item.categoria">
+              <div class="timeline-aside">
+                <span class="date">{{ item.fecha | date: 'dd MMM' }}</span>
+                <span class="year">{{ item.fecha | date: 'yyyy' }}</span>
+                <div class="line"></div>
               </div>
 
-              <p class="content">{{ item.contenido }}</p>
+              <div class="timeline-main">
+                <div class="card-header">
+                  <span class="badge" [ngClass]="item.categoria">{{ item.categoria }}</span>
+                  <span class="visibilidad-tag" *ngIf="authService.getUserRole() === 'entrenador'">
+                    {{ item.visibilidad }}
+                  </span>
+                  <h3>{{ item.titulo }}</h3>
+                </div>
 
-              <div class="card-footer">
-                <div class="author-info">
-                  <div class="avatar-mini">
-                    <img
-                      *ngIf="item.foto_autor"
-                      [src]="'http://localhost:3000' + item.foto_autor"
-                      alt="Autor"
-                    />
-                    <span *ngIf="!item.foto_autor">{{ item.nombre_autor[0] }}</span>
+                <p class="content">{{ item.contenido }}</p>
+
+                <div class="card-footer">
+                  <div class="author-info">
+                    <div class="avatar-mini">
+                      <img
+                        *ngIf="item.foto_autor"
+                        [src]="'http://localhost:3000' + item.foto_autor"
+                        alt="Autor"
+                      />
+                      <span *ngIf="!item.foto_autor">{{ item.nombre_autor[0] }}</span>
+                    </div>
+                    <span
+                      >Por <strong>{{ item.nombre_autor }}</strong></span
+                    >
                   </div>
-                  <span
-                    >Por <strong>{{ item.nombre_autor }}</strong></span
-                  >
                 </div>
               </div>
             </div>
+          } @empty {
+            <div class="empty-state">
+              <mat-icon>history_edu</mat-icon>
+              <p>No hay observaciones registradas para este jugador aún.</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ESTADÍSTICAS -->
+      <section
+        class="section-card"
+        *ngIf="
+          authService.getUserRole() !== 'admin_club' &&
+          authService.getUserRole() !== 'admin_plataforma'
+        "
+      >
+        <div class="section-header">
+          <h2>Estadísticas</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-number">{{ totales.partidos || 0 }}</span>
+            <span class="stat-label">Partidos</span>
           </div>
-        } @empty {
-          <div class="empty-state">
-            <mat-icon>history_edu</mat-icon>
-            <p>No hay observaciones registradas para este jugador aún.</p>
+
+          <div class="stat-box">
+            <span class="stat-number">{{ totales.goles || 0 }}</span>
+            <span class="stat-label">Goles</span>
           </div>
-        }
-      </div>
-    </section>
 
-    <!-- ESTADÍSTICAS -->
-    <section class="section-card">
-      <div class="section-header">
-        <h2>Estadísticas</h2>
-      </div>
+          <div class="stat-box">
+            <span class="stat-number">{{ totales.asistencias || 0 }}</span>
+            <span class="stat-label">Asistencias</span>
+          </div>
 
-      <div class="stats-grid">
-        <div class="stat-box">
-          <span class="stat-number">{{ totales.partidos || 0 }}</span>
-          <span class="stat-label">Partidos</span>
+          <div class="stat-box">
+            <span class="stat-number">{{ totales.amarillas || 0 }}</span>
+            <span class="stat-label">Tarjetas Amarillas</span>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-number">{{ totales.rojas || 0 }}</span>
+            <span class="stat-label">Tarjetas Rojas</span>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-number">{{ totales.minutos || 0 }}</span>
+            <span class="stat-label">Minutos Jugados</span>
+          </div>
         </div>
-
-        <div class="stat-box">
-          <span class="stat-number">{{ totales.goles || 0 }}</span>
-          <span class="stat-label">Goles</span>
-        </div>
-
-        <div class="stat-box">
-          <span class="stat-number">{{ totales.asistencias || 0 }}</span>
-          <span class="stat-label">Asistencias</span>
-        </div>
-
-        <div class="stat-box">
-          <span class="stat-number">{{ totales.amarillas || 0 }}</span>
-          <span class="stat-label">Tarjetas Amarillas</span>
-        </div>
-
-        <div class="stat-box">
-          <span class="stat-number">{{ totales.rojas || 0 }}</span>
-          <span class="stat-label">Tarjetas Rojas</span>
-        </div>
-
-        <div class="stat-box">
-          <span class="stat-number">{{ totales.minutos || 0 }}</span>
-          <span class="stat-label">Minutos Jugados</span>
-        </div>
-      </div>
-    </section>
-  </div>
-</main>
+      </section>
+    </div>
+  </main>
+</div>
