@@ -1,149 +1,124 @@
 <app-header></app-header>
 
 <div class="club-wrapper" *ngIf="!loading; else loadingTpl">
-
-  <!-- =========================
-       CABECERA DEL CLUB
-  ========================== -->
-  <div class="club-header">
-    <div class="club-header-left">
-      <img
-      *ngIf="club?.escudo"
-      [src]="'http://localhost:3000' + club.escudo"
-      class="escudo"
-      />
-
-      <div>
+  
+  <header class="club-hero">
+    <div class="hero-content">
+      <div class="escudo-container">
+        <img *ngIf="club?.escudo" [src]="'http://localhost:3000' + club.escudo" class="escudo" />
+        <div *ngIf="!club?.escudo" class="no-escudo"><mat-icon>shield</mat-icon></div>
+      </div>
+      <div class="hero-text">
         <h1>{{ club?.nombre }}</h1>
-        <p class="club-location">
+        <p class="location">
+          <mat-icon>location_on</mat-icon>
           {{ club?.poblacion }}, {{ club?.provincia }}
         </p>
       </div>
     </div>
-  </div>
-
-  <!-- =========================
-       KPIs / CONTADORES
-  ========================== -->
-  <div class="kpi-grid" *ngIf="resumen">
-
-    <div class="kpi-card">
-      <h4>Equipos</h4>
-      <span>{{ resumen.totalEquipos }}</span>
-    </div>
-
-    <div class="kpi-card">
-      <h4>Jugadores</h4>
-      <span>{{ resumen.totalJugadores }}</span>
-    </div>
-
-    <div class="kpi-card">
-      <h4>Entrenadores</h4>
-      <span>{{ resumen.totalEntrenadores }}</span>
-    </div>
-
-  </div>
-
-  <!-- =========================
-       BUSCADOR DE EQUIPOS
-  ========================== -->
-  <div class="filters-card">
-
-    <h3>Buscar equipos del club</h3>
-
-    <div class="filters-grid">
-      <input
-        type="text"
-        placeholder="Nombre del equipo"
-        [(ngModel)]="filtrosEquipos.nombre"
-        (input)="onInputChange()"
-      />
-
-      <input
-        type="text"
-        placeholder="Categoría"
-        [(ngModel)]="filtrosEquipos.categoria"
-        (input)="onInputChange()"
-      />
-
-      <input
-        type="text"
-        placeholder="Temporada"
-        [(ngModel)]="filtrosEquipos.temporada"
-        (input)="onInputChange()"
-      />
-
-      <button class="btn-search" (click)="buscarEquipos()">
-        Buscar
+    
+    <div class="club-actions-top">
+      <button class="btn-primary" (click)="abrirModalTraspasos()">
+        <mat-icon>swap_horiz</mat-icon> Traspasos
+      </button>
+      <button class="btn-secondary" (click)="abrirEquiposClub()">
+        <mat-icon>settings</mat-icon> Gestionar
       </button>
     </div>
+  </header>
 
+  <div class="stats-grid" *ngIf="resumen">
+    <div class="stat-card">
+      <div class="stat-icon equipos"><mat-icon>groups</mat-icon></div>
+      <div class="stat-data">
+        <span class="label">Equipos</span>
+        <span class="value">{{ resumen.totalEquipos }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon jugadores"><mat-icon>person</mat-icon></div>
+      <div class="stat-data">
+        <span class="label">Jugadores</span>
+        <span class="value">{{ resumen.totalJugadores }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon staff"><mat-icon>sports</mat-icon></div>
+      <div class="stat-data">
+        <span class="label">Staff Técnico</span>
+        <span class="value">{{ resumen.totalEntrenadores }}</span>
+      </div>
+    </div>
   </div>
 
-  <!-- =========================
-       LISTADO DE EQUIPOS
-  ========================== -->
-  <div class="info-section">
-
-    <div class="info-card equipos-card">
-
-      <div class="equipos-header">
-        <h3>Equipos del Club</h3>
-      </div>
-
-      <div class="equipo-list" *ngIf="buscado && equiposFiltrados.length > 0">
-        <div
-          class="equipo-item"
-          *ngFor="let equipo of equiposFiltrados"
-          (click)="abrirEquipo(equipo.id)"
-        >
-          <h4>{{ equipo.nombre }}</h4>
-          <p>{{ equipo.categoria }} · {{ equipo.temporada }}</p>
+  <div class="main-layout">
+    <div class="left-col">
+      <section class="section-card">
+        <div class="section-header">
+          <h3><mat-icon>search</mat-icon> Explorador de Equipos</h3>
         </div>
-      </div>
+        
+        <div class="filters-inline">
+          <input type="text" placeholder="Nombre..." [(ngModel)]="filtrosEquipos.nombre" (input)="onInputChange()" />
+          <input type="text" placeholder="Categoría" [(ngModel)]="filtrosEquipos.categoria" (input)="onInputChange()" />
+          <input type="text" placeholder="2025/2026" [(ngModel)]="filtrosEquipos.temporada" (input)="onInputChange()" />
+          <button class="btn-search-icon" (click)="buscarEquipos()"><mat-icon>search</mat-icon></button>
+        </div>
 
-      <p class="empty" *ngIf="!buscado">
-        Usa el buscador de arriba para encontrar equipos del club
-      </p>
-      
-      <!-- 👉 Búsqueda sin resultados -->
-      <p class="empty" *ngIf="buscado && equiposFiltrados.length === 0">
-        No hay equipos que coincidan con la búsqueda
-      </p>
+        <div class="equipos-results">
+          <div class="equipo-item-card" *ngFor="let equipo of equiposFiltrados" (click)="abrirEquipo(equipo.id)">
+            <div class="equipo-info">
+              <h4>{{ equipo.nombre }}</h4>
+              <span>{{ equipo.categoria }} • {{ equipo.temporada }}</span>
+            </div>
+            <mat-icon class="arrow-icon">arrow_forward_ios</mat-icon>
+          </div>
 
+          <div class="empty-msg" *ngIf="!buscado">
+            <mat-icon>info</mat-icon>
+            <p>Introduce filtros para listar los equipos</p>
+          </div>
+          <div class="empty-msg" *ngIf="buscado && equiposFiltrados.length === 0">
+            <mat-icon>error_outline</mat-icon>
+            <p>No se han encontrado equipos</p>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <!-- =========================
-         TARJETA INFO CLUB
-    ========================== -->
-    <div class="info-card clickable" (click)="editarClub()">
-      <h3>Información del Club</h3>
-
-      <p><strong>Email:</strong> {{ club?.email || 'N/A' }}</p>
-      <p><strong>Teléfono:</strong> {{ club?.telefono || 'N/A' }}</p>
-      <p><strong>Dirección:</strong> {{ club?.direccion || 'N/A' }}</p>
-      <p><strong>Código Postal:</strong> {{ club?.codigo_postal || 'N/A' }}</p>
-
-      <div class="arrow">➜</div>
+    <div class="right-col">
+      <aside class="info-sidebar" (click)="editarClub()">
+        <div class="sidebar-header">
+          <h3>Datos de Contacto</h3>
+          <mat-icon class="edit-icon">edit</mat-icon>
+        </div>
+        
+        <div class="contact-item">
+          <mat-icon>email</mat-icon>
+          <div><label>Email</label><p>{{ club?.email || 'No disponible' }}</p></div>
+        </div>
+        <div class="contact-item">
+          <mat-icon>phone</mat-icon>
+          <div><label>Teléfono</label><p>{{ club?.telefono || 'No disponible' }}</p></div>
+        </div>
+        <div class="contact-item">
+          <mat-icon>location_on</mat-icon>
+          <div><label>Dirección</label><p>{{ club?.direccion || 'No disp.' }} ({{ club?.codigo_postal }})</p></div>
+        </div>
+        
+        <div class="sidebar-footer">
+          <p>Haga clic para editar información</p>
+        </div>
+      </aside>
     </div>
-
   </div>
-
-  <!-- =========================
-       ACCIONES
-  ========================== -->
-  <div class="club-actions">
-    <button (click)="abrirModalTraspasos()">
-      Gestionar usuarios / traspasos
-    </button>
-
-    <button class="secondary" (click)="abrirEquiposClub()">
-      Crear / gestionar equipos
-    </button>
-  </div>
-
 </div>
 
 <ng-template #loadingTpl>
-  <p class="loading">Cargando datos...</p>
+  <div class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando la entidad...</p>
+  </div>
 </ng-template>
