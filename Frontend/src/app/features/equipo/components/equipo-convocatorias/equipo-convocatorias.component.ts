@@ -303,4 +303,13 @@ export class EquipoConvocatoriasComponent implements OnInit {
       this.paginaActual = p;
     }
   }
+
+  eliminarConvocatoria(c: any) {
+    if (!confirm('¿Eliminar esta convocatoria?')) return;
+
+    this.convocatoriaService.eliminarConvocatoria(c.id).subscribe({
+      next: () => (this.convocatorias = this.convocatorias.filter((x) => x.id !== c.id)),
+      error: () => alert('No se pudo eliminar la convocatoria'),
+    });
+  }
 }

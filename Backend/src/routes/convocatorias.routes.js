@@ -4,7 +4,8 @@ import {
   obtenerConvocatoriasPorEquipo,
   responderConvocatoria,
   enviarRecordatorio,
-  editarConvocatoria
+  editarConvocatoria,
+  eliminarConvocatoria,
 } from "../controllers/convocatorias.controller.js";
 
 const router = express.Router();
@@ -14,6 +15,6 @@ router.get("/equipo/:equipoId", obtenerConvocatoriasPorEquipo);
 router.post("/:id/responder", responderConvocatoria);
 router.post("/:id/recordatorio", enviarRecordatorio);
 router.put("/:id", editarConvocatoria);
-
+router.delete("/:id", eliminarConvocatoria);
 
 export default router;

@@ -15,18 +15,23 @@ const query = (sql, params = []) =>
 const formatDate = (d) =>
   new Date(d).toLocaleString("es-ES", {
     dateStyle: "short",
-    timeStyle: "short"
+    timeStyle: "short",
   });
 
-  const formatDateOnly = (d) => {
-    const date = new Date(d);
-    return date.toLocaleDateString("es-ES");
-  };
+const formatDateOnly = (d) => {
+  const date = new Date(d);
+  return date.toLocaleDateString("es-ES");
+};
 
 /* =========================
    EMAIL
 ========================= */
-const sendConvocatoriaEmail = async ({ to, jugadorNombre, equipoNombre, convocatoria }) => {
+const sendConvocatoriaEmail = async ({
+  to,
+  jugadorNombre,
+  equipoNombre,
+  convocatoria,
+}) => {
   if (!to) return;
 
   const html = `
@@ -46,7 +51,7 @@ const sendConvocatoriaEmail = async ({ to, jugadorNombre, equipoNombre, convocat
     from: process.env.EMAIL_USER,
     to,
     subject: `📣 Convocatoria ${equipoNombre}`,
-    html
+    html,
   });
 };
 
@@ -64,11 +69,18 @@ export const crearConvocatoria = async (req, res) => {
       hora_inicio,
       hora_quedada,
       fecha_limite_confirmacion,
-      jugadores
+      jugadores,
     } = req.body;
 
     // 1️⃣ Validaciones básicas
-    if (!equipo_id || !creador_dni || !fecha_partido || !hora_inicio || !hora_quedada || !fecha_limite_confirmacion) {
+    if (
+      !equipo_id ||
+      !creador_dni ||
+      !fecha_partido ||
+      !hora_inicio ||
+      !hora_quedada ||
+      !fecha_limite_confirmacion
+    ) {
       return res.status(400).json({ message: "Datos obligatorios faltantes" });
     }
 
@@ -86,29 +98,37 @@ export const crearConvocatoria = async (req, res) => {
 
     // 1️⃣ No permitir fechas pasadas
     if (fechaHoraInicio < ahora) {
-      errores.push("No se puede crear una convocatoria en una fecha u hora pasada");
+      errores.push(
+        "No se puede crear una convocatoria en una fecha u hora pasada"
+      );
     }
 
     // 2️⃣ Quedada no puede ser posterior al inicio
     if (fechaHoraQuedada > fechaHoraInicio) {
-      errores.push("La hora de quedada no puede ser posterior a la hora de inicio del partido");
+      errores.push(
+        "La hora de quedada no puede ser posterior a la hora de inicio del partido"
+      );
     }
 
     // 3️⃣ Límite no puede ser posterior al inicio
     if (fechaLimite > fechaHoraInicio) {
-      errores.push("La fecha límite de confirmación no puede ser posterior al inicio del partido");
+      errores.push(
+        "La fecha límite de confirmación no puede ser posterior al inicio del partido"
+      );
     }
 
     // 4️⃣ Límite no puede ser posterior a la quedada
     if (fechaLimite > fechaHoraQuedada) {
-      errores.push("La fecha límite de confirmación no puede ser posterior a la hora de quedada");
+      errores.push(
+        "La fecha límite de confirmación no puede ser posterior a la hora de quedada"
+      );
     }
 
     // ❌ Si hay errores → devolver TODOS
     if (errores.length > 0) {
       return res.status(400).json({
         message: "Errores de validación",
-        errors: errores
+        errors: errores,
       });
     }
 
@@ -120,18 +140,17 @@ export const crearConvocatoria = async (req, res) => {
        LIMIT 1`,
       [equipo_id, fecha_partido]
     );
-    
+
     if (conflicto.length) {
       return res.status(409).json({
-        message: "Ya existe una convocatoria para este equipo en esa fecha"
+        message: "Ya existe una convocatoria para este equipo en esa fecha",
       });
     }
 
     // 4️⃣ Comprobar equipo
-    const [equipo] = await query(
-      "SELECT nombre FROM equipos WHERE id = ?",
-      [equipo_id]
-    );
+    const [equipo] = await query("SELECT nombre FROM equipos WHERE id = ?", [
+      equipo_id,
+    ]);
 
     if (!equipo) {
       return res.status(404).json({ message: "Equipo no encontrado" });
@@ -142,7 +161,16 @@ export const crearConvocatoria = async (req, res) => {
       `INSERT INTO convocatorias
        (equipo_id, creador_dni, rival, lugar, fecha_partido, hora_inicio, hora_quedada, fecha_limite_confirmacion)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [equipo_id, creador_dni, rival, lugar, fecha_partido, hora_inicio, hora_quedada, fecha_limite_confirmacion]
+      [
+        equipo_id,
+        creador_dni,
+        rival,
+        lugar,
+        fecha_partido,
+        hora_inicio,
+        hora_quedada,
+        fecha_limite_confirmacion,
+      ]
     );
 
     const convocatoriaId = result.insertId;
@@ -177,8 +205,8 @@ export const crearConvocatoria = async (req, res) => {
           fecha_partido,
           hora_inicio,
           hora_quedada,
-          fecha_limite_confirmacion
-        }
+          fecha_limite_confirmacion,
+        },
       });
 
       await query(
@@ -190,12 +218,10 @@ export const crearConvocatoria = async (req, res) => {
     }
 
     res.status(201).json({ message: "Convocatoria creada" });
-
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 };
-
 
 /* =========================
    LISTAR
@@ -211,15 +237,16 @@ export const obtenerConvocatoriasPorEquipo = async (req, res) => {
        AND c.fecha_limite_confirmacion < NOW()`
   );
 
-
   const convocatorias = await query(
-    `SELECT * FROM convocatorias WHERE equipo_id = ? ORDER BY fecha_partido DESC`,
+    `SELECT * FROM convocatorias
+    WHERE equipo_id = ? AND deleted_at IS NULL
+    ORDER BY fecha_partido DESC`,
     [equipoId]
   );
 
   if (!convocatorias.length) return res.json([]);
 
-  const ids = convocatorias.map(c => c.id);
+  const ids = convocatorias.map((c) => c.id);
   const jugadores = await query(
     `SELECT cj.*, u.nombre, u.DNI, u.foto
      FROM convocatoria_jugadores cj
@@ -228,8 +255,8 @@ export const obtenerConvocatoriasPorEquipo = async (req, res) => {
     ids
   );
 
-  convocatorias.forEach(c => {
-    c.jugadores = jugadores.filter(j => j.convocatoria_id === c.id);
+  convocatorias.forEach((c) => {
+    c.jugadores = jugadores.filter((j) => j.convocatoria_id === c.id);
   });
 
   res.json(convocatorias);
@@ -249,13 +276,13 @@ export const responderConvocatoria = async (req, res) => {
 
   if (!conv) return res.status(404).json({ message: "No existe" });
 
-  if (!['confirmado', 'rechazado'].includes(estado)) {
+  if (!["confirmado", "rechazado"].includes(estado)) {
     return res.status(400).json({ message: "Estado no válido" });
   }
-  
-  if (estado === 'rechazado' && (!motivo || !motivo.trim())) {
+
+  if (estado === "rechazado" && (!motivo || !motivo.trim())) {
     return res.status(400).json({
-      message: "Debes indicar el motivo de la ausencia"
+      message: "Debes indicar el motivo de la ausencia",
     });
   }
   if (new Date() > new Date(conv.fecha_limite_confirmacion)) {
@@ -266,7 +293,7 @@ export const responderConvocatoria = async (req, res) => {
     `UPDATE convocatoria_jugadores
      SET estado = ?, motivo = ?, responded_at = NOW()
      WHERE convocatoria_id = ? AND jugador_dni = ?`,
-    [estado, estado === 'rechazado' ? motivo : null, id, jugador_dni]
+    [estado, estado === "rechazado" ? motivo : null, id, jugador_dni]
   );
 
   if (!r.affectedRows) return res.status(403).json({ message: "No convocado" });
@@ -295,7 +322,7 @@ export const enviarRecordatorio = async (req, res) => {
     await transporter.sendMail({
       to: p.email,
       subject: "🔔 Recordatorio convocatoria",
-      html: `<p>Hola ${p.nombre}, tienes una convocatoria pendiente.</p>`
+      html: `<p>Hola ${p.nombre}, tienes una convocatoria pendiente.</p>`,
     });
   }
 
@@ -319,7 +346,7 @@ export const editarConvocatoria = async (req, res) => {
       hora_inicio,
       hora_quedada,
       fecha_limite_confirmacion,
-      jugadores
+      jugadores,
     } = req.body;
 
     const [conv] = await query(
@@ -334,13 +361,15 @@ export const editarConvocatoria = async (req, res) => {
     }
 
     const ahora = new Date();
-    const fechaInicioActual = new Date(`${conv.fecha_partido}T${conv.hora_inicio}`);
+    const fechaInicioActual = new Date(
+      `${conv.fecha_partido}T${conv.hora_inicio}`
+    );
     const fechaLimiteActual = new Date(conv.fecha_limite_confirmacion);
 
     // 🔒 NO PERMITIR EDITAR SI YA PASÓ
     if (ahora > fechaInicioActual || ahora > fechaLimiteActual) {
       return res.status(403).json({
-        message: "No se puede editar una convocatoria ya iniciada o cerrada"
+        message: "No se puede editar una convocatoria ya iniciada o cerrada",
       });
     }
 
@@ -351,8 +380,7 @@ export const editarConvocatoria = async (req, res) => {
 
     const errores = [];
 
-    if (inicio < ahora)
-      errores.push("No se puede establecer una fecha pasada");
+    if (inicio < ahora) errores.push("No se puede establecer una fecha pasada");
 
     if (quedada > inicio)
       errores.push("La hora de quedada no puede ser posterior al inicio");
@@ -360,19 +388,28 @@ export const editarConvocatoria = async (req, res) => {
     if (limite > inicio)
       errores.push("El límite no puede ser posterior al inicio");
 
-    if (errores.length)
-      return res.status(400).json({ errors: errores });
+    if (errores.length) return res.status(400).json({ errors: errores });
 
     // UPDATE convocatoria
     await query(
       `UPDATE convocatorias 
        SET rival=?, lugar=?, fecha_partido=?, hora_inicio=?, hora_quedada=?, fecha_limite_confirmacion=?
        WHERE id=?`,
-      [rival, lugar, fecha_partido, hora_inicio, hora_quedada, fecha_limite_confirmacion, id]
+      [
+        rival,
+        lugar,
+        fecha_partido,
+        hora_inicio,
+        hora_quedada,
+        fecha_limite_confirmacion,
+        id,
+      ]
     );
 
     // 🔁 Actualizar jugadores
-    await query("DELETE FROM convocatoria_jugadores WHERE convocatoria_id=?", [id]);
+    await query("DELETE FROM convocatoria_jugadores WHERE convocatoria_id=?", [
+      id,
+    ]);
 
     for (const dni of jugadores) {
       await query(
@@ -383,9 +420,30 @@ export const editarConvocatoria = async (req, res) => {
     }
 
     res.json({ message: "Convocatoria actualizada" });
-
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 };
 
+export const eliminarConvocatoria = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const r = await query(
+      `UPDATE convocatorias
+       SET deleted_at = NOW()
+       WHERE id = ? AND deleted_at IS NULL`,
+      [id]
+    );
+
+    if (!r.affectedRows) {
+      return res
+        .status(404)
+        .json({ message: "Convocatoria no encontrada (o ya eliminada)" });
+    }
+
+    res.json({ message: "Convocatoria eliminada (oculta) correctamente" });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
