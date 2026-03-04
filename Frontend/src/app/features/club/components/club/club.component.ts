@@ -27,6 +27,11 @@ export class ClubComponent implements OnInit {
   equiposFiltrados: any[] = [];
   buscado = false;
 
+  editMode: boolean = false;
+  selectedFile: File | null = null;
+  escudoPreview: string | ArrayBuffer | null = null;
+  editForm: any = {};
+
   filtrosEquipos = {
     nombre: '',
     categoria: '',
@@ -187,5 +192,64 @@ export class ClubComponent implements OnInit {
         (!categoria || e.categoria.toLowerCase().includes(categoria.toLowerCase())) &&
         (!temporada || e.temporada.toLowerCase().includes(temporada.toLowerCase())),
     );
+  }
+
+  iniciarEdicion() {
+    this.editMode = true;
+    // Creamos una copia para no modificar el objeto original hasta guardar
+    this.editForm = { ...this.club };
+    this.escudoPreview = null;
+    this.selectedFile = null;
+  }
+
+  cancelarEdicion(event?: Event) {
+    if (event) event.stopPropagation();
+    this.editMode = false;
+    this.selectedFile = null;
+    this.escudoPreview = null;
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      // Vista previa de la imagen
+      const reader = new FileReader();
+      reader.onload = () => this.escudoPreview = reader.result;
+      reader.readAsDataURL(file);
+    }
+  }
+
+  guardarCambios(event: Event) {
+    event.stopPropagation();
+    this.loading = true;
+    
+    // Añadimos los campos de texto
+    const formData = new FormData();
+    formData.append('nombre', this.editForm.nombre);
+    formData.append('email', this.editForm.email || '');
+    formData.append('telefono', this.editForm.telefono || '');
+    formData.append('direccion', this.editForm.direccion || '');
+    formData.append('poblacion', this.editForm.poblacion || '');
+    formData.append('provincia', this.editForm.provincia || '');
+    formData.append('codigo_postal', this.editForm.codigo_postal || '');
+
+    // Añadimos el archivo si se ha seleccionado uno nuevo
+    if (this.selectedFile) {
+      formData.append('escudo', this.selectedFile);
+    }
+
+    this.clubService.updateClub(this.clubId, formData).subscribe({
+      next: () => {
+        this.editMode = false;
+        this.loadClubData(); // Recargamos todo para ver los cambios
+        if (this.isBrowser()) alert('Club actualizado correctamente');
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error(err);
+        if (this.isBrowser()) alert('Error al actualizar el club');
+      }
+    });
   }
 }

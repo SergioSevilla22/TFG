@@ -5,111 +5,126 @@
   <header class="club-hero">
     <div class="hero-content">
       <div class="escudo-container">
-        <img *ngIf="club?.escudo" [src]="'http://localhost:3000' + club.escudo" class="escudo" />
-        <div *ngIf="!club?.escudo" class="no-escudo"><mat-icon>shield</mat-icon></div>
+        <label [style.cursor]="editMode ? 'pointer' : 'default'">
+          <img *ngIf="!escudoPreview && club?.escudo" [src]="'http://localhost:3000' + club.escudo" class="escudo" [class.editing-img]="editMode" />
+          <img *ngIf="escudoPreview" [src]="escudoPreview" class="escudo editing-img" />
+          <div *ngIf="!club?.escudo && !escudoPreview" class="no-escudo"><mat-icon>shield</mat-icon></div>
+          
+          <input type="file" *ngIf="editMode" (change)="onFileSelected($event)" hidden accept="image/*">
+          <div class="edit-overlay" *ngIf="editMode"><mat-icon>camera_alt</mat-icon></div>
+        </label>
       </div>
+      
       <div class="hero-text">
-        <h1>{{ club?.nombre }}</h1>
-        <p class="location">
+        <h1 *ngIf="!editMode">{{ club?.nombre }}</h1>
+        <input *ngIf="editMode" type="text" [(ngModel)]="editForm.nombre" class="edit-input-hero">
+        
+        <p class="location" *ngIf="!editMode">
           <mat-icon>location_on</mat-icon>
           {{ club?.poblacion }}, {{ club?.provincia }}
         </p>
+        <div class="location-edit" *ngIf="editMode">
+          <input type="text" [(ngModel)]="editForm.poblacion" placeholder="Población" class="edit-input-sub">
+          <input type="text" [(ngModel)]="editForm.provincia" placeholder="Provincia" class="edit-input-sub">
+        </div>
       </div>
     </div>
     
     <div class="club-actions-top">
-      <button class="btn-primary" (click)="abrirModalTraspasos()">
-        <mat-icon>swap_horiz</mat-icon> Traspasos
-      </button>
-      <button class="btn-secondary" (click)="abrirEquiposClub()">
-        <mat-icon>settings</mat-icon> Gestionar
-      </button>
+      <ng-container *ngIf="!editMode">
+        <button class="btn-primary" (click)="abrirModalTraspasos()">
+          <mat-icon>swap_horiz</mat-icon> Traspasos
+        </button>
+        <button class="btn-secondary" (click)="abrirEquiposClub()">
+          <mat-icon>settings</mat-icon> Gestionar
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="editMode">
+        <button class="btn-primary" (click)="guardarCambios($event)">
+          <mat-icon>check</mat-icon> Guardar Cambios
+        </button>
+        <button class="btn-secondary" (click)="cancelarEdicion($event)">
+          Cancelar
+        </button>
+      </ng-container>
     </div>
   </header>
 
   <div class="stats-grid" *ngIf="resumen">
     <div class="stat-card">
       <div class="stat-icon equipos"><mat-icon>groups</mat-icon></div>
-      <div class="stat-data">
-        <span class="label">Equipos</span>
-        <span class="value">{{ resumen.totalEquipos }}</span>
-      </div>
+      <div class="stat-data"><span class="label">Equipos</span><span class="value">{{ resumen.totalEquipos }}</span></div>
     </div>
-
     <div class="stat-card">
       <div class="stat-icon jugadores"><mat-icon>person</mat-icon></div>
-      <div class="stat-data">
-        <span class="label">Jugadores</span>
-        <span class="value">{{ resumen.totalJugadores }}</span>
-      </div>
+      <div class="stat-data"><span class="label">Jugadores</span><span class="value">{{ resumen.totalJugadores }}</span></div>
     </div>
-
     <div class="stat-card">
       <div class="stat-icon staff"><mat-icon>sports</mat-icon></div>
-      <div class="stat-data">
-        <span class="label">Staff Técnico</span>
-        <span class="value">{{ resumen.totalEntrenadores }}</span>
-      </div>
+      <div class="stat-data"><span class="label">Staff Técnico</span><span class="value">{{ resumen.totalEntrenadores }}</span></div>
     </div>
   </div>
 
   <div class="main-layout">
     <div class="left-col">
       <section class="section-card">
-        <div class="section-header">
-          <h3><mat-icon>search</mat-icon> Explorador de Equipos</h3>
-        </div>
-        
+        <div class="section-header"><h3><mat-icon>search</mat-icon> Explorador de Equipos</h3></div>
         <div class="filters-inline">
           <input type="text" placeholder="Nombre..." [(ngModel)]="filtrosEquipos.nombre" (input)="onInputChange()" />
           <input type="text" placeholder="Categoría" [(ngModel)]="filtrosEquipos.categoria" (input)="onInputChange()" />
           <input type="text" placeholder="2025/2026" [(ngModel)]="filtrosEquipos.temporada" (input)="onInputChange()" />
           <button class="btn-search-icon" (click)="buscarEquipos()"><mat-icon>search</mat-icon></button>
         </div>
-
         <div class="equipos-results">
           <div class="equipo-item-card" *ngFor="let equipo of equiposFiltrados" (click)="abrirEquipo(equipo.id)">
-            <div class="equipo-info">
-              <h4>{{ equipo.nombre }}</h4>
-              <span>{{ equipo.categoria }} • {{ equipo.temporada }}</span>
-            </div>
+            <div class="equipo-info"><h4>{{ equipo.nombre }}</h4><span>{{ equipo.categoria }} • {{ equipo.temporada }}</span></div>
             <mat-icon class="arrow-icon">arrow_forward_ios</mat-icon>
           </div>
-
-          <div class="empty-msg" *ngIf="!buscado">
-            <mat-icon>info</mat-icon>
-            <p>Introduce filtros para listar los equipos</p>
-          </div>
-          <div class="empty-msg" *ngIf="buscado && equiposFiltrados.length === 0">
-            <mat-icon>error_outline</mat-icon>
-            <p>No se han encontrado equipos</p>
-          </div>
+          <div class="empty-msg" *ngIf="!buscado"><mat-icon>info</mat-icon><p>Introduce filtros para listar los equipos</p></div>
         </div>
       </section>
     </div>
 
     <div class="right-col">
-      <aside class="info-sidebar" (click)="editarClub()">
+      <aside class="info-sidebar" (click)="!editMode && iniciarEdicion()" [class.is-editing]="editMode">
         <div class="sidebar-header">
-          <h3>Datos de Contacto</h3>
-          <mat-icon class="edit-icon">edit</mat-icon>
+          <h3>{{ editMode ? 'Editando Contacto' : 'Datos de Contacto' }}</h3>
+          <mat-icon class="edit-icon" *ngIf="!editMode">edit</mat-icon>
         </div>
         
         <div class="contact-item">
           <mat-icon>email</mat-icon>
-          <div><label>Email</label><p>{{ club?.email || 'No disponible' }}</p></div>
+          <div>
+            <label>Email</label>
+            <p *ngIf="!editMode">{{ club?.email || 'No disponible' }}</p>
+            <input *ngIf="editMode" type="text" [(ngModel)]="editForm.email" (click)="$event.stopPropagation()" class="sidebar-input">
+          </div>
         </div>
+
         <div class="contact-item">
           <mat-icon>phone</mat-icon>
-          <div><label>Teléfono</label><p>{{ club?.telefono || 'No disponible' }}</p></div>
+          <div>
+            <label>Teléfono</label>
+            <p *ngIf="!editMode">{{ club?.telefono || 'No disponible' }}</p>
+            <input *ngIf="editMode" type="text" [(ngModel)]="editForm.telefono" (click)="$event.stopPropagation()" class="sidebar-input">
+          </div>
         </div>
+
         <div class="contact-item">
           <mat-icon>location_on</mat-icon>
-          <div><label>Dirección</label><p>{{ club?.direccion || 'No disp.' }} ({{ club?.codigo_postal }})</p></div>
+          <div>
+            <label>Dirección y CP</label>
+            <p *ngIf="!editMode">{{ club?.direccion || 'No disp.' }} ({{ club?.codigo_postal }})</p>
+            <div *ngIf="editMode" class="edit-group-sidebar" (click)="$event.stopPropagation()">
+                <input type="text" [(ngModel)]="editForm.direccion" placeholder="Dirección" class="sidebar-input">
+                <input type="text" [(ngModel)]="editForm.codigo_postal" placeholder="C.P." class="sidebar-input cp">
+            </div>
+          </div>
         </div>
         
         <div class="sidebar-footer">
-          <p>Haga clic para editar información</p>
+          <p>{{ editMode ? 'Modifique los campos y use los botones de arriba' : 'Haga clic para editar información' }}</p>
         </div>
       </aside>
     </div>
@@ -117,8 +132,5 @@
 </div>
 
 <ng-template #loadingTpl>
-  <div class="loading-container">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Cargando la entidad...</p>
-  </div>
+  <div class="loading-container"><mat-spinner diameter="50"></mat-spinner><p>Cargando la entidad...</p></div>
 </ng-template>

@@ -71,7 +71,7 @@ router.get(
 router.put(
   "/clubes/:id",
   authMiddleware,
-  requireAdminPlataforma,
+  requireAdminClub,
   upload.single("escudo"),
   actualizarClub
 );

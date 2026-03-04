@@ -6,14 +6,13 @@ export const requireAdminPlataforma = (req, res, next) => {
 };
 
 export const requireAdminClub = (req, res, next) => {
-  if (req.user.Rol === "admin_plataforma") {
+  if ((req.user.Rol === "admin_plataforma") || (req.user.Rol === "admin_club" && req.user.club_id == req.params.id)) {
       return next();
   }
-
-  if (req.user.Rol !== "admin_club") {
-    return res.status(403).json({ message: "Solo admin de club" });
-  }
-  next();
+  
+   return res.status(403).json({ 
+      message: "No tienes permisos para gestionar este club o no perteneces a él" 
+  });
 };
 
 export const requireGestionClub = (req, res, next) => {

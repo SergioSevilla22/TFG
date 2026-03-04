@@ -222,3 +222,79 @@
 }
 
 .loading-container { text-align: center; padding: 100px; color: #64748b; }
+
+/* Inputs en el Hero (Blanco) */
+.edit-input-hero {
+  font-size: 2.2rem;
+  font-weight: 800;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 5px 10px;
+  color: #1e293b;
+  width: 100%;
+}
+
+.location-edit {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-input-sub {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.9rem;
+}
+
+/* Edición de Escudo */
+.escudo-container label {
+  position: relative;
+  display: block;
+}
+
+.editing-img {
+  filter: brightness(0.6);
+  border: 2px dashed #1ea83a !important;
+}
+
+.edit-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  pointer-events: none;
+}
+
+/* Inputs en el Sidebar (Oscuro) */
+.is-editing {
+  transform: none !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+
+.sidebar-input {
+  width: 100%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  color: white;
+  padding: 8px;
+  margin-top: 5px;
+  outline: none;
+}
+
+.sidebar-input:focus {
+  border-color: #1ea83a;
+}
+
+.edit-group-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sidebar-input.cp {
+  width: 80px;
+}
