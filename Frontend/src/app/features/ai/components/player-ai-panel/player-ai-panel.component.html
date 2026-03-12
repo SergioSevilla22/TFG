@@ -1,0 +1,31 @@
+<section class="section-card">
+  <div class="section-header">
+    <h2>🤖 Análisis IA</h2>
+  </div>
+
+  <div *ngIf="loading">Analizando rendimiento del jugador...</div>
+
+  <div *ngIf="!loading && score !== null">
+    <!-- SCORE -->
+
+    <div class="score-box">
+      <div class="score-circle">
+        {{ score | number: '1.0-0' }}
+      </div>
+
+      <div class="score-label">Performance Score</div>
+
+      <div class="interpretation">
+        {{ getInterpretation() }}
+      </div>
+    </div>
+
+    <!-- RADAR -->
+
+    <div *ngIf="isBrowser" class="chart-container">
+      <h3>Radar de rendimiento</h3>
+
+      <canvas baseChart [data]="radarChartData" [type]="radarChartType"> </canvas>
+    </div>
+  </div>
+</section>

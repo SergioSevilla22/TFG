@@ -15,6 +15,8 @@ import calendarioRoutes from "./routes/calendario.routes.js";
 import estadisticasRoutes from "./routes/estadisticas.routes.js";
 import observacionesRoutes from "./routes/observaciones.routes.js";
 import rendimientoRoutes from "./routes/rendimiento.routes.js";
+import aiRoutes from "./routes/ai.routes.js";
+import { startModelTrainingCron } from "./services/modelTrainer.js";
 
 dotenv.config();
 
@@ -40,8 +42,10 @@ app.use("/api/calendario", calendarioRoutes);
 app.use("/api/estadisticas", estadisticasRoutes);
 app.use("/api/observaciones", observacionesRoutes);
 app.use("/api/rendimiento", rendimientoRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  startModelTrainingCron();
 });
