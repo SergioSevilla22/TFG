@@ -1,0 +1,54 @@
+.section-card {
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+}
+
+.score-box {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: auto;
+
+  font-size: 32px;
+  font-weight: bold;
+
+  color: white;
+
+  background: linear-gradient(135deg, #1e7c45, #2dbd6e);
+}
+
+.score-label {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.interpretation {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.chart-container {
+  margin-top: 30px;
+}
+
+.insights {
+  margin-top: 30px;
+}
+
+.insights ul {
+  padding-left: 18px;
+}

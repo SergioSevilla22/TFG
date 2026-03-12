@@ -11,11 +11,19 @@ import { ObservacionesService } from '../../../../services/equipo/observaciones.
 import { MatIconModule } from '@angular/material/icon';
 import { CreateObservacionModalComponent } from '../../equipo/modals/create-observacion-modal/create-observacion-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PlayerAiPanelComponent } from '../../ai/components/player-ai-panel/player-ai-panel.component';
 
 @Component({
   selector: 'app-jugador-ficha',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, SidebarEquipoComponent, MatIconModule, MatDialogModule],
+  imports: [
+    CommonModule,
+    HeaderComponent,
+    SidebarEquipoComponent,
+    MatIconModule,
+    MatDialogModule,
+    PlayerAiPanelComponent,
+  ],
   templateUrl: './jugador-ficha.component.html',
   styleUrls: ['./jugador-ficha.component.scss'],
 })
