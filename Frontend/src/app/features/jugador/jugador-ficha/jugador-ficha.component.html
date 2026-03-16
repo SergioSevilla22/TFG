@@ -53,13 +53,7 @@
 
     <div class="ficha-bottom">
       <!-- OBSERVACIONES -->
-      <section
-        class="bloque"
-        *ngIf="
-          authService.getUserRole() !== 'admin_club' &&
-          authService.getUserRole() !== 'admin_plataforma'
-        "
-      >
+      <section class="bloque">
         <div class="bloque-header">
           <h2>Historial de Observaciones</h2>
           <button
@@ -119,13 +113,7 @@
       </section>
 
       <!-- ESTADÍSTICAS -->
-      <section
-        class="section-card"
-        *ngIf="
-          authService.getUserRole() !== 'admin_club' &&
-          authService.getUserRole() !== 'admin_plataforma'
-        "
-      >
+      <section class="section-card">
         <div class="section-header">
           <h2>Estadísticas</h2>
         </div>
