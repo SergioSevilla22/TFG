@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const AI_URL = "http://127.0.0.1:8000/ai/player";
+const AI_ATTENDANCE_URL = "http://127.0.0.1:8000/ai/attendance";
 
 export const analyzePlayerAI = async (stats, training) => {
   try {
@@ -14,4 +15,12 @@ export const analyzePlayerAI = async (stats, training) => {
     console.error("Error llamando a la IA:", error.message);
     return null;
   }
+};
+
+export const analyzeAttendanceAI = async (stats) => {
+  const response = await axios.post(AI_ATTENDANCE_URL, {
+    stats,
+  });
+
+  return response.data;
 };

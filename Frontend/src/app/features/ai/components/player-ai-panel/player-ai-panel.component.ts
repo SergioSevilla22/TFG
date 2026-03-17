@@ -18,6 +18,10 @@ export class PlayerAiPanelComponent implements OnInit {
 
   loading = true;
   score: number | null = null;
+  attendanceRatio: number | null = null;
+  dropoutProbability: number | null = null;
+  trend: string | null = null;
+  attendanceHistory: any[] = [];
   isBrowser = false;
 
   insights: string[] = [];
@@ -64,6 +68,32 @@ export class PlayerAiPanelComponent implements OnInit {
         this.loading = false;
       },
     });
+
+    // ==============================
+    // MODELO 2 (ASISTENCIA)
+    // ==============================
+
+    this.aiService.getAttendanceAnalysis(this.dni).subscribe({
+      next: (res: any) => {
+        this.attendanceRatio = res.attendance_ratio;
+        this.dropoutProbability = res.dropout_probability;
+        this.trend = res.trend;
+
+        // HISTORIAL DE PARTIDOS
+        this.attendanceHistory = res.history;
+
+        this.lineChartData.labels = this.attendanceHistory.map((h: any) => `${h.match}`);
+
+        this.lineChartData.datasets[0].data = this.attendanceHistory.map((h: any) => h.value);
+
+        this.loading = false;
+      },
+
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+      },
+    });
   }
 
   getInterpretation(): string {
@@ -91,4 +121,54 @@ export class PlayerAiPanelComponent implements OnInit {
       },
     ],
   };
+
+  public lineChartType: ChartType = 'line';
+
+  public lineChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [],
+
+    datasets: [
+      {
+        label: 'Asistencia (%)',
+        data: [],
+        borderWidth: 3,
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
+
+  public lineChartOptions = {
+    responsive: true,
+
+    scales: {
+      y: {
+        min: 0,
+        max: 3,
+
+        ticks: {
+          stepSize: 1,
+
+          callback: function (value: any) {
+            if (value === 3) return 'Presente';
+            if (value === 2) return 'Tarde';
+            if (value === 1) return 'Excusado';
+            if (value === 0) return 'Ausente';
+
+            return '';
+          },
+        },
+      },
+    },
+  };
+  getRiskColor(): string {
+    if (this.dropoutProbability === null) return '#999';
+
+    const p = this.dropoutProbability;
+
+    if (p < 0.3) return '#2ecc71';
+    if (p < 0.6) return '#f1c40f';
+
+    return '#e74c3c';
+  }
 }

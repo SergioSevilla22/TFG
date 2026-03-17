@@ -41,7 +41,26 @@ GROUP BY sub_est.jugador_dni
     """
 
     df = pd.read_sql(query, connection)
+    connection.close()
 
+    return df
+
+
+def load_attendance_dataset():
+
+    connection = mysql.connector.connect(
+        host="localhost",
+        user="tfguser",
+        password="tfguser",
+        database="tfg"
+    )
+
+    query = """
+    SELECT estado_asistencia
+    FROM estadisticas_convocatoria
+    """
+
+    df = pd.read_sql(query, connection)
     connection.close()
 
     return df

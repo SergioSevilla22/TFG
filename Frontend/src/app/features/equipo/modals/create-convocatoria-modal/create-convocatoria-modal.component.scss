@@ -1,6 +1,6 @@
 // Colores base VERDE
 $primary: #16a34a; // Verde principal (Emerald 600)
-$primary-hover: #15803d; 
+$primary-hover: #15803d;
 $primary-light: #f0fdf4;
 $text-main: #1e293b;
 $text-muted: #64748b;
@@ -37,17 +37,25 @@ $error: #ef4444;
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  
-  mat-icon { font-size: 20px; width: 20px; height: 20px; }
-  
-  &.margin-top { margin-top: 24px; }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &.margin-top {
+    margin-top: 24px;
+  }
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  .full-width { grid-column: span 2; }
+  .full-width {
+    grid-column: span 2;
+  }
 }
 
 .field {
@@ -85,9 +93,9 @@ $error: #ef4444;
 }
 
 .player-list {
-  max-height: 250px;
+  max-height: 300px;
   overflow-y: auto;
-  
+
   .player-row {
     display: block;
     padding: 10px 16px;
@@ -96,13 +104,18 @@ $error: #ef4444;
     cursor: pointer;
     transition: background 0.2s;
 
-    &:hover { background: $primary-light; }
-    &:last-child { border-bottom: none; }
+    &:hover {
+      background: $primary-light;
+    }
+    &:last-child {
+      border-bottom: none;
+    }
 
     .player-info {
       display: flex;
       align-items: center;
       gap: 12px;
+      width: 100%;
 
       .avatar-mini {
         width: 36px;
@@ -115,7 +128,7 @@ $error: #ef4444;
         justify-content: center;
         font-weight: 700;
         font-size: 0.85rem;
-        overflow: hidden; // Para que la imagen se recorte en círculo
+        overflow: hidden;
 
         .avatar-img {
           width: 100%;
@@ -124,18 +137,70 @@ $error: #ef4444;
         }
       }
 
-      .name {
+      .player-main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
         flex: 1;
-        font-weight: 500;
-        color: $text-main;
+
+        .name {
+          font-weight: 600;
+          color: $text-main;
+        }
+
+        .dni-tag {
+          font-size: 0.75rem;
+          color: $text-muted;
+          width: fit-content;
+          background: #f1f5f9;
+          padding: 2px 8px;
+          border-radius: 4px;
+          margin-top: 4px;
+        }
       }
 
-      .dni-tag {
-        font-size: 0.75rem;
-        color: $text-muted;
-        background: #f1f5f9;
-        padding: 2px 8px;
-        border-radius: 4px;
+      .attendance-trend {
+        min-width: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        white-space: nowrap;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        &.trend-good {
+          color: #15803d;
+          background: #dcfce7;
+          border-color: #86efac;
+        }
+
+        &.trend-medium {
+          color: #a16207;
+          background: #fef9c3;
+          border-color: #fde68a;
+        }
+
+        &.trend-bad {
+          color: #b91c1c;
+          background: #fee2e2;
+          border-color: #fca5a5;
+        }
+
+        &.trend-unknown {
+          color: #475569;
+          background: #e2e8f0;
+          border-color: #cbd5e1;
+        }
       }
     }
   }
@@ -161,7 +226,38 @@ $error: #ef4444;
     gap: 8px;
     color: $error;
     font-size: 0.85rem;
-    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.player-filters {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  label {
+    font-size: 0.8rem;
+    color: $text-muted;
+    font-weight: 600;
+  }
+
+  .custom-select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid $border-color;
+    font-size: 0.85rem;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+    }
   }
 }
 
@@ -176,12 +272,79 @@ $error: #ef4444;
     border-radius: 8px;
     height: 44px;
     font-weight: 600;
-    &:hover { background-color: $primary-hover; }
-    mat-icon { margin-right: 8px; }
+    &:hover {
+      background-color: $primary-hover;
+    }
+    mat-icon {
+      margin-right: 8px;
+    }
   }
-  
+
   .btn-cancel {
     font-weight: 600;
     color: $text-muted;
   }
+}
+
+.player-ai {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.performance-score {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #1e293b;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.performance-badge {
+  min-width: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.perf-high {
+    color: #15803d;
+    background: #dcfce7;
+    border-color: #86efac;
+  }
+
+  &.perf-medium {
+    color: #a16207;
+    background: #fef9c3;
+    border-color: #fde68a;
+  }
+
+  &.perf-low {
+    color: #b91c1c;
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
+
+  &.perf-unknown {
+    color: #475569;
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+  }
+}
+
+::ng-deep .mat-tooltip {
+  white-space: pre-line;
 }
