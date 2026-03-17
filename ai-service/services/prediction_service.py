@@ -30,8 +30,8 @@ def analyze_player(stats, training):
     return {
         "performance_score": score,
         "metrics": {
-            "goles": round(avg_goals, 2),
-            "asistencias": round(avg_assists, 2),
+            "goles": round(min(avg_goals * 5, 10), 2),
+            "asistencias": round(min(avg_assists * 5, 10), 2),
             "minutos": round(avg_minutes / 9, 2),
             "disciplina": round(discipline, 2),
             "participacion": round(participation, 2),
