@@ -27,5 +27,38 @@
 
       <canvas baseChart [data]="radarChartData" [type]="radarChartType"> </canvas>
     </div>
+
+    <!-- ========================= -->
+    <!-- TENDENCIA DE ASISTENCIA -->
+    <!-- ========================= -->
+
+    <div *ngIf="isBrowser && dropoutProbability !== null" class="chart-container">
+      <h3>Tendencia de asistencia (últimos 5 partidos)</h3>
+
+      <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+      </canvas>
+      <div class="attendance-summary">
+        <h4>Nivel medio de asistencia</h4>
+        <p class="metric-description">
+          Porcentaje de asistencia del jugador considerando
+          <strong>todos los partidos registrados</strong>.
+        </p>
+        <div class="risk-circle" [style.background]="getRiskColor()">
+          {{ (attendanceRatio ?? 0) * 100 | number: '1.0-0' }}%
+        </div>
+      </div>
+
+      <div class="risk-score">
+        <h4>Riesgo de baja del jugador</h4>
+        <p class="metric-description">
+          Probabilidad estimada de baja de un jugador a un partido mediante el modelo de
+          <strong>IA</strong> a partir del historial de asistencia.
+        </p>
+
+        <div class="risk-circle" [style.background]="getRiskColor()">
+          {{ (dropoutProbability ?? 0) * 100 | number: '1.0-0' }}%
+        </div>
+      </div>
+    </div>
   </div>
 </section>

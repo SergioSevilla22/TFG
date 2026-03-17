@@ -11,23 +11,42 @@ def load_dataset():
     )
 
     query = """
-   SELECT
-    ec.minutos,
-    ec.goles,
-    ec.asistencias,
-    ec.amarillas,
-    ec.rojas,
-    re.nota_general,
-    re.intensidad,
-    re.actitud,
-    1 as attendance_ratio
+    SELECT
+        ec.minutos,
+        ec.goles,
+        ec.asistencias,
+        ec.amarillas,
+        ec.rojas,
+        re.nota_general,
+        re.intensidad,
+        re.actitud,
+        1 as attendance_ratio
     FROM estadisticas_convocatoria ec
     LEFT JOIN rendimiento_entrenamiento re
-    ON ec.jugador_dni = re.jugador_dni
+        ON ec.jugador_dni = re.jugador_dni
     """
 
     df = pd.read_sql(query, connection)
+    connection.close()
 
+    return df
+
+
+def load_attendance_dataset():
+
+    connection = mysql.connector.connect(
+        host="localhost",
+        user="tfguser",
+        password="tfguser",
+        database="tfg"
+    )
+
+    query = """
+    SELECT estado_asistencia
+    FROM estadisticas_convocatoria
+    """
+
+    df = pd.read_sql(query, connection)
     connection.close()
 
     return df

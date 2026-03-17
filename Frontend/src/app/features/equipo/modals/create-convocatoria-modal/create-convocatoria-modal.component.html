@@ -14,12 +14,22 @@
   <div class="form-grid">
     <div class="field full-width">
       <label>Rival</label>
-      <input type="text" [(ngModel)]="convocatoria.rival" placeholder="Ej: UD San Lorenzo" class="custom-input" />
+      <input
+        type="text"
+        [(ngModel)]="convocatoria.rival"
+        placeholder="Ej: UD San Lorenzo"
+        class="custom-input"
+      />
     </div>
 
     <div class="field full-width">
       <label>Lugar / Estadio</label>
-      <input type="text" [(ngModel)]="convocatoria.lugar" placeholder="Ciudad Deportiva, Campo 2" class="custom-input" />
+      <input
+        type="text"
+        [(ngModel)]="convocatoria.lugar"
+        placeholder="Ciudad Deportiva, Campo 2"
+        class="custom-input"
+      />
     </div>
 
     <div class="field">
@@ -39,7 +49,11 @@
 
     <div class="field">
       <label>Límite de Confirmación</label>
-      <input type="datetime-local" [(ngModel)]="convocatoria.fecha_limite_confirmacion" class="custom-input" />
+      <input
+        type="datetime-local"
+        [(ngModel)]="convocatoria.fecha_limite_confirmacion"
+        class="custom-input"
+      />
     </div>
   </div>
 
@@ -48,22 +62,62 @@
     <span>Jugadores Convocados</span>
   </div>
 
+  <div class="player-filters">
+    <label>Ordenar por:</label>
+
+    <select [(ngModel)]="ordenSeleccionado" (change)="ordenarJugadores()" class="custom-select">
+      <option value="nombre">Nombre</option>
+      <option value="rendimiento">Mejor rendimiento</option>
+      <option value="mejor">Mejor asistencia</option>
+      <option value="peor">Peor asistencia</option>
+    </select>
+  </div>
+
   <div class="player-selection-container">
     <div class="player-list">
-      <label class="player-row" *ngFor="let j of jugadores">
+      <label class="player-row" *ngFor="let j of jugadoresFiltrados">
         <div class="player-info">
           <input
-          type="checkbox"
-          [checked]="seleccionados.has(j.DNI)"
-          (change)="toggleJugador(j.DNI, $event)"
-          class="custom-checkbox"
-        />
+            type="checkbox"
+            [checked]="seleccionados.has(j.DNI)"
+            (change)="toggleJugador(j.DNI, $event)"
+            class="custom-checkbox"
+          />
+
           <div class="avatar-mini">
-            <img *ngIf="j.foto" [src]="'http://localhost:3000' + j.foto" alt="Foto" class="avatar-img" />
+            <img
+              *ngIf="j.foto"
+              [src]="'http://localhost:3000' + j.foto"
+              alt="Foto"
+              class="avatar-img"
+            />
             <span *ngIf="!j.foto">{{ j.nombre[0] | uppercase }}</span>
           </div>
-          <span class="name">{{ j.nombre }}</span>
-          <span class="dni-tag">{{ j.DNI }}</span>
+
+          <div class="player-main">
+            <span class="name">{{ j.nombre }}</span>
+            <span class="dni-tag">{{ j.DNI }}</span>
+          </div>
+
+          <div class="player-ai">
+            <div
+              class="performance-badge"
+              [ngClass]="getPerformanceClass(j.DNI)"
+              [matTooltip]="getPerformanceTooltip(j.DNI)"
+            >
+              <mat-icon>insights</mat-icon>
+              <span>{{ getPerformance(j.DNI) | number: '1.0-0' }}</span>
+            </div>
+
+            <div
+              class="attendance-trend"
+              [ngClass]="getAttendanceClass(j.DNI)"
+              [matTooltip]="getAttendanceTooltip(j.DNI)"
+            >
+              <mat-icon>{{ getAttendanceIcon(j.DNI) }}</mat-icon>
+              <span>{{ getAttendanceLabel(j.DNI) }}</span>
+            </div>
+          </div>
         </div>
       </label>
     </div>
@@ -79,12 +133,22 @@
 
 <div mat-dialog-actions align="end" class="modal-actions">
   <button mat-button (click)="cerrar(false)" class="btn-cancel">Cancelar</button>
-  <button mat-flat-button color="primary" [disabled]="loading" (click)="guardar()" class="btn-publish">
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="loading"
+    (click)="guardar()"
+    class="btn-publish"
+  >
     <mat-icon *ngIf="!loading">send</mat-icon>
-    {{ 
-      loading 
-        ? (modo === 'editar' ? 'Guardando...' : 'Publicando...') 
-        : (modo === 'editar' ? 'Guardar Cambios' : 'Publicar Convocatoria') 
+    {{
+      loading
+        ? modo === 'editar'
+          ? 'Guardando...'
+          : 'Publicando...'
+        : modo === 'editar'
+          ? 'Guardar Cambios'
+          : 'Publicar Convocatoria'
     }}
   </button>
 </div>

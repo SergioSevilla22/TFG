@@ -6,8 +6,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
 import { ConvocatoriaService } from '../../../../../services/equipo/convocatoria.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
+import { AiService } from '../../../../../services/ai/ai.service';
 
 @Component({
   selector: 'app-create-convocatoria-modal',
@@ -20,6 +25,7 @@ import { AuthService } from '../../../../../services/auth/auth.service';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatTooltipModule,
   ],
   templateUrl: './create-convocatoria-modal.component.html',
   styleUrls: ['./create-convocatoria-modal.component.scss'],
@@ -40,8 +46,23 @@ export class CreateConvocatoriaModalComponent implements OnInit {
 
   mensaje = '';
   loading = false;
+  loadingAttendance = false;
 
   modo: 'crear' | 'editar' = 'crear';
+  ordenSeleccionado: 'nombre' | 'mejor' | 'peor' | 'rendimiento' = 'nombre';
+
+  jugadoresFiltrados: any[] = [];
+
+  attendanceMap: Record<
+    string,
+    {
+      attendance_ratio: number;
+      dropout_probability: number;
+      trend: string;
+    }
+  > = {};
+
+  performanceMap: Record<string, number> = {};
 
   constructor(
     private dialogRef: MatDialogRef<CreateConvocatoriaModalComponent>,
@@ -54,6 +75,7 @@ export class CreateConvocatoriaModalComponent implements OnInit {
     },
     private convocatoriaService: ConvocatoriaService,
     private authService: AuthService,
+    private aiService: AiService,
   ) {}
 
   ngOnInit(): void {
@@ -61,7 +83,8 @@ export class CreateConvocatoriaModalComponent implements OnInit {
       .slice()
       .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
 
-    // 🔥 SI VIENE CONVOCATORIA → ES EDICIÓN
+    this.jugadoresFiltrados = [...this.jugadores];
+
     if (this.data?.convocatoria) {
       this.modo = 'editar';
 
@@ -76,11 +99,51 @@ export class CreateConvocatoriaModalComponent implements OnInit {
         fecha_limite_confirmacion: this.formatDatetimeLocal(c.fecha_limite_confirmacion),
       };
 
-      // marcar jugadores ya convocados
       c.jugadores?.forEach((j: any) => {
         this.seleccionados.add(j.DNI);
       });
     }
+
+    this.loadAttendanceTrends();
+    this.loadPerformanceScores();
+  }
+
+  loadAttendanceTrends() {
+    if (!this.jugadores.length) return;
+
+    this.loadingAttendance = true;
+
+    const requests = this.jugadores.map((jugador) =>
+      this.aiService.getAttendanceAnalysis(jugador.DNI).pipe(
+        catchError(() =>
+          of({
+            attendance_ratio: 0,
+            dropout_probability: 0,
+            trend: 'sin datos',
+            history: [],
+          }),
+        ),
+      ),
+    );
+
+    forkJoin(requests).subscribe({
+      next: (results) => {
+        results.forEach((res, index) => {
+          const dni = this.jugadores[index].DNI;
+          this.attendanceMap[dni] = {
+            attendance_ratio: res.attendance_ratio,
+            dropout_probability: res.dropout_probability,
+            trend: res.trend,
+          };
+        });
+
+        this.loadingAttendance = false;
+      },
+      error: () => {
+        this.loadingAttendance = false;
+      },
+    });
+    this.ordenarJugadores();
   }
 
   toggleJugador(dni: string, event: Event) {
@@ -127,33 +190,27 @@ export class CreateConvocatoriaModalComponent implements OnInit {
     const limite = new Date(this.convocatoria.fecha_limite_confirmacion);
     const ahora = new Date();
 
-    // ⛔ Fecha pasada
     if (inicio < ahora) {
       errores.push('No se puede crear una convocatoria en una fecha u hora pasada.');
     }
 
-    // ⛔ Quedada > inicio
     if (quedada > inicio) {
       errores.push('La hora de quedada no puede ser posterior al inicio del partido.');
     }
 
-    // ⛔ Límite > inicio
     if (limite > inicio) {
       errores.push('El límite de confirmación no puede ser posterior al inicio del partido.');
     }
 
-    // ⛔ Límite > quedada
     if (limite > quedada) {
       errores.push('El límite de confirmación no puede ser posterior a la hora de quedada.');
     }
 
-    // ❌ SI HAY ERRORES → MOSTRAR TODOS
     if (errores.length > 0) {
       this.errores = errores;
       return;
     }
 
-    // ✅ TODO OK → ENVIAR
     this.loading = true;
     this.errores = [];
     this.mensaje = '';
@@ -205,5 +262,138 @@ export class CreateConvocatoriaModalComponent implements OnInit {
   formatDatetimeLocal(dateString: string) {
     const d = new Date(dateString);
     return d.toISOString().slice(0, 16);
+  }
+
+  getAttendanceInfo(dni: string) {
+    return this.attendanceMap[dni] || null;
+  }
+
+  getAttendanceIcon(dni: string): string {
+    const info = this.getAttendanceInfo(dni);
+    if (!info) return 'help_outline';
+
+    if (info.trend === 'estable') return 'trending_up';
+    if (info.trend === 'riesgo moderado') return 'trending_flat';
+    if (info.trend === 'alto riesgo') return 'trending_down';
+
+    return 'help_outline';
+  }
+
+  getAttendanceClass(dni: string): string {
+    const info = this.getAttendanceInfo(dni);
+    if (!info) return 'trend-unknown';
+
+    if (info.trend === 'estable') return 'trend-good';
+    if (info.trend === 'riesgo moderado') return 'trend-medium';
+    if (info.trend === 'alto riesgo') return 'trend-bad';
+
+    return 'trend-unknown';
+  }
+
+  getAttendanceLabel(dni: string): string {
+    const info = this.getAttendanceInfo(dni);
+    if (!info) return 'Sin datos';
+
+    if (info.trend === 'estable') return 'Estable';
+    if (info.trend === 'riesgo moderado') return 'Riesgo medio';
+    if (info.trend === 'alto riesgo') return 'Alto riesgo';
+
+    return 'Sin datos';
+  }
+
+  getAttendanceTooltip(dni: string): string {
+    const info = this.getAttendanceInfo(dni);
+    if (!info) return 'Sin datos de asistencia';
+
+    const asistencia = Math.round((info.attendance_ratio || 0) * 100);
+    const riesgo = Math.round((info.dropout_probability || 0) * 100);
+
+    return `Asistencia media: ${asistencia}% · Riesgo IA: ${riesgo}%`;
+  }
+
+  ordenarJugadores() {
+    const jugadores = [...this.jugadores];
+
+    if (this.ordenSeleccionado === 'nombre') {
+      jugadores.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+    }
+
+    if (this.ordenSeleccionado === 'mejor') {
+      jugadores.sort((a, b) => {
+        const aVal = this.getAttendanceInfo(a.DNI)?.attendance_ratio ?? -1;
+        const bVal = this.getAttendanceInfo(b.DNI)?.attendance_ratio ?? -1;
+        return bVal - aVal;
+      });
+    }
+
+    if (this.ordenSeleccionado === 'peor') {
+      jugadores.sort((a, b) => {
+        const aVal = this.getAttendanceInfo(a.DNI)?.attendance_ratio ?? 999;
+        const bVal = this.getAttendanceInfo(b.DNI)?.attendance_ratio ?? 999;
+        return aVal - bVal;
+      });
+    }
+
+    if (this.ordenSeleccionado === 'rendimiento') {
+      jugadores.sort((a, b) => {
+        return this.getPerformance(b.DNI) - this.getPerformance(a.DNI);
+      });
+    }
+
+    this.jugadoresFiltrados = jugadores;
+  }
+
+  getPerformance(dni: string): number {
+    return this.performanceMap[dni] ?? 0;
+  }
+
+  loadPerformanceScores() {
+    if (!this.jugadores.length) return;
+
+    const requests = this.jugadores.map((jugador) =>
+      this.aiService.getPlayerAnalysis(jugador.DNI).pipe(
+        catchError(() =>
+          of({
+            performance_score: 0,
+          }),
+        ),
+      ),
+    );
+
+    forkJoin(requests).subscribe({
+      next: (results) => {
+        results.forEach((res, index) => {
+          const dni = this.jugadores[index].DNI;
+          this.performanceMap[dni] = res.performance_score;
+        });
+
+        this.ordenarJugadores();
+      },
+    });
+  }
+
+  getPerformanceTooltip(dni: string): string {
+    const score = this.getPerformance(dni);
+
+    if (!score) return 'Sin datos de rendimiento';
+
+    let nivel = '';
+
+    if (score >= 70) nivel = 'Alto rendimiento';
+    else if (score >= 40) nivel = 'Rendimiento medio';
+    else nivel = 'Rendimiento bajo';
+
+    return `Nivel: ${nivel}`;
+  }
+
+  getPerformanceClass(dni: string): string {
+    const score = this.getPerformance(dni);
+
+    if (!score) return 'perf-unknown';
+
+    if (score >= 70) return 'perf-high';
+    if (score >= 40) return 'perf-medium';
+
+    return 'perf-low';
   }
 }
