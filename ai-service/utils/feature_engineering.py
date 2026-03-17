@@ -14,6 +14,12 @@ def build_features(stats, training):
     avg_yellows = sum(s["amarillas"] for s in stats) / total_matches
     avg_reds = sum(s["rojas"] for s in stats) / total_matches
 
+    minutos_base = max(avg_minutes, 1)
+    goles_p90 = (avg_goals / minutos_base) * 90
+    asistencias_p90 = (avg_assists / minutos_base) * 90
+    yellow_p90 = (avg_yellows / minutos_base) * 90
+    red_p90 = (avg_reds / minutos_base) * 90
+
     avg_training_note = (
         sum(t["nota_general"] for t in training) / total_training
         if total_training else 0
@@ -43,12 +49,12 @@ def build_features(stats, training):
 
     return [
         avg_minutes,
-        avg_goals,
-        avg_assists,
+        goles_p90,
+        asistencias_p90,
         avg_training_note,
         avg_intensity,
         avg_attitude,
         attendance_ratio,
-        avg_yellows,
-        avg_reds
+        yellow_p90,
+        red_p90
     ]
