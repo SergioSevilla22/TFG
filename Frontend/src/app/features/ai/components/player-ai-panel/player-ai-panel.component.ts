@@ -23,6 +23,9 @@ export class PlayerAiPanelComponent implements OnInit {
   trend: string | null = null;
   attendanceHistory: any[] = [];
   isBrowser = false;
+  clusterData: any = null;
+  clusterIcon: string = '👤';
+  clusterColor: string = '#bdc3c7';
 
   insights: string[] = [];
 
@@ -94,8 +97,44 @@ export class PlayerAiPanelComponent implements OnInit {
         this.loading = false;
       },
     });
+
+    this.aiService.getClusteringAnalysis(this.dni).subscribe({
+      next: (res) => {
+        if (res && res.cluster_id !== undefined) { 
+          this.clusterData = res;
+          this.setClusterStyling(res.cluster_id);
+        } else {
+          console.warn("La IA no ha podido clasificar a este jugador (datos insuficientes)");
+          this.clusterData = null;
+        }
+      },
+      error: (err) => console.error("Error cargando clustering:", err)
+    });
   }
 
+  setClusterStyling(clusterId: number) {
+    switch (clusterId) {
+      case 0: 
+        this.clusterIcon = '⭐'; 
+        this.clusterColor = '#f39c12'; // Naranja (Cracks)
+        break;
+      case 1: 
+        this.clusterIcon = '⚠️'; 
+        this.clusterColor = '#e74c3c'; // Rojo (Riesgo)
+        break;
+      case 2: 
+        this.clusterIcon = '🛡️'; 
+        this.clusterColor = '#3498db'; // Azul (Defensivos)
+        break;
+      case 3: 
+        this.clusterIcon = '⚡'; 
+        this.clusterColor = '#9b59b6'; // Morado (Revulsivos)
+        break;
+      default: 
+        this.clusterIcon = '👤'; 
+        this.clusterColor = '#bdc3c7'; // Gris por defecto
+    }
+  }
   getInterpretation(): string {
     if (this.score === null) return '';
 
