@@ -27,6 +27,12 @@ export interface AttendanceAIResponse {
   }[];
 }
 
+export interface ClusterAIResponse {
+  cluster_id: number;
+  nombre_perfil: string;
+  jugadores_similares: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -41,5 +47,9 @@ export class AiService {
 
   getAttendanceAnalysis(dni: string): Observable<AttendanceAIResponse> {
     return this.http.get<AttendanceAIResponse>(`${this.API_URL}/attendance/${dni}`);
+  }
+
+  getClusteringAnalysis(dni: string): Observable<ClusterAIResponse> {
+    return this.http.get<ClusterAIResponse>(`${this.API_URL}/clustering/${dni}`);
   }
 }

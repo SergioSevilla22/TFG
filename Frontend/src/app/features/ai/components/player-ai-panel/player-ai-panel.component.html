@@ -60,5 +60,31 @@
         </div>
       </div>
     </div>
+
+    <div *ngIf="clusterData" class="chart-container cluster-section">
+      <h3>Clasificación K-Means (Scouting)</h3>
+      
+      <div class="cluster-badge" [style.border-left-color]="clusterColor">
+        <div class="cluster-icon" [style.background-color]="clusterColor">
+          {{ clusterIcon }}
+        </div>
+        <div class="cluster-info">
+          <h4>{{ clusterData.nombre_perfil }}</h4>
+          <p>Perfil de juego detectado automáticamente según patrones estadísticos y actitud.</p>
+        </div>
+      </div>
+
+      <div class="similar-players" *ngIf="clusterData.jugadores_similares?.length > 0">
+        <h4>Jugadores del club con perfil similar:</h4>
+        <div class="chips-container">
+          <span class="chip" *ngFor="let sim of clusterData.jugadores_similares">
+            <i class="fas fa-user-circle"></i> {{ sim }}
+          </span>
+        </div>
+      </div>
+      <div *ngIf="clusterData.jugadores_similares?.length === 0" class="no-similares">
+        <p>No hay jugadores con un perfil similar en la base de datos.</p>
+      </div>
+    </div>
   </div>
 </section>

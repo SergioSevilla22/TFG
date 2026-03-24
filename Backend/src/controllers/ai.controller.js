@@ -1,5 +1,5 @@
 import { db } from "../db.js";
-import { analyzePlayerAI, analyzeAttendanceAI } from "../services/aiService.js";
+import { analyzePlayerAI, analyzeAttendanceAI, analyzeClusteringAI } from "../services/aiService.js";
 
 const query = (sql, params = []) =>
   new Promise((resolve, reject) => {
@@ -80,6 +80,35 @@ export const getAIAttendance = async (req, res) => {
       ...result,
       history,
     });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+export const getAIClusteringAnalysis = async (req, res) => {
+  const { dni } = req.params;
+
+  try {
+    // Reutilizamos las queries que ya tienes porque el clustering necesita lo mismo
+    const stats = await query(
+      `SELECT minutos, goles, asistencias, amarillas, rojas, estado_asistencia
+       FROM estadisticas_convocatoria
+       WHERE jugador_dni = ?`,
+      [dni]
+    );
+
+    const training = await query(
+      `SELECT nota_general, intensidad, actitud, estado_asistencia
+       FROM rendimiento_entrenamiento
+       WHERE jugador_dni = ?`,
+      [dni]
+    );
+
+    const clusteringResult = await analyzeClusteringAI(dni, stats, training);
+
+    res.json(clusteringResult);
   } catch (error) {
     res.status(500).json({
       error: error.message,
