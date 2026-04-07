@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { JugadorService } from '../../../../../services/jugador/jugador.service';
+import { PlayerService } from '../../../../../services/jugador/player.service';
 
 @Component({
   selector: 'app-add-players-club-modal',
@@ -33,7 +33,7 @@ export class AddPlayersClubModalComponent implements OnInit {
     private dialogRef: MatDialogRef<AddPlayersClubModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { clubId: number },
     private clubService: ClubService,
-    private jugadorService: JugadorService,
+    private jugadorService: PlayerService,
   ) {}
 
   ngOnInit(): void {
@@ -41,7 +41,7 @@ export class AddPlayersClubModalComponent implements OnInit {
   }
 
   cargarJugadoresClub() {
-    this.clubService.getJugadoresClub(this.data.clubId).subscribe({
+    this.clubService.getClubPlayers(this.data.clubId).subscribe({
       next: (res) => (this.jugadoresClub = res),
     });
   }
@@ -52,7 +52,7 @@ export class AddPlayersClubModalComponent implements OnInit {
       return;
     }
 
-    this.jugadorService.buscarJugadoresGlobal(this.busqueda).subscribe({
+    this.jugadorService.searchPlayersGlobal(this.busqueda).subscribe({
       next: (res) => (this.resultadosBusqueda = res),
     });
   }
@@ -63,7 +63,7 @@ export class AddPlayersClubModalComponent implements OnInit {
 
   accionJugador(jugador: any) {
     if (jugador.club_id === this.data.clubId) {
-      this.clubService.removeJugadorClub(this.data.clubId, jugador.DNI).subscribe({
+      this.clubService.removeClubPlayer(this.data.clubId, jugador.DNI).subscribe({
         next: () => {
           this.buscar();
         },
@@ -72,7 +72,7 @@ export class AddPlayersClubModalComponent implements OnInit {
       return;
     }
 
-    this.clubService.addJugadoresClub(this.data.clubId, [jugador.DNI]).subscribe({
+    this.clubService.addClubPlayers(this.data.clubId, [jugador.DNI]).subscribe({
       next: () => {
         this.buscar();
       },
@@ -85,7 +85,7 @@ export class AddPlayersClubModalComponent implements OnInit {
   }
 
   quitar(dni: string) {
-    this.clubService.removeJugadorClub(this.data.clubId, dni).subscribe({
+    this.clubService.removeClubPlayer(this.data.clubId, dni).subscribe({
       next: () => this.cargarJugadoresClub(),
     });
   }

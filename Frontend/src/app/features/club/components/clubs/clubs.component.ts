@@ -35,7 +35,7 @@ export class ClubsComponent implements OnInit {
     this.loading = true;
     this.buscado = true;
 
-    this.clubService.buscarClubes(this.filtros).subscribe({
+    this.clubService.searchClubs(this.filtros).subscribe({
       next: (res) => {
         this.clubes = res;
         this.loading = false;

@@ -7,8 +7,8 @@ import { HeaderComponent } from '../../../../layout/header/header.component';
 import { SidebarEquipoComponent } from '../sidebar-equipo/sidebar-equipo.component';
 
 import { AuthService } from '../../../../../services/auth/auth.service';
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
-import { EventoService } from '../../../../../services/equipo/evento.service';
+import { TeamService } from '../../../../../services/equipo/team.service';
+import { EventService } from '../../../../../services/equipo/event.service';
 
 import { CreateEventoModalComponent } from '../../modals/create-evento-modal/create-evento-modal.component';
 import { MotivoModalComponent } from '../../modals/motivo-modal/motivo-modal.component';
@@ -53,8 +53,8 @@ export class EquipoEventosComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private equipoService: EquipoService,
-    private eventoService: EventoService,
+    private equipoService: TeamService,
+    private eventoService: EventService,
     private dialog: MatDialog,
     public authService: AuthService,
   ) {}
@@ -92,7 +92,7 @@ export class EquipoEventosComponent implements OnInit {
   // CARGA DE DATOS
   // ======================
   cargarEquipo() {
-    this.equipoService.getEquipoById(this.equipoId).subscribe({
+    this.equipoService.getTeamById(this.equipoId).subscribe({
       next: (data) => {
         this.equipo = data;
         this.cargarEventos();
@@ -106,7 +106,7 @@ export class EquipoEventosComponent implements OnInit {
   cargarEventos() {
     this.loadingEventos = true;
 
-    this.eventoService.getEventosEquipo(this.equipoId).subscribe({
+    this.eventoService.getTeamEvents(this.equipoId).subscribe({
       next: (data) => {
         this.eventos = data;
         this.loadingEventos = false;
@@ -140,7 +140,7 @@ export class EquipoEventosComponent implements OnInit {
   eliminarEvento(e: any) {
     if (!confirm(`¿Eliminar el evento "${e.titulo}"?`)) return;
 
-    this.eventoService.eliminarEvento(e.id).subscribe({
+    this.eventoService.deleteEvent(e.id).subscribe({
       next: () => {
         this.eventos = this.eventos.filter((ev) => ev.id !== e.id);
       },
@@ -149,7 +149,7 @@ export class EquipoEventosComponent implements OnInit {
   }
 
   enviarRecordatorioEvento(e: any) {
-    this.eventoService.enviarRecordatorio(e.id).subscribe({
+    this.eventoService.sendReminder(e.id).subscribe({
       next: () => alert('Recordatorio enviado'),
       error: () => alert('Error enviando recordatorio'),
     });
@@ -172,7 +172,7 @@ export class EquipoEventosComponent implements OnInit {
     const user = this.authService.getUser();
 
     this.eventoService
-      .responderEvento(evento.id, {
+      .respondToEvent(evento.id, {
         jugador_dni: user.DNI,
         estado,
       })
@@ -192,7 +192,7 @@ export class EquipoEventosComponent implements OnInit {
       if (!motivo) return;
 
       this.eventoService
-        .responderEvento(evento.id, {
+        .respondToEvent(evento.id, {
           jugador_dni: this.authService.getUser().DNI,
           estado: 'confirmado_tarde',
           motivo,
@@ -211,7 +211,7 @@ export class EquipoEventosComponent implements OnInit {
       if (!motivo) return;
 
       this.eventoService
-        .responderEvento(evento.id, {
+        .respondToEvent(evento.id, {
           jugador_dni: this.authService.getUser().DNI,
           estado: 'rechazado',
           motivo,

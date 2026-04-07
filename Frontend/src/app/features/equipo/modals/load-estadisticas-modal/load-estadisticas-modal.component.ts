@@ -10,7 +10,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { EstadisticasService } from '../../../../../services/jugador/estadisticas.service';
+import { StatsService } from '../../../../../services/jugador/stats.service';
 
 @Component({
   selector: 'app-load-estadisticas-modal',
@@ -33,7 +33,7 @@ export class LoadEstadisticasModalComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private estadisticasService: EstadisticasService,
+    private estadisticasService: StatsService,
     private dialogRef: MatDialogRef<LoadEstadisticasModalComponent>,
   ) {}
 
@@ -73,19 +73,17 @@ export class LoadEstadisticasModalComponent implements OnInit {
       };
     });
 
-    this.estadisticasService
-      .getEstadisticasConvocatoria(this.data.convocatoriaId)
-      .subscribe((existing) => {
-        existing.forEach((s: any) => {
-          const jugador = this.jugadores.find((j) => j.jugador_dni === s.jugador_dni);
-          if (jugador) Object.assign(jugador, s);
-        });
+    this.estadisticasService.getMatchCallStats(this.data.convocatoriaId).subscribe((existing) => {
+      existing.forEach((s: any) => {
+        const jugador = this.jugadores.find((j) => j.jugador_dni === s.jugador_dni);
+        if (jugador) Object.assign(jugador, s);
       });
+    });
   }
 
   guardar() {
     this.estadisticasService
-      .guardarEstadisticasConvocatoria(this.data.convocatoriaId, this.jugadores)
+      .saveMatchCallStats(this.data.convocatoriaId, this.jugadores)
       .subscribe(() => this.dialogRef.close(true));
   }
 

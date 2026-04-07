@@ -1,24 +1,44 @@
 import { db } from "../db.js";
 
-export const crearClub = (req, res) => {
-  const { nombre, telefono, email, direccion, poblacion, provincia, codigo_postal } = req.body;
+export const createClub = (req, res) => {
+  const {
+    nombre,
+    telefono,
+    email,
+    direccion,
+    poblacion,
+    provincia,
+    codigo_postal,
+  } = req.body;
   const escudo = req.file ? `/uploads/${req.file.filename}` : null;
 
-  if (!nombre) return res.status(400).json({ message: "El nombre es obligatorio" });
+  if (!nombre)
+    return res.status(400).json({ message: "El nombre es obligatorio" });
 
   db.query(
     `INSERT INTO clubes (nombre, telefono, email, direccion, poblacion, provincia, codigo_postal, escudo)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [nombre, telefono, email, direccion, poblacion, provincia, codigo_postal, escudo],
+    [
+      nombre,
+      telefono,
+      email,
+      direccion,
+      poblacion,
+      provincia,
+      codigo_postal,
+      escudo,
+    ],
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
 
-      res.status(201).json({ message: "Club creado correctamente", id: result.insertId });
+      res
+        .status(201)
+        .json({ message: "Club creado correctamente", id: result.insertId });
     }
   );
 };
 
-export const obtenerClubes = (req, res) => {
+export const getClubs = (req, res) => {
   const { nombre, provincia, poblacion } = req.query;
 
   let sql = `SELECT * FROM clubes WHERE 1=1`;
@@ -42,38 +62,72 @@ export const obtenerClubes = (req, res) => {
   sql += ` ORDER BY nombre ASC`;
 
   db.query(sql, values, (err, data) => {
-    if (err) return res.status(500).json({ message: "Error al obtener clubes" });
+    if (err)
+      return res.status(500).json({ message: "Error al obtener clubes" });
     return res.json(data);
   });
 };
 
-export const obtenerClub = (req, res) => {
+export const getClub = (req, res) => {
   const { id } = req.params;
 
   db.query("SELECT * FROM clubes WHERE id = ?", [id], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0) return res.status(404).json({ message: "Club no encontrado" });
+    if (results.length === 0)
+      return res.status(404).json({ message: "Club no encontrado" });
 
     res.json(results[0]);
   });
 };
 
-export const actualizarClub = (req, res) => {
+export const updateClub = (req, res) => {
   const { id } = req.params;
-  const { nombre, telefono, email, direccion, poblacion, provincia, codigo_postal } = req.body;
+  const {
+    nombre,
+    telefono,
+    email,
+    direccion,
+    poblacion,
+    provincia,
+    codigo_postal,
+  } = req.body;
   const escudo = req.file ? `/uploads/${req.file.filename}` : null;
 
   const updateFields = [];
   const params = [];
 
-  if (nombre) { updateFields.push("nombre = ?"); params.push(nombre); }
-  if (telefono) { updateFields.push("telefono = ?"); params.push(telefono); }
-  if (email) { updateFields.push("email = ?"); params.push(email); }
-  if (direccion) { updateFields.push("direccion = ?"); params.push(direccion); }
-  if (poblacion) { updateFields.push("poblacion = ?"); params.push(poblacion); }
-  if (provincia) { updateFields.push("provincia = ?"); params.push(provincia); }
-  if (codigo_postal) { updateFields.push("codigo_postal = ?"); params.push(codigo_postal); }
-  if (escudo) { updateFields.push("escudo = ?"); params.push(escudo); }
+  if (nombre) {
+    updateFields.push("nombre = ?");
+    params.push(nombre);
+  }
+  if (telefono) {
+    updateFields.push("telefono = ?");
+    params.push(telefono);
+  }
+  if (email) {
+    updateFields.push("email = ?");
+    params.push(email);
+  }
+  if (direccion) {
+    updateFields.push("direccion = ?");
+    params.push(direccion);
+  }
+  if (poblacion) {
+    updateFields.push("poblacion = ?");
+    params.push(poblacion);
+  }
+  if (provincia) {
+    updateFields.push("provincia = ?");
+    params.push(provincia);
+  }
+  if (codigo_postal) {
+    updateFields.push("codigo_postal = ?");
+    params.push(codigo_postal);
+  }
+  if (escudo) {
+    updateFields.push("escudo = ?");
+    params.push(escudo);
+  }
 
   if (updateFields.length === 0) {
     return res.status(400).json({ message: "No hay datos para actualizar" });
@@ -81,14 +135,18 @@ export const actualizarClub = (req, res) => {
 
   params.push(id);
 
-  db.query(`UPDATE clubes SET ${updateFields.join(", ")} WHERE id = ?`, params, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
+  db.query(
+    `UPDATE clubes SET ${updateFields.join(", ")} WHERE id = ?`,
+    params,
+    (err) => {
+      if (err) return res.status(500).json({ error: err.message });
 
-    res.json({ message: "Club actualizado correctamente" });
-  });
+      res.json({ message: "Club actualizado correctamente" });
+    }
+  );
 };
 
-export const eliminarClub = (req, res) => {
+export const deleteClub = (req, res) => {
   const { id } = req.params;
 
   db.query("DELETE FROM clubes WHERE id = ?", [id], (err) => {
@@ -98,7 +156,7 @@ export const eliminarClub = (req, res) => {
   });
 };
 
-export const obtenerJugadoresClub = (req, res) => {
+export const getClubPlayers = (req, res) => {
   const { id } = req.params; // clubId
 
   db.query(
@@ -115,7 +173,7 @@ export const obtenerJugadoresClub = (req, res) => {
   );
 };
 
-export const obtenerJugadoresClubCategoria = (req, res) => {
+export const getClubPlayersByCategory = (req, res) => {
   const { id } = req.params; // clubId
   const { anioTemporada, edadMin, edadMax } = req.query;
 
@@ -127,13 +185,7 @@ export const obtenerJugadoresClubCategoria = (req, res) => {
        AND u.club_id = ?
        AND (? - u.anio_nacimiento) BETWEEN ? AND ?
      ORDER BY u.nombre ASC`,
-    [
-      anioTemporada,
-      id,
-      anioTemporada,
-      edadMin,
-      edadMax
-    ],
+    [anioTemporada, id, anioTemporada, edadMin, edadMax],
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json(results);
@@ -141,7 +193,7 @@ export const obtenerJugadoresClubCategoria = (req, res) => {
   );
 };
 
-export const obtenerEntrenadoresClub = (req, res) => {
+export const getClubCoaches = (req, res) => {
   const { id } = req.params; // clubId
 
   db.query(
@@ -158,8 +210,7 @@ export const obtenerEntrenadoresClub = (req, res) => {
   );
 };
 
-
-export const obtenerResumenClub = (req, res) => {
+export const getClubSummary = (req, res) => {
   const { id } = req.params;
 
   const sql = `
@@ -174,5 +225,3 @@ export const obtenerResumenClub = (req, res) => {
     res.json(rows[0]);
   });
 };
-
-

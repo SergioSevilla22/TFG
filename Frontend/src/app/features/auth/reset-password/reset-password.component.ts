@@ -20,10 +20,12 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./reset-password.component.css'],
 })
 export class ResetPasswordComponent {
-  passwordsIguales: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const nueva = control.get('nuevaPassword')?.value;
-    const confirmar = control.get('confirmarPassword')?.value;
-    return nueva && confirmar && nueva !== confirmar ? { noCoinciden: true } : null;
+  passwordsMatch: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const newPassword = control.get('nuevaPassword')?.value;
+    const confirmPassword = control.get('confirmarPassword')?.value;
+    return newPassword && confirmPassword && newPassword !== confirmPassword
+      ? { noCoinciden: true }
+      : null;
   };
 
   form = new FormGroup(
@@ -31,7 +33,7 @@ export class ResetPasswordComponent {
       nuevaPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
       confirmarPassword: new FormControl('', [Validators.required]),
     },
-    { validators: [this.passwordsIguales] },
+    { validators: [this.passwordsMatch] },
   );
 
   token = '';
@@ -65,7 +67,7 @@ export class ResetPasswordComponent {
     });
   }
 
-  get passwordsNoCoinciden(): boolean {
+  get passwordsMismatch(): boolean {
     return this.form.hasError('noCoinciden') && this.form.get('confirmarPassword')?.touched!;
   }
 }

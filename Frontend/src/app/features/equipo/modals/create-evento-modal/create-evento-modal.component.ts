@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
-import { EventoService } from '../../../../../services/equipo/evento.service';
+import { EventService } from '../../../../../services/equipo/event.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
 
 @Component({
@@ -45,7 +45,7 @@ export class CreateEventoModalComponent implements OnInit {
     private dialogRef: MatDialogRef<CreateEventoModalComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: { equipoId: number; jugadoresEquipo: any[]; evento?: any },
-    private eventoService: EventoService,
+    private eventoService: EventService,
     private authService: AuthService,
   ) {}
 
@@ -115,7 +115,7 @@ export class CreateEventoModalComponent implements OnInit {
     this.loading = true;
 
     if (this.modo === 'editar') {
-      this.eventoService.editarEvento(this.data.evento.id, payload).subscribe({
+      this.eventoService.editEvent(this.data.evento.id, payload).subscribe({
         next: () => {
           this.loading = false;
           this.cerrar(true);
@@ -127,7 +127,7 @@ export class CreateEventoModalComponent implements OnInit {
       });
     } else {
       this.eventoService
-        .crearEvento({
+        .createEvent({
           equipo_id: this.data.equipoId,
           creador_dni: user.DNI,
           ...payload,

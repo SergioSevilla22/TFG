@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ClubService } from '../../../../../services/club/club.service';
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
+import { TeamService } from '../../../../../services/equipo/team.service';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +14,14 @@ import { TransferUserModalComponent } from '../../modals/transfer-user-modal/tra
 @Component({
   selector: 'app-club',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent, FormsModule, MatIcon, MatProgressSpinnerModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    HeaderComponent,
+    FormsModule,
+    MatIcon,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './club.component.html',
   styleUrls: ['./club.component.css'],
 })
@@ -42,7 +49,7 @@ export class ClubComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private clubService: ClubService,
-    private equipoService: EquipoService,
+    private equipoService: TeamService,
     private dialog: MatDialog,
     private authService: AuthService,
   ) {}
@@ -93,7 +100,7 @@ export class ClubComponent implements OnInit {
       next: (club) => {
         this.club = club;
 
-        this.equipoService.obtenerEquiposPorClub(this.clubId).subscribe({
+        this.equipoService.getTeamsByClub(this.clubId).subscribe({
           next: (equipos) => {
             this.equipos = equipos;
             this.equiposFiltrados = [];
@@ -106,7 +113,7 @@ export class ClubComponent implements OnInit {
           },
         });
 
-        this.clubService.getResumenClub(this.clubId).subscribe({
+        this.clubService.getClubSummary(this.clubId).subscribe({
           next: (data) => (this.resumen = data),
         });
       },
@@ -118,7 +125,7 @@ export class ClubComponent implements OnInit {
   }
 
   loadResumen() {
-    this.clubService.getResumenClub(this.clubId).subscribe({
+    this.clubService.getClubSummary(this.clubId).subscribe({
       next: (data) => (this.resumen = data),
     });
   }
@@ -139,11 +146,11 @@ export class ClubComponent implements OnInit {
   }
 
   loadEquipos() {
-    this.equipoService.obtenerEquiposPorClub(this.clubId).subscribe({
+    this.equipoService.getTeamsByClub(this.clubId).subscribe({
       next: (data) => {
         this.equipos = data;
-        this.equiposFiltrados = []; // 👈 NO mostrar nada al inicio
-        this.buscado = false; // 👈 aún no se ha buscado
+        this.equiposFiltrados = [];
+        this.buscado = false;
         this.loading = false;
       },
       error: () => {
@@ -215,7 +222,7 @@ export class ClubComponent implements OnInit {
       this.selectedFile = file;
       // Vista previa de la imagen
       const reader = new FileReader();
-      reader.onload = () => this.escudoPreview = reader.result;
+      reader.onload = () => (this.escudoPreview = reader.result);
       reader.readAsDataURL(file);
     }
   }
@@ -223,8 +230,7 @@ export class ClubComponent implements OnInit {
   guardarCambios(event: Event) {
     event.stopPropagation();
     this.loading = true;
-    
-    // Añadimos los campos de texto
+
     const formData = new FormData();
     formData.append('nombre', this.editForm.nombre);
     formData.append('email', this.editForm.email || '');
@@ -234,7 +240,6 @@ export class ClubComponent implements OnInit {
     formData.append('provincia', this.editForm.provincia || '');
     formData.append('codigo_postal', this.editForm.codigo_postal || '');
 
-    // Añadimos el archivo si se ha seleccionado uno nuevo
     if (this.selectedFile) {
       formData.append('escudo', this.selectedFile);
     }
@@ -242,14 +247,14 @@ export class ClubComponent implements OnInit {
     this.clubService.updateClub(this.clubId, formData).subscribe({
       next: () => {
         this.editMode = false;
-        this.loadClubData(); // Recargamos todo para ver los cambios
+        this.loadClubData();
         if (this.isBrowser()) alert('Club actualizado correctamente');
       },
       error: (err) => {
         this.loading = false;
         console.error(err);
         if (this.isBrowser()) alert('Error al actualizar el club');
-      }
+      },
     });
   }
 }

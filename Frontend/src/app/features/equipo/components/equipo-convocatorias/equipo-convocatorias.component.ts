@@ -7,14 +7,14 @@ import { HeaderComponent } from '../../../../layout/header/header.component';
 import { SidebarEquipoComponent } from '../sidebar-equipo/sidebar-equipo.component';
 
 import { AuthService } from '../../../../../services/auth/auth.service';
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
-import { ConvocatoriaService } from '../../../../../services/equipo/convocatoria.service';
+import { TeamService } from '../../../../../services/equipo/team.service';
+import { MatchCallService } from '../../../../../services/equipo/matchCall.service';
 
 import { CreateConvocatoriaModalComponent } from '../../modals/create-convocatoria-modal/create-convocatoria-modal.component';
 import { MotivoModalComponent } from '../../modals/motivo-modal/motivo-modal.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { LoadEstadisticasModalComponent } from '../../modals/load-estadisticas-modal/load-estadisticas-modal.component';
-import { EstadisticasService } from '../../../../../services/jugador/estadisticas.service';
+import { StatsService } from '../../../../../services/jugador/stats.service';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -55,11 +55,11 @@ export class EquipoConvocatoriasComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private equipoService: EquipoService,
-    private convocatoriaService: ConvocatoriaService,
+    private equipoService: TeamService,
+    private convocatoriaService: MatchCallService,
     private dialog: MatDialog,
     public authService: AuthService,
-    private estadisticasService: EstadisticasService,
+    private estadisticasService: StatsService,
   ) {}
 
   ngOnInit(): void {
@@ -92,7 +92,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
   cargarEquipo() {
     this.loading = true;
 
-    this.equipoService.getEquipoById(this.equipoId).subscribe({
+    this.equipoService.getTeamById(this.equipoId).subscribe({
       next: (data) => {
         this.equipo = data;
         this.loading = false;
@@ -108,7 +108,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
   cargarConvocatorias() {
     this.loadingConvocatorias = true;
 
-    this.convocatoriaService.getConvocatoriasEquipo(this.equipoId).subscribe({
+    this.convocatoriaService.getTeamMatchCalls(this.equipoId).subscribe({
       next: (data) => {
         this.convocatorias = data;
         this.loadingConvocatorias = false;
@@ -146,7 +146,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
     console.log('Convocatoria:', c);
     const u = this.authService.getUser();
     this.convocatoriaService
-      .responderConvocatoria(c.id, {
+      .respondMatchCall(c.id, {
         jugador_dni: u.DNI,
         estado,
       })
@@ -163,7 +163,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
       if (!motivo) return;
 
       this.convocatoriaService
-        .responderConvocatoria(c.id, {
+        .respondMatchCall(c.id, {
           jugador_dni: this.authService.getUser().DNI,
           estado: 'rechazado',
           motivo,
@@ -173,9 +173,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
   }
 
   enviarRecordatorio(c: any) {
-    this.convocatoriaService
-      .enviarRecordatorio(c.id)
-      .subscribe(() => alert('Recordatorio enviado'));
+    this.convocatoriaService.sendReminder(c.id).subscribe(() => alert('Recordatorio enviado'));
   }
 
   contarPorEstado(convocatoria: any, estado: 'confirmado' | 'rechazado' | 'pendiente'): number {
@@ -247,7 +245,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
 
     if (!this.estadisticasJugador[convocatoriaId]) {
       this.estadisticasService
-        .getEstadisticasJugadorConvocatoria(convocatoriaId, user.DNI)
+        .getPlayerMatchCallStats(convocatoriaId, user.DNI)
         .subscribe((data) => {
           this.estadisticasJugador[convocatoriaId] = data;
           this.statsAbiertas[convocatoriaId] = true;
@@ -307,7 +305,7 @@ export class EquipoConvocatoriasComponent implements OnInit {
   eliminarConvocatoria(c: any) {
     if (!confirm('¿Eliminar esta convocatoria?')) return;
 
-    this.convocatoriaService.eliminarConvocatoria(c.id).subscribe({
+    this.convocatoriaService.deleteMatchCall(c.id).subscribe({
       next: () => (this.convocatorias = this.convocatorias.filter((x) => x.id !== c.id)),
       error: () => alert('No se pudo eliminar la convocatoria'),
     });

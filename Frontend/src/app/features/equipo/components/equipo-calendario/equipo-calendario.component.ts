@@ -11,11 +11,11 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg } from '@fullcalendar/core';
 
 import { MatDialog } from '@angular/material/dialog';
-import { CalendarioService } from '../../../../../services/equipo/calendario.service';
+import { CalendarService } from '../../../../../services/equipo/calendar.service';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { CreateConvocatoriaModalComponent } from '../../modals/create-convocatoria-modal/create-convocatoria-modal.component';
 import { CreateEventoModalComponent } from '../../modals/create-evento-modal/create-evento-modal.component';
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
+import { TeamService } from '../../../../../services/equipo/team.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
 import { DetallesEventoModalComponent } from '../../modals/detalles-evento-modal/detalles-evento-modal.component';
 import { SidebarEquipoComponent } from '../sidebar-equipo/sidebar-equipo.component';
@@ -54,8 +54,8 @@ export class EquipoCalendarioComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private calendarioService: CalendarioService,
-    private equipoService: EquipoService,
+    private calendarioService: CalendarService,
+    private equipoService: TeamService,
     private dialog: MatDialog,
     public authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -94,7 +94,7 @@ export class EquipoCalendarioComponent implements OnInit {
       });
   }
   cargarDatosEquipo() {
-    this.equipoService.getEquipoById(this.equipoId).subscribe({
+    this.equipoService.getTeamById(this.equipoId).subscribe({
       next: (data) => {
         this.equipo = data;
       },
@@ -105,7 +105,7 @@ export class EquipoCalendarioComponent implements OnInit {
   cargarCalendario() {
     this.loading = true;
 
-    this.calendarioService.getCalendarioEquipo(this.equipoId).subscribe({
+    this.calendarioService.getTeamCalendar(this.equipoId).subscribe({
       next: (data) => {
         console.log('Eventos recibidos del backend:', data);
         console.log(data);
@@ -133,7 +133,7 @@ export class EquipoCalendarioComponent implements OnInit {
   }
 
   descargarICal() {
-    window.open(this.calendarioService.getICalEquipo(this.equipoId), '_blank');
+    window.open(this.calendarioService.getTeamICal(this.equipoId), '_blank');
   }
 
   abrirModalCrearConvocatoria() {

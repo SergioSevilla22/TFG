@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { UsuarioService } from '../../../../../services/usuario/usuario.service';
+import { UserService } from '../../../../../services/usuario/user.service';
 
 @Component({
   selector: 'app-transfer-user-modal',
@@ -36,7 +36,7 @@ export class TransferUserModalComponent implements OnInit {
     private dialogRef: MatDialogRef<TransferUserModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { clubId: number },
     private clubService: ClubService,
-    private usuarioService: UsuarioService,
+    private usuarioService: UserService,
   ) {}
 
   ngOnInit(): void {
@@ -53,16 +53,14 @@ export class TransferUserModalComponent implements OnInit {
 
   cargarUsuarios() {
     if (this.tipoUsuario === 'jugador') {
-      this.clubService.getJugadoresClub(this.data.clubId).subscribe((res) => (this.usuarios = res));
+      this.clubService.getClubPlayers(this.data.clubId).subscribe((res) => (this.usuarios = res));
     } else {
-      this.clubService
-        .getEntrenadoresClub(this.data.clubId)
-        .subscribe((res) => (this.usuarios = res));
+      this.clubService.getClubCoaches(this.data.clubId).subscribe((res) => (this.usuarios = res));
     }
   }
 
   cargarClubes() {
-    this.clubService.getClubes().subscribe((res) => {
+    this.clubService.getClubs().subscribe((res) => {
       this.clubes = res.filter((c) => c.id !== this.data.clubId);
     });
   }
@@ -75,15 +73,13 @@ export class TransferUserModalComponent implements OnInit {
   traspasar() {
     if (!this.usuarioSeleccionado || !this.clubDestinoId) return;
 
-    this.usuarioService
-      .traspasarUsuario(this.usuarioSeleccionado.DNI, this.clubDestinoId)
-      .subscribe({
-        next: () => {
-          this.usuarioSeleccionado = null;
-          this.cargarUsuarios();
-        },
-        error: () => alert('Error al traspasar usuario'),
-      });
+    this.usuarioService.transferUser(this.usuarioSeleccionado.DNI, this.clubDestinoId).subscribe({
+      next: () => {
+        this.usuarioSeleccionado = null;
+        this.cargarUsuarios();
+      },
+      error: () => alert('Error al traspasar usuario'),
+    });
   }
 
   eliminar() {
@@ -91,7 +87,7 @@ export class TransferUserModalComponent implements OnInit {
       return;
     }
 
-    this.usuarioService.eliminarUsuario(this.usuarioSeleccionado.DNI).subscribe({
+    this.usuarioService.deleteUser(this.usuarioSeleccionado.DNI).subscribe({
       next: () => {
         this.usuarioSeleccionado = null;
         this.cargarUsuarios();

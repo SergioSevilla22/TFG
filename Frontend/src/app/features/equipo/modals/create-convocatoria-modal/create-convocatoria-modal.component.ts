@@ -10,7 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { ConvocatoriaService } from '../../../../../services/equipo/convocatoria.service';
+import { MatchCallService } from '../../../../../services/equipo/matchCall.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
 import { AiService } from '../../../../../services/ai/ai.service';
 
@@ -73,7 +73,7 @@ export class CreateConvocatoriaModalComponent implements OnInit {
       jugadoresEquipo: any[];
       convocatoria?: any;
     },
-    private convocatoriaService: ConvocatoriaService,
+    private convocatoriaService: MatchCallService,
     private authService: AuthService,
     private aiService: AiService,
   ) {}
@@ -229,7 +229,7 @@ export class CreateConvocatoriaModalComponent implements OnInit {
     this.errores = [];
 
     if (this.modo === 'editar') {
-      this.convocatoriaService.editarConvocatoria(this.data.convocatoria.id, payload).subscribe({
+      this.convocatoriaService.editMatchCall(this.data.convocatoria.id, payload).subscribe({
         next: () => {
           this.loading = false;
           this.cerrar(true);
@@ -241,7 +241,7 @@ export class CreateConvocatoriaModalComponent implements OnInit {
       });
     } else {
       this.convocatoriaService
-        .crearConvocatoria({
+        .createMatchCall({
           equipo_id: this.data.equipoId,
           creador_dni: user.DNI,
           ...payload,

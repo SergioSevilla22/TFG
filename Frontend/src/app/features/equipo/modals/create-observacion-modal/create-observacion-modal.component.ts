@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ObservacionesService } from '../../../../../services/equipo/observaciones.service';
+import { ObservationsService } from '../../../../../services/equipo/observations.service';
 
 @Component({
   selector: 'app-create-observacion-modal',
@@ -24,7 +24,7 @@ export class CreateObservacionModalComponent implements OnInit {
     public dialogRef: MatDialogRef<CreateObservacionModalComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: { equipoId: number; jugadoresEquipo: any[]; dniIndividual?: string },
-    private obsService: ObservacionesService,
+    private obsService: ObservationsService,
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +52,7 @@ export class CreateObservacionModalComponent implements OnInit {
       dnis: Array.from(this.seleccionados),
     };
 
-    this.obsService.crear(payload).subscribe({
+    this.obsService.create(payload).subscribe({
       next: () => this.dialogRef.close(true),
       error: (err) => {
         this.loading = false;

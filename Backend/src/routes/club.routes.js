@@ -2,32 +2,36 @@ import express from "express";
 import multer from "multer";
 
 import {
-  crearClub,
-  obtenerClubes,
-  obtenerClub,
-  actualizarClub,
-  eliminarClub,
-  obtenerJugadoresClub,
-  obtenerEntrenadoresClub,
-  obtenerResumenClub,
-  obtenerJugadoresClubCategoria
+  createClub,
+  getClubs,
+  getClub,
+  updateClub,
+  deleteClub,
+  getClubPlayers,
+  getClubCoaches,
+  getClubSummary,
+  getClubPlayersByCategory,
 } from "../controllers/club.controller.js";
 
-import { registerUsuariosMasivoAdminClub } from "../controllers/auth.controller.js";
+import { bulkRegisterClubAdminUsers } from "../controllers/auth.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-import { requireAdminPlataforma, requireAdminClub, requireGestionClub } from "../middlewares/roles.middleware.js";
+import {
+  requireAdminPlataforma,
+  requireAdminClub,
+  requireGestionClub,
+} from "../middlewares/roles.middleware.js";
 
 const router = express.Router();
 
 // ---------- MULTER ----------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "public/uploads/"),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 const upload = multer({ storage });
 
 /* ======================================================
-   CRUD CLUBES → SOLO ADMIN PLATAFORMA
+   CLUB CRUD → ADMIN PLATAFORMA ONLY
 ====================================================== */
 
 router.post(
@@ -35,22 +39,19 @@ router.post(
   authMiddleware,
   requireAdminPlataforma,
   upload.single("escudo"),
-  crearClub
+  createClub
 );
 
 router.get(
   "/clubes",
   authMiddleware,
   (req, res, next) => {
-    if (
-      req.user.Rol === 'admin_plataforma' ||
-      req.user.Rol === 'admin_club'
-    ) {
+    if (req.user.Rol === "admin_plataforma" || req.user.Rol === "admin_club") {
       return next();
     }
     return res.status(403).json({ message: "Acceso denegado" });
   },
-  obtenerClubes
+  getClubs
 );
 
 router.get(
@@ -58,14 +59,14 @@ router.get(
   authMiddleware,
   (req, res, next) => {
     if (
-      req.user.Rol === 'admin_plataforma' ||
-      (req.user.Rol === 'admin_club' && req.user.club_id == req.params.id)
+      req.user.Rol === "admin_plataforma" ||
+      (req.user.Rol === "admin_club" && req.user.club_id == req.params.id)
     ) {
       return next();
     }
     return res.status(403).json({ message: "Acceso denegado" });
   },
-  obtenerClub
+  getClub
 );
 
 router.put(
@@ -73,18 +74,18 @@ router.put(
   authMiddleware,
   requireAdminClub,
   upload.single("escudo"),
-  actualizarClub
+  updateClub
 );
 
 router.delete(
   "/clubes/:id",
   authMiddleware,
   requireAdminPlataforma,
-  eliminarClub
+  deleteClub
 );
 
 /* ======================================================
-   CONSULTAS CLUB → ADMIN CLUB (SOLO SU CLUB)
+   CLUB QUERIES → ADMIN CLUB (OWN CLUB ONLY)
 ====================================================== */
 
 router.get(
@@ -97,7 +98,7 @@ router.get(
     }
     next();
   },
-  obtenerJugadoresClub
+  getClubPlayers
 );
 
 router.get(
@@ -110,22 +111,25 @@ router.get(
     }
     next();
   },
-  obtenerEntrenadoresClub
+  getClubCoaches
 );
 
 router.get(
   "/clubes/:id/resumen",
   authMiddleware,
   requireGestionClub,
-  obtenerResumenClub
+  getClubSummary
 );
 
-router.get('/clubes/:id/jugadores-categoria', authMiddleware, requireGestionClub,
-  obtenerJugadoresClubCategoria
+router.get(
+  "/clubes/:id/jugadores-categoria",
+  authMiddleware,
+  requireGestionClub,
+  getClubPlayersByCategory
 );
 
 /* ======================================================
-   REGISTRO MASIVO → ADMIN CLUB
+   BULK REGISTER → ADMIN CLUB
 ====================================================== */
 
 router.post(
@@ -133,7 +137,7 @@ router.post(
   authMiddleware,
   requireAdminClub,
   upload.single("file"),
-  registerUsuariosMasivoAdminClub
+  bulkRegisterClubAdminUsers
 );
 
 export default router;

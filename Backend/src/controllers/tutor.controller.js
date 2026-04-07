@@ -2,45 +2,61 @@ import { db } from "../db.js";
 import bcrypt from "bcryptjs";
 
 /**
- * REGISTRAR DEPENDIENTE
- * El tutor crea un jugador dependiente con email y contraseña reales.
+ * REGISTER DEPENDENT
+ * The tutor creates a dependent player with a real email and password.
  */
-export const registrarDependiente = (req, res) => {
-  const { DNI, nombre, email, telefono, anioNacimiento, password, idTutor } = req.body;
+export const registerDependent = (req, res) => {
+  const { DNI, nombre, email, telefono, anioNacimiento, password, idTutor } =
+    req.body;
 
-  if (!DNI || !nombre || !email || !password || !idTutor|| !anioNacimiento) {
-    return res.status(400).json({ message: "Todos los campos son obligatorios" });
+  if (!DNI || !nombre || !email || !password || !idTutor || !anioNacimiento) {
+    return res
+      .status(400)
+      .json({ message: "Todos los campos son obligatorios" });
   }
 
-  // Verificar si ya existe un usuario con ese DNI
-  db.query("SELECT * FROM usuarios WHERE DNI = ?", [DNI], async (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length > 0)
-      return res.status(409).json({ message: "Ya existe un usuario con ese DNI" });
+  // Check if a user with that DNI already exists
+  db.query(
+    "SELECT * FROM usuarios WHERE DNI = ?",
+    [DNI],
+    async (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.length > 0)
+        return res
+          .status(409)
+          .json({ message: "Ya existe un usuario con ese DNI" });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    db.query(
-      "INSERT INTO usuarios (DNI, nombre, email, telefono, anio_nacimiento, password, Rol, idTutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [DNI, nombre, email, telefono, anioNacimiento, hashedPassword, "jugador", idTutor],
-      (err2) => {
-        
-        if (err2) return res.status(500).json({ error: err2.message });
+      db.query(
+        "INSERT INTO usuarios (DNI, nombre, email, telefono, anio_nacimiento, password, Rol, idTutor) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          DNI,
+          nombre,
+          email,
+          telefono,
+          anioNacimiento,
+          hashedPassword,
+          "jugador",
+          idTutor,
+        ],
+        (err2) => {
+          if (err2) return res.status(500).json({ error: err2.message });
 
-        res.json({ message: "Dependiente registrado correctamente" });
-      }
-    );
-  });
+          res.json({ message: "Dependiente registrado correctamente" });
+        }
+      );
+    }
+  );
 };
 
 /**
- * OBTENER DEPENDIENTES DEL TUTOR
+ * GET TUTOR'S DEPENDENTS
  */
-export const obtenerDependientes = (req, res) => {
+export const getDependents = (req, res) => {
   const { idTutor } = req.query;
 
-  if (!idTutor)
-    return res.status(400).json({ message: "idTutor obligatorio" });
+  if (!idTutor) return res.status(400).json({ message: "idTutor obligatorio" });
 
   db.query(
     "SELECT DNI, nombre, email, telefono, foto FROM usuarios WHERE idTutor = ?",
@@ -54,23 +70,19 @@ export const obtenerDependientes = (req, res) => {
 };
 
 /**
- * QUITAR VÍNCULO
- * El jugador deja de ser dependiente y pasa a jugador autónomo.
+ * REMOVE LINK
+ * The player is no longer a dependent and becomes an autonomous player.
  */
-export const quitarVinculo = (req, res) => {
+export const removeLink = (req, res) => {
   const { DNI } = req.body;
 
   if (!DNI) {
     return res.status(400).json({ message: "DNI obligatorio" });
   }
 
-  db.query(
-    "UPDATE usuarios SET idTutor = NULL WHERE DNI = ?",
-    [DNI],
-    (err) => {
-      if (err) return res.status(500).json({ error: err.message });
+  db.query("UPDATE usuarios SET idTutor = NULL WHERE DNI = ?", [DNI], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-      res.json({ message: "Jugador ahora es independiente" });
-    }
-  );
+    res.json({ message: "Jugador ahora es independiente" });
+  });
 };

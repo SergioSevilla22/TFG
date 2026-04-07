@@ -1,5 +1,9 @@
 import { db } from "../db.js";
-import { analyzePlayerAI, analyzeAttendanceAI, analyzeClusteringAI } from "../services/aiService.js";
+import {
+  analyzePlayerAI,
+  analyzeAttendanceAI,
+  analyzeClusteringAI,
+} from "../services/aiService.js";
 
 const query = (sql, params = []) =>
   new Promise((resolve, reject) => {
@@ -91,7 +95,7 @@ export const getAIClusteringAnalysis = async (req, res) => {
   const { dni } = req.params;
 
   try {
-    // Reutilizamos las queries que ya tienes porque el clustering necesita lo mismo
+    // Reusing existing queries since clustering needs the same data
     const stats = await query(
       `SELECT minutos, goles, asistencias, amarillas, rojas, estado_asistencia
        FROM estadisticas_convocatoria
