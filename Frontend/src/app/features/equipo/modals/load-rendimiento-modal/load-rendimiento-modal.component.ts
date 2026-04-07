@@ -10,7 +10,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { RendimientoService } from '../../../../../services/jugador/rendimiento.service';
+import { PerformanceService } from '../../../../../services/jugador/performance.service';
 
 @Component({
   selector: 'app-load-rendimiento-modal',
@@ -33,7 +33,7 @@ export class LoadRendimientoModalComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private rendimientoService: RendimientoService,
+    private rendimientoService: PerformanceService,
     private dialogRef: MatDialogRef<LoadRendimientoModalComponent>,
   ) {}
 
@@ -50,7 +50,7 @@ export class LoadRendimientoModalComponent implements OnInit {
       observaciones: '',
     }));
 
-    this.rendimientoService.getRendimiento(this.data.eventoId).subscribe((existing) => {
+    this.rendimientoService.getPerformance(this.data.eventoId).subscribe((existing) => {
       existing.forEach((r: any) => {
         const jugador = this.jugadores.find((j) => j.jugador_dni === r.jugador_dni);
         if (jugador) Object.assign(jugador, r);
@@ -60,7 +60,7 @@ export class LoadRendimientoModalComponent implements OnInit {
 
   guardar() {
     this.rendimientoService
-      .guardarRendimiento(this.data.eventoId, this.jugadores)
+      .savePerformance(this.data.eventoId, this.jugadores)
       .subscribe(() => this.dialogRef.close(true));
   }
 

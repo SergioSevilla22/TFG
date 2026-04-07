@@ -1,13 +1,13 @@
-import { EstadisticasService } from '../../../../services/jugador/estadisticas.service';
+import { StatsService } from '../../../../services/jugador/stats.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../../layout/header/header.component';
 import { SidebarEquipoComponent } from '../../equipo/components/sidebar-equipo/sidebar-equipo.component';
 import { AuthService } from '../../../../services/auth/auth.service';
-import { EquipoService } from '../../../../services/equipo/equipos.service';
+import { TeamService } from '../../../../services/equipo/team.service';
 import { signal } from '@angular/core';
-import { ObservacionesService } from '../../../../services/equipo/observaciones.service';
+import { ObservationsService } from '../../../../services/equipo/observations.service';
 import { MatIconModule } from '@angular/material/icon';
 import { CreateObservacionModalComponent } from '../../equipo/modals/create-observacion-modal/create-observacion-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -38,9 +38,9 @@ export class JugadorFichaComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public authService: AuthService,
-    private equipoService: EquipoService,
-    private estadisticasService: EstadisticasService,
-    private obsService: ObservacionesService,
+    private equipoService: TeamService,
+    private estadisticasService: StatsService,
+    private obsService: ObservationsService,
     private dialog: MatDialog,
   ) {}
 
@@ -55,7 +55,7 @@ export class JugadorFichaComponent implements OnInit {
       this.jugador = null;
       this.observaciones.set([]);
 
-      this.equipoService.getEquipoById(this.equipoId).subscribe({
+      this.equipoService.getTeamById(this.equipoId).subscribe({
         next: (data) => (this.equipo = data),
       });
 
@@ -71,7 +71,7 @@ export class JugadorFichaComponent implements OnInit {
         },
       });
 
-      this.estadisticasService.getTotalesJugador(dni).subscribe({
+      this.estadisticasService.getPlayerTotals(dni).subscribe({
         next: (data) => (this.totales = data),
         error: (err) => console.error('Error estadísticas:', err),
       });
@@ -84,7 +84,7 @@ export class JugadorFichaComponent implements OnInit {
   }
 
   cargarObservaciones(dni: string) {
-    this.obsService.getPorJugador(dni).subscribe({
+    this.obsService.getByPlayer(dni).subscribe({
       next: (data) => this.observaciones.set(data),
       error: (err) => console.error('Error observaciones:', err),
     });

@@ -3,18 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   // =====================
-  // ENDPOINTS BASE
+  // BASE ENDPOINTS
   // =====================
   private apiBase = 'http://localhost:3000/api';
 
   private apiUrlLogin = `${this.apiBase}/login`;
-  private apiUrlRegister = `${this.apiBase}/register`; // ⚠️ legado
-  private apiUrlRegisterCSV = `${this.apiBase}/register-massive`; // ⚠️ legado
+  private apiUrlRegister = `${this.apiBase}/register`; // ⚠️ legacy
+  private apiUrlRegisterCSV = `${this.apiBase}/register-massive`; // ⚠️ legacy
   private apiUrlForgotPassword = `${this.apiBase}/forgot-password`;
   private apiUrlResetPassword = `${this.apiBase}/reset-password`;
   private apiUrlAccept = `${this.apiBase}/accept-invitation`;
@@ -56,7 +55,7 @@ export class AuthService {
       tap((res: any) => {
         this.setItem('token', res.token);
         this.setItem('user', JSON.stringify(res.user));
-      })
+      }),
     );
   }
 
@@ -87,13 +86,13 @@ export class AuthService {
   }
 
   // =====================
-  // REGISTROS (NUEVO MODELO)
+  // REGISTRATIONS (NEW MODEL)
   // =====================
 
   /**
    * 🔴 ADMIN PLATAFORMA
    */
-  registerByAdminPlataforma(data: {
+  registerByPlatformAdmin(data: {
     DNI: string;
     nombre: string;
     email: string;
@@ -108,7 +107,7 @@ export class AuthService {
   /**
    * 🔵 ADMIN CLUB
    */
-  registerByAdminClub(data: {
+  registerByClubAdmin(data: {
     DNI: string;
     nombre: string;
     email: string;
@@ -122,12 +121,12 @@ export class AuthService {
   /**
    * 🔵 ADMIN CLUB - CSV
    */
-  registerMasivoAdminClub(formData: FormData): Observable<any> {
+  bulkRegisterByClubAdmin(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiBase}/club-admin/register-massive`, formData);
   }
 
   // =====================
-  // ⚠️ REGISTROS LEGADOS
+  // ⚠️ LEGACY REGISTRATIONS
   // =====================
   register(userData: any): Observable<any> {
     return this.http.post(this.apiUrlRegister, userData);
@@ -138,7 +137,7 @@ export class AuthService {
   }
 
   // =====================
-  // PASSWORD / INVITACIONES
+  // PASSWORD / INVITATIONS
   // =====================
   forgotPassword(email: string): Observable<any> {
     return this.http.post(this.apiUrlForgotPassword, { email });
@@ -161,21 +160,21 @@ export class AuthService {
   }
 
   // =====================
-  // USUARIOS
+  // USERS
   // =====================
-  updateUser(datos: FormData, actualizarSesion = true): Observable<any> {
-    return this.http.put(this.apiUrlUpdateUser, datos).pipe(
+  updateUser(data: FormData, updateSession = true): Observable<any> {
+    return this.http.put(this.apiUrlUpdateUser, data).pipe(
       tap((res: any) => {
-        if (actualizarSesion && res.user) {
+        if (updateSession && res.user) {
           this.setItem('user', JSON.stringify(res.user));
         }
-      })
+      }),
     );
   }
 
   deleteUser(dni: string): Observable<any> {
     return this.http.request('delete', this.apiUrlDeleteUser, {
-      body: { dni }
+      body: { dni },
     });
   }
 
@@ -190,15 +189,15 @@ export class AuthService {
   // =====================
   // TUTOR
   // =====================
-  registrarDependiente(data: any) {
+  registerDependent(data: any) {
     return this.http.post(`${this.apiBase}/tutor/registrar-dependiente`, data);
   }
 
-  obtenerDependientes(idTutor: string) {
+  getDependents(idTutor: string) {
     return this.http.get(`${this.apiBase}/tutor/dependientes?idTutor=${idTutor}`);
   }
 
-  quitarVinculo(DNI: string) {
+  removeLink(DNI: string) {
     return this.http.put(`${this.apiBase}/tutor/quitar-vinculo`, { DNI });
   }
 

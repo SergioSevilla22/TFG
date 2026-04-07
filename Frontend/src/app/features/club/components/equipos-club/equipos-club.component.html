@@ -15,7 +15,6 @@
   </header>
 
   <div class="main-grid">
-    
     <div class="list-section">
       <div class="section-top">
         <h3><mat-icon>account_tree</mat-icon> Estructura Actual</h3>
@@ -23,11 +22,19 @@
 
       <div class="categories-stack">
         <div class="cat-group" *ngFor="let grupo of equiposPorCategoria">
-          <div class="cat-header" 
-               [class.is-open]="categoriaAbierta === grupo.categoria"
-               (click)="categoriaAbierta = categoriaAbierta === grupo.categoria ? null : grupo.categoria">
+          <div
+            class="cat-header"
+            [class.is-open]="categoriaAbierta === grupo.categoria"
+            (click)="
+              categoriaAbierta = categoriaAbierta === grupo.categoria ? null : grupo.categoria
+            "
+          >
             <div class="cat-title">
-              <mat-icon class="folder-icon">{{ categoriaAbierta === grupo.categoria ? 'keyboard_arrow_down' : 'keyboard_arrow_right' }}</mat-icon>
+              <mat-icon class="folder-icon">{{
+                categoriaAbierta === grupo.categoria
+                  ? 'keyboard_arrow_down'
+                  : 'keyboard_arrow_right'
+              }}</mat-icon>
               <span>{{ grupo.categoria }}</span>
             </div>
             <span class="cat-count">{{ grupo.equipos.length }} equipos</span>
@@ -35,8 +42,12 @@
 
           <div class="cat-body" *ngIf="categoriaAbierta === grupo.categoria">
             <div class="team-grid">
-              <div class="team-card-modern" *ngFor="let eq of grupo.equipos" (click)="abrirEquipo(eq.id)">
-                <div class="team-initials">{{ eq.nombre.substring(0,2) | uppercase }}</div>
+              <div
+                class="team-card-modern"
+                *ngFor="let eq of grupo.equipos"
+                (click)="abrirEquipo(eq.id)"
+              >
+                <div class="team-initials">{{ eq.nombre.substring(0, 2) | uppercase }}</div>
                 <div class="team-data">
                   <h4>{{ eq.nombre }}</h4>
                   <span class="season-tag">{{ eq.temporada }}</span>
@@ -46,7 +57,7 @@
                 </button>
               </div>
             </div>
-            
+
             <div class="empty-state-mini" *ngIf="grupo.equipos.length === 0">
               <p>No hay equipos en esta categoría</p>
             </div>
@@ -62,11 +73,11 @@
             <mat-icon>add_box</mat-icon>
             <h3>Nuevo Equipo</h3>
           </div>
-          
+
           <div class="card-body">
             <div class="form-field">
               <label>Nombre identificativo</label>
-              <input type="text" placeholder="Ej: Juvenil A" [(ngModel)]="nuevoEquipo.nombre">
+              <input type="text" placeholder="Ej: Juvenil A" [(ngModel)]="nuevoEquipo.nombre" />
             </div>
 
             <div class="form-field">
@@ -95,6 +106,5 @@
         </div>
       </div>
     </aside>
-
   </div>
 </div>

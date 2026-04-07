@@ -8,8 +8,8 @@ import {
   MatDialogActions,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { ConvocatoriaService } from '../../../../../services/equipo/convocatoria.service';
-import { EventoService } from '../../../../../services/equipo/evento.service';
+import { MatchCallService } from '../../../../../services/equipo/matchCall.service';
+import { EventService } from '../../../../../services/equipo/event.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
 
@@ -41,8 +41,8 @@ export class DetallesEventoModalComponent implements OnInit {
     public dialogRef: MatDialogRef<DetallesEventoModalComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: { id: number; tipo: 'convocatoria' | 'evento'; equipoId: number },
-    private convocatoriaService: ConvocatoriaService,
-    private eventoService: EventoService,
+    private convocatoriaService: MatchCallService,
+    private eventoService: EventService,
     public authService: AuthService,
   ) {
     this.user = this.authService.getUser();
@@ -87,9 +87,9 @@ export class DetallesEventoModalComponent implements OnInit {
     };
 
     if (this.data.tipo === 'convocatoria') {
-      this.convocatoriaService.getConvocatoriasEquipo(equipoId).subscribe(observer);
+      this.convocatoriaService.getTeamMatchCalls(equipoId).subscribe(observer);
     } else {
-      this.eventoService.getEventosEquipo(equipoId).subscribe(observer);
+      this.eventoService.getTeamEvents(equipoId).subscribe(observer);
     }
   }
 
@@ -138,8 +138,8 @@ export class DetallesEventoModalComponent implements OnInit {
 
     const peticion =
       this.data.tipo === 'convocatoria'
-        ? this.convocatoriaService.responderConvocatoria(this.detalles.id, payload)
-        : this.eventoService.responderEvento(this.detalles.id, payload);
+        ? this.convocatoriaService.respondMatchCall(this.detalles.id, payload)
+        : this.eventoService.respondToEvent(this.detalles.id, payload);
 
     peticion.subscribe({
       next: () => this.dialogRef.close(true),

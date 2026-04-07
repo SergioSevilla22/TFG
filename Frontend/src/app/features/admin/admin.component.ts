@@ -13,8 +13,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { ClubService } from '../../../services/club/club.service';
-import { CategoriaService } from '../../../services/admin/categoria.service';
-import { TemporadaService } from '../../../services/admin/temporada.service';
+import { CategoryService } from '../../../services/admin/category.service';
+import { SeasonService } from '../../../services/admin/season.service';
 
 @Component({
   selector: 'app-admin',
@@ -26,16 +26,16 @@ import { TemporadaService } from '../../../services/admin/temporada.service';
 export class AdminComponent implements OnInit {
   activeTab: string = 'eliminar';
 
-  // ---------- GESTIÓN USUARIOS ----------
+  // ---------- USER MANAGEMENT ----------
   dniToDelete: string = '';
-  resultado: string = '';
+  result: string = '';
 
-  dniBusqueda = '';
-  usuarioEncontrado: any = null;
-  resultadoBusqueda = '';
+  searchDni = '';
+  foundUser: any = null;
+  searchResult = '';
 
-  nuevoRol: string = '';
-  resultadoRol: string = '';
+  newRole: string = '';
+  roleResult: string = '';
 
   RegisterForm = new FormGroup({
     DNI: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{8}[A-Za-z]$/)]),
@@ -53,15 +53,15 @@ export class AdminComponent implements OnInit {
 
   selectedFile: File | null = null;
 
-  // ---- EDICIÓN PERFIL USUARIO (ADMIN) ----
+  // ---- USER PROFILE EDITING (ADMIN) ----
   editUserMode = false;
   editUser: any = null;
-  resultadoEdicion = '';
+  editResult = '';
 
-  // ---------- GESTIÓN CLUBES ----------
-  clubes: any[] = [];
-  clubesFiltrados: any[] = [];
-  busquedaClub: string = '';
+  // ---------- CLUB MANAGEMENT ----------
+  clubs: any[] = [];
+  filteredClubs: any[] = [];
+  clubSearch: string = '';
 
   editingClubId: number | null = null;
   selectedEscudo: File | null = null;
@@ -76,61 +76,60 @@ export class AdminComponent implements OnInit {
     codigo_postal: new FormControl(''),
   });
 
-  // ---------- GESTIÓN CATEGORÍAS ----------
-  categorias: any[] = [];
-  editingCategoriaId: number | null = null;
+  // ---------- CATEGORY MANAGEMENT ----------
+  categories: any[] = [];
+  editingCategoryId: number | null = null;
 
-  CategoriaForm = new FormGroup({
+  CategoryForm = new FormGroup({
     nombre: new FormControl('', Validators.required),
     edad_min: new FormControl<number | null>(null),
     edad_max: new FormControl<number | null>(null),
   });
 
-  // ---------- GESTIÓN TEMPORADAS ----------
-  temporadas: any[] = [];
+  // ---------- SEASON MANAGEMENT ----------
+  seasons: any[] = [];
 
-  TemporadaForm = new FormGroup({
+  SeasonForm = new FormGroup({
     nombre: new FormControl('', Validators.required),
   });
 
-  rolUsuario: 'admin_plataforma' | 'admin_club' | null = null;
-  clubIdAdminClub: number | null = null;
+  userRole: 'admin_plataforma' | 'admin_club' | null = null;
+  clubAdminClubId: number | null = null;
 
   constructor(
     private readonly authService: AuthService,
     private readonly clubService: ClubService,
-    private readonly categoriaService: CategoriaService,
-    private readonly temporadaService: TemporadaService,
+    private readonly categoryService: CategoryService,
+    private readonly seasonService: SeasonService,
     private router: Router,
   ) {}
 
   ngOnInit(): void {
     const user = this.authService.getUser();
-    this.rolUsuario = user?.Rol || null;
-    this.clubIdAdminClub = user?.club_id || null;
+    this.userRole = user?.Rol || null;
+    this.clubAdminClubId = user?.club_id || null;
 
-    // 🔒 Si es admin club, forzamos pestaña registrar
-    if (this.rolUsuario === 'admin_club') {
+    // 🔒 If admin club, force registrar tab
+    if (this.userRole === 'admin_club') {
       this.activeTab = 'registrar';
     }
 
-    if (this.rolUsuario === 'admin_plataforma') {
-      this.cargarClubes();
+    if (this.userRole === 'admin_plataforma') {
+      this.loadClubs();
     }
-    this.cargarCategorias();
-    this.cargarTemporadas();
+    this.loadCategories();
+    this.loadSeasons();
 
-    // --- TU CÓDIGO DE DNI (NO TOCAR) ---
     const dniControl = this.RegisterForm.get('DNI');
     if (dniControl) {
       dniControl.valueChanges.subscribe((value) => {
         if (!value) return;
         if (value.length > 8) {
-          const numeros = value.slice(0, 8);
-          const letra = value.slice(8).toUpperCase();
-          const nuevoValor = numeros + letra;
-          if (nuevoValor !== value) {
-            dniControl.setValue(nuevoValor, { emitEvent: false });
+          const numbers = value.slice(0, 8);
+          const letter = value.slice(8).toUpperCase();
+          const newValue = numbers + letter;
+          if (newValue !== value) {
+            dniControl.setValue(newValue, { emitEvent: false });
           }
         }
       });
@@ -138,36 +137,36 @@ export class AdminComponent implements OnInit {
   }
 
   // ===========================
-  //       GESTIÓN USUARIOS
+  //       USER MANAGEMENT
   // ===========================
 
   onDniChange() {
-    if (!this.usuarioEncontrado) return;
+    if (!this.foundUser) return;
 
-    if (this.dniBusqueda !== this.usuarioEncontrado.DNI) {
-      this.usuarioEncontrado = null;
-      this.resultadoRol = '';
+    if (this.searchDni !== this.foundUser.DNI) {
+      this.foundUser = null;
+      this.roleResult = '';
     }
   }
 
-  eliminarUser(dni: string) {
+  deleteUserById(dni: string) {
     if (!confirm(`¿Seguro que quieres eliminar al usuario con DNI ${dni}?`)) return;
 
     this.authService.deleteUser(dni).subscribe({
       next: (res: any) => {
-        this.resultado = res.message;
-        this.dniBusqueda = '';
-        this.usuarioEncontrado = null;
+        this.result = res.message;
+        this.searchDni = '';
+        this.foundUser = null;
       },
       error: (err: any) => {
-        this.resultado = err.error?.message || 'Error al eliminar usuario';
+        this.result = err.error?.message || 'Error al eliminar usuario';
       },
     });
   }
 
-  eliminarUsuario() {
+  deleteUser() {
     if (!this.dniToDelete) {
-      this.resultado = 'Debes introducir un DNI';
+      this.result = 'Debes introducir un DNI';
       return;
     }
 
@@ -175,73 +174,73 @@ export class AdminComponent implements OnInit {
 
     this.authService.deleteUser(this.dniToDelete).subscribe({
       next: (res: any) => {
-        this.resultado = res.message;
+        this.result = res.message;
         this.dniToDelete = '';
       },
       error: (err: any) => {
-        this.resultado = err.error?.message || 'Error al eliminar usuario';
+        this.result = err.error?.message || 'Error al eliminar usuario';
       },
     });
   }
 
-  buscarUsuario() {
-    if (!this.dniBusqueda) {
-      this.resultadoBusqueda = 'Introduce un DNI';
+  searchUser() {
+    if (!this.searchDni) {
+      this.searchResult = 'Introduce un DNI';
       return;
     }
 
-    this.authService.getUserByDni(this.dniBusqueda).subscribe({
+    this.authService.getUserByDni(this.searchDni).subscribe({
       next: (user: any) => {
-        this.usuarioEncontrado = user;
-        this.resultadoBusqueda = '';
+        this.foundUser = user;
+        this.searchResult = '';
       },
       error: (err) => {
-        this.usuarioEncontrado = null;
-        this.resultadoBusqueda = err.error?.message || 'Error al buscar usuario';
+        this.foundUser = null;
+        this.searchResult = err.error?.message || 'Error al buscar usuario';
       },
     });
   }
 
-  cambiarRol() {
-    if (!this.nuevoRol) {
-      this.resultadoRol = 'Debes seleccionar un rol';
+  changeRole() {
+    if (!this.newRole) {
+      this.roleResult = 'Debes seleccionar un rol';
       return;
     }
 
     this.authService
       .updateUserRole({
-        dni: this.usuarioEncontrado.DNI,
-        nuevoRol: this.nuevoRol,
+        dni: this.foundUser.DNI,
+        nuevoRol: this.newRole,
       })
       .subscribe({
         next: (res: any) => {
-          this.resultadoRol = res.message;
-          this.usuarioEncontrado.Rol = this.nuevoRol;
-          this.nuevoRol = '';
+          this.roleResult = res.message;
+          this.foundUser.Rol = this.newRole;
+          this.newRole = '';
         },
         error: (err) => {
-          this.resultadoRol = err.error?.message || 'Error al actualizar rol';
+          this.roleResult = err.error?.message || 'Error al actualizar rol';
         },
       });
   }
 
-  activarEdicionUsuario() {
+  enableUserEdit() {
     this.editUserMode = true;
-    this.resultadoEdicion = '';
-    this.editUser = { ...this.usuarioEncontrado };
+    this.editResult = '';
+    this.editUser = { ...this.foundUser };
   }
 
-  cancelarEdicionUsuario() {
+  cancelUserEdit() {
     this.editUserMode = false;
     this.editUser = null;
-    this.resultadoEdicion = '';
+    this.editResult = '';
   }
 
-  guardarEdicionUsuario() {
+  saveUserEdit() {
     if (!this.editUser) return;
 
     if (!/^[0-9]{9}$/.test(this.editUser.telefono)) {
-      this.resultadoEdicion = 'El teléfono debe tener 9 dígitos';
+      this.editResult = 'El teléfono debe tener 9 dígitos';
       return;
     }
 
@@ -254,12 +253,12 @@ export class AdminComponent implements OnInit {
 
     this.authService.updateUser(formData, false).subscribe({
       next: (res) => {
-        this.usuarioEncontrado = res.user;
+        this.foundUser = res.user;
         this.editUserMode = false;
-        this.resultadoEdicion = 'Usuario actualizado correctamente';
+        this.editResult = 'Usuario actualizado correctamente';
       },
       error: (err) => {
-        this.resultadoEdicion = err.error?.message || 'Error al actualizar usuario';
+        this.editResult = err.error?.message || 'Error al actualizar usuario';
       },
     });
   }
@@ -275,7 +274,7 @@ export class AdminComponent implements OnInit {
     // ============================
     // ADMIN PLATAFORMA
     // ============================
-    if (this.rolUsuario === 'admin_plataforma') {
+    if (this.userRole === 'admin_plataforma') {
       const payload: {
         DNI: string;
         nombre: string;
@@ -297,7 +296,7 @@ export class AdminComponent implements OnInit {
         payload.club_id = raw.club_id;
       }
 
-      this.authService.registerByAdminPlataforma(payload).subscribe({
+      this.authService.registerByPlatformAdmin(payload).subscribe({
         next: () => alert('Usuario creado correctamente'),
         error: (err) => alert(err.error?.message || 'Error al crear usuario'),
       });
@@ -306,10 +305,10 @@ export class AdminComponent implements OnInit {
     // ============================
     // ADMIN CLUB
     // ============================
-    if (this.rolUsuario === 'admin_club') {
+    if (this.userRole === 'admin_club') {
       const rol = raw.Rol;
 
-      // 🔒 Validación estricta (y defendible)
+      // 🔒 Strict validation
       if (rol !== 'jugador' && rol !== 'entrenador' && rol !== 'tutor') {
         alert('Rol no válido para admin de club');
         return;
@@ -331,7 +330,7 @@ export class AdminComponent implements OnInit {
         Rol: rol,
       };
 
-      this.authService.registerByAdminClub(payload).subscribe({
+      this.authService.registerByClubAdmin(payload).subscribe({
         next: () => alert('Usuario creado en tu club'),
         error: (err) => alert(err.error?.message || 'Error al crear usuario'),
       });
@@ -354,8 +353,8 @@ export class AdminComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', this.selectedFile);
 
-    // 🔴 ADMIN PLATAFORMA (LEGADO)
-    if (this.rolUsuario === 'admin_plataforma') {
+    // 🔴 ADMIN PLATAFORMA (LEGACY)
+    if (this.userRole === 'admin_plataforma') {
       this.authService.registerMassive(formData).subscribe({
         next: (res) => alert(res.message),
         error: (err) => alert(err.error?.message || 'Error'),
@@ -363,8 +362,8 @@ export class AdminComponent implements OnInit {
     }
 
     // 🔵 ADMIN CLUB
-    if (this.rolUsuario === 'admin_club') {
-      this.authService.registerMasivoAdminClub(formData).subscribe({
+    if (this.userRole === 'admin_club') {
+      this.authService.bulkRegisterByClubAdmin(formData).subscribe({
         next: (res) => alert(res.message),
         error: (err) => alert(err.error?.message || 'Error'),
       });
@@ -372,31 +371,31 @@ export class AdminComponent implements OnInit {
   }
 
   // ===========================
-  //       GESTIÓN CLUBES
+  //       CLUB MANAGEMENT
   // ===========================
 
-  cargarClubes() {
-    this.clubService.getClubes().subscribe({
+  loadClubs() {
+    this.clubService.getClubs().subscribe({
       next: (data) => {
-        this.clubes = data;
-        this.clubesFiltrados = [];
+        this.clubs = data;
+        this.filteredClubs = [];
       },
       error: (err) => console.error('Error al cargar clubes:', err),
     });
   }
 
-  filtrarClubes() {
-    const texto = this.busquedaClub.toLowerCase().trim();
+  filterClubs() {
+    const text = this.clubSearch.toLowerCase().trim();
 
-    if (texto === '') {
-      this.clubesFiltrados = [];
+    if (text === '') {
+      this.filteredClubs = [];
       return;
     }
 
-    this.clubesFiltrados = this.clubes.filter((club) => club.nombre.toLowerCase().includes(texto));
+    this.filteredClubs = this.clubs.filter((club) => club.nombre.toLowerCase().includes(text));
   }
 
-  abrirClub(id: number) {
+  openClub(id: number) {
     this.router.navigate(['/club', id]);
   }
 
@@ -407,7 +406,7 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  guardarClub() {
+  saveClub() {
     if (this.ClubForm.invalid) {
       this.ClubForm.markAllAsTouched();
       return;
@@ -429,7 +428,7 @@ export class AdminComponent implements OnInit {
         next: () => {
           alert('Club actualizado');
           this.resetClubForm();
-          this.cargarClubes();
+          this.loadClubs();
         },
         error: (err) => alert(err.error?.message || 'Error al actualizar club'),
       });
@@ -438,14 +437,14 @@ export class AdminComponent implements OnInit {
         next: () => {
           alert('Club creado');
           this.resetClubForm();
-          this.cargarClubes();
+          this.loadClubs();
         },
         error: (err) => alert(err.error?.message || 'Error al crear club'),
       });
     }
   }
 
-  editarClub(club: any) {
+  editClub(club: any) {
     this.editingClubId = club.id;
 
     this.ClubForm.patchValue({
@@ -461,11 +460,11 @@ export class AdminComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  eliminarClub(id: number) {
+  deleteClub(id: number) {
     if (!confirm('¿Eliminar este club?')) return;
 
     this.clubService.deleteClub(id).subscribe({
-      next: () => this.cargarClubes(),
+      next: () => this.loadClubs(),
       error: (err) => alert(err.error?.message || 'Error al eliminar club'),
     });
   }
@@ -477,48 +476,48 @@ export class AdminComponent implements OnInit {
   }
 
   // ===========================
-  //       GESTIÓN CATEGORÍAS
+  //       CATEGORY MANAGEMENT
   // ===========================
 
-  cargarCategorias() {
-    this.categoriaService.getCategorias().subscribe({
-      next: (data) => (this.categorias = data),
+  loadCategories() {
+    this.categoryService.getCategories().subscribe({
+      next: (data) => (this.categories = data),
       error: (err) => console.error(err),
     });
   }
 
-  guardarCategoria() {
-    if (this.CategoriaForm.invalid) {
-      this.CategoriaForm.markAllAsTouched();
+  saveCategory() {
+    if (this.CategoryForm.invalid) {
+      this.CategoryForm.markAllAsTouched();
       return;
     }
 
-    const payload = this.CategoriaForm.value;
+    const payload = this.CategoryForm.value;
 
-    if (this.editingCategoriaId) {
-      this.categoriaService.updateCategoria(this.editingCategoriaId, payload).subscribe({
+    if (this.editingCategoryId) {
+      this.categoryService.updateCategory(this.editingCategoryId, payload).subscribe({
         next: () => {
           alert('Categoría actualizada');
-          this.resetCategoriaForm();
-          this.cargarCategorias();
+          this.resetCategoryForm();
+          this.loadCategories();
         },
         error: (err) => alert(err.error?.message || 'Error al actualizar'),
       });
     } else {
-      this.categoriaService.createCategoria(payload).subscribe({
+      this.categoryService.createCategory(payload).subscribe({
         next: () => {
           alert('Categoría creada');
-          this.resetCategoriaForm();
-          this.cargarCategorias();
+          this.resetCategoryForm();
+          this.loadCategories();
         },
         error: (err) => alert(err.error?.message || 'Error al crear categoría'),
       });
     }
   }
 
-  editarCategoria(cat: any) {
-    this.editingCategoriaId = cat.id;
-    this.CategoriaForm.patchValue({
+  editCategory(cat: any) {
+    this.editingCategoryId = cat.id;
+    this.CategoryForm.patchValue({
       nombre: cat.nombre,
       edad_min: cat.edad_min,
       edad_max: cat.edad_max,
@@ -527,59 +526,59 @@ export class AdminComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  eliminarCategoria(id: number) {
+  deleteCategory(id: number) {
     if (!confirm('¿Eliminar esta categoría?')) return;
 
-    this.categoriaService.deleteCategoria(id).subscribe({
-      next: () => this.cargarCategorias(),
+    this.categoryService.deleteCategory(id).subscribe({
+      next: () => this.loadCategories(),
       error: (err) => alert(err.error?.message || 'Error al eliminar categoría'),
     });
   }
 
-  resetCategoriaForm() {
-    this.CategoriaForm.reset();
-    this.editingCategoriaId = null;
+  resetCategoryForm() {
+    this.CategoryForm.reset();
+    this.editingCategoryId = null;
   }
 
   // ===========================
-  //       GESTIÓN TEMPORADAS
+  //       SEASON MANAGEMENT
   // ===========================
 
-  cargarTemporadas() {
-    this.temporadaService.getTemporadas().subscribe({
-      next: (data) => (this.temporadas = data),
+  loadSeasons() {
+    this.seasonService.getSeasons().subscribe({
+      next: (data) => (this.seasons = data),
       error: (err) => console.error(err),
     });
   }
 
-  crearNuevaTemporada() {
-    if (this.TemporadaForm.invalid) {
-      this.TemporadaForm.markAllAsTouched();
+  createNewSeason() {
+    if (this.SeasonForm.invalid) {
+      this.SeasonForm.markAllAsTouched();
       return;
     }
 
-    this.temporadaService.createTemporada(this.TemporadaForm.value).subscribe({
+    this.seasonService.createSeason(this.SeasonForm.value).subscribe({
       next: () => {
         alert('Temporada creada');
-        this.TemporadaForm.reset();
-        this.cargarTemporadas();
+        this.SeasonForm.reset();
+        this.loadSeasons();
       },
       error: (err) => alert(err.error?.message || 'Error al crear temporada'),
     });
   }
 
-  activarTemporada(id: number) {
-    this.temporadaService.activarTemporada(id).subscribe({
-      next: () => this.cargarTemporadas(),
+  activateSeason(id: number) {
+    this.seasonService.activateSeason(id).subscribe({
+      next: () => this.loadSeasons(),
       error: (err) => alert(err.error?.message || 'Error al activar temporada'),
     });
   }
 
-  eliminarTemporada(id: number) {
+  deleteSeason(id: number) {
     if (!confirm('¿Eliminar esta temporada?')) return;
 
-    this.temporadaService.deleteTemporada(id).subscribe({
-      next: () => this.cargarTemporadas(),
+    this.seasonService.deleteSeason(id).subscribe({
+      next: () => this.loadSeasons(),
       error: (err) => alert(err.error?.message || 'Error al eliminar temporada'),
     });
   }

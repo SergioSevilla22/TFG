@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { SidebarEquipoComponent } from '../sidebar-equipo/sidebar-equipo.component';
 
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
+import { TeamService } from '../../../../../services/equipo/team.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
 import { filter } from 'rxjs';
 
@@ -27,7 +27,7 @@ export class EquipoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private equipoService: EquipoService,
+    private equipoService: TeamService,
     public authService: AuthService,
   ) {}
 
@@ -49,7 +49,7 @@ export class EquipoComponent implements OnInit {
   cargarEquipo() {
     this.loading = true;
 
-    this.equipoService.getEquipoById(this.equipoId).subscribe({
+    this.equipoService.getTeamById(this.equipoId).subscribe({
       next: (data) => {
         this.equipo = data;
         this.loading = false;

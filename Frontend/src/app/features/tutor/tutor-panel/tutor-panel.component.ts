@@ -42,7 +42,7 @@ export class TutorPanelComponent implements OnInit {
   }
 
   cargarDependientes() {
-    this.authService.obtenerDependientes(this.user.DNI).subscribe({
+    this.authService.getDependents(this.user.DNI).subscribe({
       next: (res: any) => (this.dependientes = res),
       error: () => alert('Error cargando dependientes'),
     });
@@ -56,7 +56,7 @@ export class TutorPanelComponent implements OnInit {
       idTutor: this.user.DNI,
     };
 
-    this.authService.registrarDependiente(data).subscribe({
+    this.authService.registerDependent(data).subscribe({
       next: (res) => {
         alert(res);
         this.DepForm.reset();
@@ -69,7 +69,7 @@ export class TutorPanelComponent implements OnInit {
   quitarVinculo(dni: string) {
     if (!confirm('¿Seguro que quieres desvincular este jugador?')) return;
 
-    this.authService.quitarVinculo(dni).subscribe({
+    this.authService.removeLink(dni).subscribe({
       next: (res) => {
         alert(res);
         this.cargarDependientes();

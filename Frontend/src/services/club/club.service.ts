@@ -3,18 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ClubService {
-
   private apiUrl = 'http://localhost:3000/api/clubes';
 
   constructor(private http: HttpClient) {}
 
   // =====================
-  // CLUBES
+  // CLUBS
   // =====================
-  getClubes(): Observable<any[]> {
+  getClubs(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
 
@@ -34,66 +33,69 @@ export class ClubService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  buscarClubes(filtros: {
+  searchClubs(filters: {
     nombre?: string;
     provincia?: string;
     poblacion?: string;
   }): Observable<any[]> {
     const params: any = {};
 
-    if (filtros.nombre?.trim()) params.nombre = filtros.nombre.trim();
-    if (filtros.provincia?.trim()) params.provincia = filtros.provincia.trim();
-    if (filtros.poblacion?.trim()) params.poblacion = filtros.poblacion.trim();
+    if (filters.nombre?.trim()) params.nombre = filters.nombre.trim();
+    if (filters.provincia?.trim()) params.provincia = filters.provincia.trim();
+    if (filters.poblacion?.trim()) params.poblacion = filters.poblacion.trim();
 
     return this.http.get<any[]>(this.apiUrl, { params });
   }
 
   // =====================
-  // JUGADORES
+  // PLAYERS
   // =====================
-  getJugadoresClub(clubId: number): Observable<any[]> {
+  getClubPlayers(clubId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${clubId}/jugadores`);
   }
 
-  addJugadoresClub(clubId: number, jugadores: string[]): Observable<any> {
+  addClubPlayers(clubId: number, jugadores: string[]): Observable<any> {
     return this.http.put(`${this.apiUrl}/${clubId}/jugadores`, { jugadores });
   }
 
-  removeJugadorClub(clubId: number, dni: string): Observable<any> {
+  removeClubPlayer(clubId: number, dni: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${clubId}/jugadores/${dni}`);
   }
 
-  getJugadoresClubCategoria(clubId: number, anioTemporada: number, edadMin: number, edadMax: number): Observable<any[]> {
-
-    return this.http.get<any[]>(`${this.apiUrl}/${clubId}/jugadores-categoria`,
-      {
-        params: {
-          anioTemporada,
-          edadMin,
-          edadMax
-        }
-      }
-    );
+  getClubPlayersByCategory(
+    clubId: number,
+    anioTemporada: number,
+    edadMin: number,
+    edadMax: number,
+  ): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${clubId}/jugadores-categoria`, {
+      params: {
+        anioTemporada,
+        edadMin,
+        edadMax,
+      },
+    });
   }
+
   // =====================
-  // ENTRENADORES
+  // COACHES
   // =====================
-  getEntrenadoresClub(clubId: number): Observable<any[]> {
+  getClubCoaches(clubId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${clubId}/entrenadores`);
   }
 
-  addEntrenadoresClub(clubId: number, entrenadores: string[]): Observable<any> {
+  addClubCoaches(clubId: number, entrenadores: string[]): Observable<any> {
     return this.http.put(`${this.apiUrl}/${clubId}/entrenadores`, { entrenadores });
   }
 
-  removeEntrenadorClub(clubId: number, dni: string): Observable<any> {
+  removeClubCoach(clubId: number, dni: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${clubId}/entrenadores/${dni}`);
   }
 
   // =====================
-  // RESUMEN
+  // SUMMARY
   // =====================
-  getResumenClub(clubId: number): Observable<any> {
+  getClubSummary(clubId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${clubId}/resumen`);
   }
 }

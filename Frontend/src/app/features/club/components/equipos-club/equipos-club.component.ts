@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
-import { CategoriaService } from '../../../../../services/admin/categoria.service';
-import { TemporadaService } from '../../../../../services/admin/temporada.service';
+import { TeamService } from '../../../../../services/equipo/team.service';
+import { CategoryService } from '../../../../../services/admin/category.service';
+import { SeasonService } from '../../../../../services/admin/season.service';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { CommonModule } from '@angular/common';
@@ -44,9 +44,9 @@ export class EquiposClubComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private equipoService: EquipoService,
-    private categoriaService: CategoriaService,
-    private temporadaService: TemporadaService,
+    private equipoService: TeamService,
+    private categoriaService: CategoryService,
+    private temporadaService: SeasonService,
     private router: Router,
   ) {}
 
@@ -60,7 +60,7 @@ export class EquiposClubComponent implements OnInit {
   }
 
   cargarEquipos() {
-    this.equipoService.obtenerEquiposPorClub(this.clubId).subscribe((res) => {
+    this.equipoService.getTeamsByClub(this.clubId).subscribe((res) => {
       this.equipos = res;
       this.agruparEquiposPorCategoria();
     });
@@ -83,13 +83,13 @@ export class EquiposClubComponent implements OnInit {
   }
 
   cargarCategorias() {
-    this.categoriaService.getCategorias().subscribe((res) => {
+    this.categoriaService.getCategories().subscribe((res) => {
       this.categorias = res;
     });
   }
 
   cargarTemporadaActiva() {
-    this.temporadaService.getTemporadas().subscribe((temps: any[]) => {
+    this.temporadaService.getSeasons().subscribe((temps: any[]) => {
       const activa = temps.find((t) => t.activa === 1);
       this.temporadaActiva = activa.id;
       this.nuevoEquipo.temporada_id = activa.id;
@@ -97,7 +97,7 @@ export class EquiposClubComponent implements OnInit {
   }
 
   crearEquipo() {
-    this.equipoService.crearEquipo(this.nuevoEquipo).subscribe({
+    this.equipoService.createTeam(this.nuevoEquipo).subscribe({
       next: () => {
         this.mensaje = 'Equipo creado correctamente';
         this.cargarEquipos();
@@ -109,7 +109,7 @@ export class EquiposClubComponent implements OnInit {
   }
 
   eliminarEquipo(id: number) {
-    this.equipoService.eliminarEquipo(id).subscribe(() => {
+    this.equipoService.deleteTeam(id).subscribe(() => {
       this.cargarEquipos();
     });
   }

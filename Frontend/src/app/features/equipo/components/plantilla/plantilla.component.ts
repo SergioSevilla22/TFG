@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { SidebarEquipoComponent } from '../sidebar-equipo/sidebar-equipo.component';
 
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
+import { EquipoService } from '../../../../../services/equipo/team.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
 
 import { AddPlayersTeamModalComponent } from '../../../club/modals/add-players-team-modal/add-players-team-modal.component';

@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { EntrenadorService } from '../../../../../services/entrenador/entrenador.service';
+import { CoachService } from '../../../../../services/entrenador/coach.service';
 
 @Component({
   selector: 'app-add-coaches-club-modal',
@@ -31,7 +31,7 @@ export class AddCoachesClubModalComponent {
     private dialogRef: MatDialogRef<AddCoachesClubModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { clubId: number },
     private clubService: ClubService,
-    private entrenadorService: EntrenadorService,
+    private entrenadorService: CoachService,
   ) {}
 
   buscar() {
@@ -40,20 +40,20 @@ export class AddCoachesClubModalComponent {
       return;
     }
 
-    this.entrenadorService.buscarEntrenadoresGlobal(this.busqueda).subscribe({
+    this.entrenadorService.searchCoachesGlobal(this.busqueda).subscribe({
       next: (res) => (this.resultadosBusqueda = res as any[]),
     });
   }
 
   accionEntrenador(entrenador: any) {
     if (entrenador.club_id === this.data.clubId) {
-      this.clubService.removeEntrenadorClub(this.data.clubId, entrenador.DNI).subscribe({
+      this.clubService.removeClubCoach(this.data.clubId, entrenador.DNI).subscribe({
         next: () => this.buscar(),
         error: () => alert('Error quitando entrenador del club'),
       });
       return;
     }
-    this.clubService.addEntrenadoresClub(this.data.clubId, [entrenador.DNI]).subscribe({
+    this.clubService.addClubCoaches(this.data.clubId, [entrenador.DNI]).subscribe({
       next: () => this.buscar(),
       error: () => alert('Error añadiendo entrenador al club'),
     });

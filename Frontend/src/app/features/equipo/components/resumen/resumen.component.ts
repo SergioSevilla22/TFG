@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
+import { TeamService } from '../../../../../services/equipo/team.service';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { AddPlayersTeamModalComponent } from '../../../club/modals/add-players-team-modal/add-players-team-modal.component';
 import { AssignCoachTeamModalComponent } from '../../../club/modals/assign-coach-team-modal/assign-coach-team-modal.component';
 import { AuthService } from '../../../../../services/auth/auth.service';
-import { ConvocatoriaService } from '../../../../../services/equipo/convocatoria.service';
+import { MatchCallService } from '../../../../../services/equipo/matchCall.service';
 import { CreateConvocatoriaModalComponent } from '../../modals/create-convocatoria-modal/create-convocatoria-modal.component';
-import { EventoService } from '../../../../../services/equipo/evento.service';
+import { EventService } from '../../../../../services/equipo/event.service';
 import { CreateEventoModalComponent } from '../../modals/create-evento-modal/create-evento-modal.component';
 import { MotivoModalComponent } from '../../modals/motivo-modal/motivo-modal.component';
 import { SidebarEquipoComponent } from '../sidebar-equipo/sidebar-equipo.component';
@@ -60,9 +60,9 @@ export class ResumenComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private equipoService: EquipoService,
-    private convocatoriaService: ConvocatoriaService,
-    private eventoService: EventoService,
+    private equipoService: TeamService,
+    private convocatoriaService: MatchCallService,
+    private eventoService: EventService,
     private dialog: MatDialog,
     public authService: AuthService,
   ) {}
@@ -116,7 +116,7 @@ export class ResumenComponent implements OnInit {
 
   cargarConvocatorias() {
     this.loadingConvocatorias = true;
-    this.convocatoriaService.getConvocatoriasEquipo(this.equipoId).subscribe({
+    this.convocatoriaService.getTeamMatchCalls(this.equipoId).subscribe({
       next: (data) => {
         this.convocatorias = data;
         this.loadingConvocatorias = false;
@@ -154,7 +154,7 @@ export class ResumenComponent implements OnInit {
   responderConvocatoria(c: any, estado: string) {
     const u = this.authService.getUser();
     this.convocatoriaService
-      .responderConvocatoria(c.id, {
+      .respondMatchCall(c.id, {
         jugador_dni: u.DNI,
         estado,
       })
@@ -162,9 +162,7 @@ export class ResumenComponent implements OnInit {
   }
 
   enviarRecordatorio(c: any) {
-    this.convocatoriaService
-      .enviarRecordatorio(c.id)
-      .subscribe(() => alert('Recordatorio enviado'));
+    this.convocatoriaService.sendReminder(c.id).subscribe(() => alert('Recordatorio enviado'));
   }
 
   contarPorEstado(convocatoria: any, estado: 'confirmado' | 'rechazado' | 'pendiente'): number {
@@ -174,7 +172,7 @@ export class ResumenComponent implements OnInit {
 
   cargarEventos() {
     this.loadingEventos = true;
-    this.eventoService.getEventosEquipo(this.equipoId).subscribe({
+    this.eventoService.getTeamEvents(this.equipoId).subscribe({
       next: (data) => {
         this.eventos = data;
         this.loadingEventos = false;
@@ -204,7 +202,7 @@ export class ResumenComponent implements OnInit {
 
   responderEvento(e: any, estado: string) {
     this.eventoService
-      .responderEvento(e.id, {
+      .respondToEvent(e.id, {
         jugador_dni: this.authService.getUser().DNI,
         estado,
       })
@@ -239,7 +237,7 @@ export class ResumenComponent implements OnInit {
       return;
     }
 
-    this.eventoService.eliminarEvento(e.id).subscribe({
+    this.eventoService.deleteEvent(e.id).subscribe({
       next: () => {
         // Quitar el evento de la lista local
         this.eventos = this.eventos.filter((ev) => ev.id !== e.id);
@@ -253,7 +251,7 @@ export class ResumenComponent implements OnInit {
 
   // evento.component.ts
   enviarRecordatorioEvento(evento: any) {
-    this.eventoService.enviarRecordatorio(evento.id).subscribe({
+    this.eventoService.sendReminder(evento.id).subscribe({
       next: () => {
         alert('Recordatorio enviado'); // mensaje de éxito
       },
@@ -300,7 +298,7 @@ export class ResumenComponent implements OnInit {
   cargarEquipo() {
     this.loading = true;
 
-    this.equipoService.getEquipoById(this.equipoId).subscribe({
+    this.equipoService.getTeamById(this.equipoId).subscribe({
       next: (data) => {
         this.equipo = data;
         this.loading = false;
@@ -325,7 +323,7 @@ export class ResumenComponent implements OnInit {
       ASIGNAR ENTRENADOR
   =================================*/
   asignarEntrenador(dni: string) {
-    this.equipoService.asignarEntrenador(this.equipoId, dni).subscribe({
+    this.equipoService.assignCoach(this.equipoId, dni).subscribe({
       next: () => this.cargarEquipo(),
       error: () => alert('Error al asignar entrenador'),
     });
@@ -335,14 +333,14 @@ export class ResumenComponent implements OnInit {
       ASIGNAR JUGADORES
   =================================*/
   asignarJugador(dni: string) {
-    this.equipoService.asignarJugadores(this.equipoId, [dni]).subscribe({
+    this.equipoService.assignPlayers(this.equipoId, [dni]).subscribe({
       next: () => this.cargarEquipo(),
       error: () => alert('Error al asignar jugador'),
     });
   }
 
   eliminarJugador(dni: string) {
-    this.equipoService.moverJugador(dni, null).subscribe({
+    this.equipoService.movePlayer(dni, null).subscribe({
       next: () => this.cargarEquipo(),
       error: () => alert('Error al eliminar jugador'),
     });
@@ -354,7 +352,7 @@ export class ResumenComponent implements OnInit {
   onDropJugador(event: any) {
     const jugadorDNI = event.dataTransfer.getData('text/dni');
 
-    this.equipoService.moverJugador(jugadorDNI, this.equipoId).subscribe({
+    this.equipoService.movePlayer(jugadorDNI, this.equipoId).subscribe({
       next: () => this.cargarEquipo(),
       error: () => alert('Error moviendo jugador'),
     });
@@ -369,7 +367,7 @@ export class ResumenComponent implements OnInit {
   }
 
   eliminarEntrenador(dni: string) {
-    this.equipoService.quitarEntrenadorEquipo(dni).subscribe({
+    this.equipoService.removeCoachFromTeam(dni).subscribe({
       next: () => this.cargarEquipo(),
       error: () => alert('Error al quitar entrenador del equipo'),
     });
@@ -409,7 +407,7 @@ export class ResumenComponent implements OnInit {
       if (!motivo) return;
 
       this.convocatoriaService
-        .responderConvocatoria(c.id, {
+        .respondMatchCall(c.id, {
           jugador_dni: this.authService.getUser().DNI,
           estado: 'rechazado',
           motivo,
@@ -430,7 +428,7 @@ export class ResumenComponent implements OnInit {
       if (!motivo) return;
 
       this.eventoService
-        .responderEvento(e.id, {
+        .respondToEvent(e.id, {
           jugador_dni: this.authService.getUser().DNI,
           estado: 'confirmado_tarde',
           motivo,
@@ -451,7 +449,7 @@ export class ResumenComponent implements OnInit {
       if (!motivo) return;
 
       this.eventoService
-        .responderEvento(e.id, {
+        .respondToEvent(e.id, {
           jugador_dni: this.authService.getUser().DNI,
           estado: 'rechazado',
           motivo,

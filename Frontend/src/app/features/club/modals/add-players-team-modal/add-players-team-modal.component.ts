@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { EquipoService } from '../../../../../services/equipo/equipos.service';
+import { EquipoService } from '../../../../../services/equipo/team.service';
 
 @Component({
   selector: 'app-add-players-team-modal',
