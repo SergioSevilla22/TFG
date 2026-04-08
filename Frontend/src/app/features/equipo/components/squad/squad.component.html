@@ -1,0 +1,87 @@
+<div class="equipo-layout">
+  <main class="plantilla-content" *ngIf="!loading && team">
+    <!-- =========================
+         ENTRENADORES
+    ========================== -->
+    <section class="bloque">
+      <div class="bloque-header">
+        <h1>Entrenadores: {{ team.entrenadores.length }}</h1>
+
+        <button
+          *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
+          class="btn-add"
+          (click)="openAssignCoachModal()"
+        >
+          + Añadir entrenador
+        </button>
+      </div>
+
+      <div class="grid-personas entrenadores">
+        <div class="card-persona" *ngFor="let coach of team.entrenadores">
+          <div class="foto">
+            <img *ngIf="coach.foto" [src]="'http://localhost:3000' + coach.foto" />
+            <span *ngIf="!coach.foto">{{ coach.nombre[0] }}</span>
+          </div>
+
+          <h3>{{ coach.nombre }}</h3>
+
+          <button
+            *ngIf="authService.hasRole('admin_plataforma') || authService.hasRole('admin_club')"
+            class="btn-delete"
+            (click)="removeCoach(coach.DNI)"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         JUGADORES
+    ========================== -->
+    <section class="bloque">
+      <div class="bloque-header">
+        <h1>Jugadores: {{ team.jugadores.length }}</h1>
+
+        <button
+          *ngIf="
+            authService.hasRole('admin_plataforma') ||
+            authService.hasRole('admin_club') ||
+            authService.hasRole('entrenador')
+          "
+          class="btn-add"
+          (click)="openAddPlayersModal()"
+        >
+          + Añadir jugador
+        </button>
+      </div>
+
+      <div class="grid-personas jugadores">
+        <div
+          class="card-persona"
+          *ngFor="let player of team.jugadores"
+          (click)="goToProfile(player.DNI)"
+        >
+          <div class="foto grande">
+            <img *ngIf="player.foto" [src]="'http://localhost:3000' + player.foto" />
+            <span *ngIf="!player.foto">{{ player.nombre[0] }}</span>
+          </div>
+
+          <h3>{{ player.nombre }}</h3>
+
+          <button
+            *ngIf="
+              authService.hasRole('admin_plataforma') ||
+              authService.hasRole('admin_club') ||
+              authService.hasRole('entrenador')
+            "
+            class="btn-delete"
+            (click)="removePlayer(player.DNI); $event.stopPropagation()"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

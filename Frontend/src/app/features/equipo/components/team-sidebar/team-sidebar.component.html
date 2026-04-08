@@ -1,0 +1,64 @@
+<aside class="sidebar" *ngIf="team">
+  <!-- HEADER -->
+  <div class="sidebar-header">
+    <img
+      *ngIf="team.club?.escudo"
+      [src]="'http://localhost:3000' + team.club.escudo"
+      class="sidebar-escudo"
+    />
+
+    <h2>{{ team.nombre }}</h2>
+    <p>{{ team.categoria?.nombre }} · {{ team.temporada?.nombre }}</p>
+  </div>
+
+  <!-- NAV -->
+  <nav class="sidebar-nav">
+    <a
+      class="nav-item"
+      [routerLink]="['/equipo', teamId]"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>dashboard</mat-icon>
+      Resumen
+    </a>
+
+    <a
+      class="nav-item"
+      [class.active]="isSquadActive"
+      [routerLink]="['/equipo', teamId, 'plantilla']"
+    >
+      <mat-icon>group</mat-icon>
+      Plantilla
+    </a>
+
+    <a class="nav-item" [routerLink]="['/equipo', teamId, 'calendario']" routerLinkActive="active">
+      <mat-icon>calendar_month</mat-icon>
+      Calendario
+    </a>
+
+    <a class="nav-item" [routerLink]="['/equipo', teamId, 'eventos']" routerLinkActive="active">
+      <mat-icon>fitness_center</mat-icon>
+      Eventos
+    </a>
+
+    <a
+      class="nav-item"
+      [routerLink]="['/equipo', teamId, 'convocatorias']"
+      routerLinkActive="active"
+    >
+      <mat-icon>event</mat-icon>
+      Convocatorias
+    </a>
+
+    <a
+      *ngIf="dni"
+      class="nav-item"
+      [class.active]="isMyProfileActive"
+      [routerLink]="['/equipo', teamId, 'jugador', dni]"
+    >
+      <mat-icon>person</mat-icon>
+      Mi ficha
+    </a>
+  </nav>
+</aside>

@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { EquipoService } from '../../../../../services/equipo/team.service';
+import { TeamService } from '../../../../../services/team/team.service';
 
 @Component({
   selector: 'app-assign-coach-team-modal',
@@ -24,42 +24,42 @@ import { EquipoService } from '../../../../../services/equipo/team.service';
   styleUrls: ['./assign-coach-team-modal.component.scss'],
 })
 export class AssignCoachTeamModalComponent implements OnInit {
-  entrenadoresClub: any[] = [];
-  busqueda = '';
+  clubCoaches: any[] = [];
+  searchQuery = '';
 
   constructor(
     private dialogRef: MatDialogRef<AssignCoachTeamModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { clubId: number; equipoId: number },
     private clubService: ClubService,
-    private equipoService: EquipoService,
+    private teamService: TeamService,
   ) {}
 
   ngOnInit(): void {
-    this.cargarEntrenadores();
+    this.loadCoaches();
   }
 
-  cargarEntrenadores() {
-    this.clubService.getEntrenadoresClub(this.data.clubId).subscribe({
-      next: (res) => (this.entrenadoresClub = res as any[]),
+  loadCoaches() {
+    this.clubService.getClubCoaches(this.data.clubId).subscribe({
+      next: (res) => (this.clubCoaches = res as any[]),
     });
   }
 
-  get entrenadoresFiltrados() {
-    const q = this.busqueda.toLowerCase().trim();
-    if (!q) return this.entrenadoresClub;
-    return this.entrenadoresClub.filter(
-      (e) => e.nombre.toLowerCase().includes(q) || e.DNI.toLowerCase().includes(q),
+  get filteredCoaches() {
+    const q = this.searchQuery.toLowerCase().trim();
+    if (!q) return this.clubCoaches;
+    return this.clubCoaches.filter(
+      (c) => c.nombre.toLowerCase().includes(q) || c.DNI.toLowerCase().includes(q),
     );
   }
 
-  asignar(dni: string) {
-    this.equipoService.asignarEntrenador(this.data.equipoId, dni).subscribe({
+  assign(dni: string) {
+    this.teamService.assignCoach(this.data.equipoId, dni).subscribe({
       next: () => this.dialogRef.close(true),
       error: (err) => alert(err.error?.message || 'Error asignando entrenador'),
     });
   }
 
-  cerrar() {
+  close() {
     this.dialogRef.close(false);
   }
 }

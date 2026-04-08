@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { PlayerService } from '../../../../../services/jugador/player.service';
+import { PlayerService } from '../../../../../services/player/player.service';
 
 @Component({
   selector: 'app-add-players-club-modal',
@@ -24,69 +24,65 @@ import { PlayerService } from '../../../../../services/jugador/player.service';
   styleUrls: ['./add-players-club-modal.component.scss'],
 })
 export class AddPlayersClubModalComponent implements OnInit {
-  jugadoresClub: any[] = [];
-  resultadosBusqueda: any[] = [];
-  busqueda = '';
-  seleccion = new Set<string>();
+  clubPlayers: any[] = [];
+  searchResults: any[] = [];
+  searchQuery = '';
+  selection = new Set<string>();
 
   constructor(
     private dialogRef: MatDialogRef<AddPlayersClubModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { clubId: number },
     private clubService: ClubService,
-    private jugadorService: PlayerService,
+    private playerService: PlayerService,
   ) {}
 
   ngOnInit(): void {
-    this.cargarJugadoresClub();
+    this.loadClubPlayers();
   }
 
-  cargarJugadoresClub() {
+  loadClubPlayers() {
     this.clubService.getClubPlayers(this.data.clubId).subscribe({
-      next: (res) => (this.jugadoresClub = res),
+      next: (res) => (this.clubPlayers = res),
     });
   }
 
-  buscar() {
-    if (!this.busqueda.trim()) {
-      this.resultadosBusqueda = [];
+  search() {
+    if (!this.searchQuery.trim()) {
+      this.searchResults = [];
       return;
     }
 
-    this.jugadorService.searchPlayersGlobal(this.busqueda).subscribe({
-      next: (res) => (this.resultadosBusqueda = res),
+    this.playerService.searchPlayersGlobal(this.searchQuery).subscribe({
+      next: (res) => (this.searchResults = res),
     });
   }
 
   toggle(dni: string) {
-    this.seleccion.has(dni) ? this.seleccion.delete(dni) : this.seleccion.add(dni);
+    this.selection.has(dni) ? this.selection.delete(dni) : this.selection.add(dni);
   }
 
-  accionJugador(jugador: any) {
-    if (jugador.club_id === this.data.clubId) {
-      this.clubService.removeClubPlayer(this.data.clubId, jugador.DNI).subscribe({
-        next: () => {
-          this.buscar();
-        },
+  handlePlayerAction(player: any) {
+    if (player.club_id === this.data.clubId) {
+      this.clubService.removeClubPlayer(this.data.clubId, player.DNI).subscribe({
+        next: () => this.search(),
         error: () => alert('Error quitando jugador del club'),
       });
       return;
     }
 
-    this.clubService.addClubPlayers(this.data.clubId, [jugador.DNI]).subscribe({
-      next: () => {
-        this.buscar();
-      },
+    this.clubService.addClubPlayers(this.data.clubId, [player.DNI]).subscribe({
+      next: () => this.search(),
       error: () => alert('Error añadiendo jugador al club'),
     });
   }
 
-  cerrar() {
+  close() {
     this.dialogRef.close(false);
   }
 
-  quitar(dni: string) {
+  remove(dni: string) {
     this.clubService.removeClubPlayer(this.data.clubId, dni).subscribe({
-      next: () => this.cargarJugadoresClub(),
+      next: () => this.loadClubPlayers(),
     });
   }
 }

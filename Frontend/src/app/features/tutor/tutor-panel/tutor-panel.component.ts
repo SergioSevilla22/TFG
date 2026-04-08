@@ -18,10 +18,10 @@ import { HeaderComponent } from '../../../layout/header/header.component';
   styleUrls: ['./tutor-panel.component.css'],
 })
 export class TutorPanelComponent implements OnInit {
-  dependientes: any[] = [];
+  dependents: any[] = [];
   user: any;
 
-  DepForm = new FormGroup({
+  dependentForm = new FormGroup({
     DNI: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{8}[A-Za-z]$/)]),
     nombre: new FormControl('', Validators.required),
     anioNacimiento: new FormControl<number | null>(null, [
@@ -38,41 +38,41 @@ export class TutorPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.authService.getUser();
-    this.cargarDependientes();
+    this.loadDependents();
   }
 
-  cargarDependientes() {
+  loadDependents() {
     this.authService.getDependents(this.user.DNI).subscribe({
-      next: (res: any) => (this.dependientes = res),
+      next: (res: any) => (this.dependents = res),
       error: () => alert('Error cargando dependientes'),
     });
   }
 
-  registrarDependiente() {
-    if (this.DepForm.invalid) return;
+  registerDependent() {
+    if (this.dependentForm.invalid) return;
 
     const data = {
-      ...this.DepForm.value,
+      ...this.dependentForm.value,
       idTutor: this.user.DNI,
     };
 
     this.authService.registerDependent(data).subscribe({
       next: (res) => {
         alert(res);
-        this.DepForm.reset();
-        this.cargarDependientes();
+        this.dependentForm.reset();
+        this.loadDependents();
       },
       error: (err) => alert(err.error?.message || 'Error al registrar dependiente'),
     });
   }
 
-  quitarVinculo(dni: string) {
+  removeLink(dni: string) {
     if (!confirm('¿Seguro que quieres desvincular este jugador?')) return;
 
     this.authService.removeLink(dni).subscribe({
       next: (res) => {
         alert(res);
-        this.cargarDependientes();
+        this.loadDependents();
       },
       error: (err) => alert(err.error?.message || 'Error al quitar vínculo'),
     });

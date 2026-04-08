@@ -14,15 +14,15 @@ import { MatIcon } from '@angular/material/icon';
   styleUrls: ['./clubs.component.css'],
 })
 export class ClubsComponent implements OnInit {
-  filtros = {
+  filters = {
     nombre: '',
     provincia: '',
     poblacion: '',
   };
 
-  clubes: any[] = [];
+  clubs: any[] = [];
   loading = false;
-  buscado = false; // 👈 clave UX
+  searched = false; // 👈 clave UX
 
   constructor(
     private clubService: ClubService,
@@ -31,13 +31,13 @@ export class ClubsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  buscar() {
+  search() {
     this.loading = true;
-    this.buscado = true;
+    this.searched = true;
 
-    this.clubService.searchClubs(this.filtros).subscribe({
+    this.clubService.searchClubs(this.filters).subscribe({
       next: (res) => {
-        this.clubes = res;
+        this.clubs = res;
         this.loading = false;
       },
       error: () => {
@@ -48,16 +48,16 @@ export class ClubsComponent implements OnInit {
   }
 
   onInputChange() {
-    const { nombre, provincia, poblacion } = this.filtros;
+    const { nombre, provincia, poblacion } = this.filters;
 
     // Si todos los campos están vacíos → limpiar resultados
     if (!nombre && !provincia && !poblacion) {
-      this.clubes = [];
-      this.buscado = false;
+      this.clubs = [];
+      this.searched = false;
     }
   }
 
-  abrirClub(id: number) {
+  openClub(id: number) {
     this.router.navigate(['/club', id]);
   }
 }

@@ -10,7 +10,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { PerformanceService } from '../../../../../services/jugador/performance.service';
+import { PerformanceService } from '../../../../../services/player/performance.service';
 
 @Component({
   selector: 'app-load-rendimiento-modal',
@@ -29,20 +29,19 @@ import { PerformanceService } from '../../../../../services/jugador/performance.
   styleUrls: ['./load-rendimiento-modal.component.scss'],
 })
 export class LoadRendimientoModalComponent implements OnInit {
-  jugadores: any[] = [];
+  players: any[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private rendimientoService: PerformanceService,
+    private performanceService: PerformanceService,
     private dialogRef: MatDialogRef<LoadRendimientoModalComponent>,
   ) {}
 
   ngOnInit() {
-    this.jugadores = this.data.jugadores.map((j: any) => ({
+    this.players = this.data.jugadores.map((j: any) => ({
       jugador_dni: j.DNI,
       nombre: j.nombre,
       foto: j.foto,
-
       estado_asistencia: 'presente',
       nota_general: 0,
       intensidad: 0,
@@ -50,28 +49,27 @@ export class LoadRendimientoModalComponent implements OnInit {
       observaciones: '',
     }));
 
-    this.rendimientoService.getPerformance(this.data.eventoId).subscribe((existing) => {
+    this.performanceService.getPerformance(this.data.eventoId).subscribe((existing) => {
       existing.forEach((r: any) => {
-        const jugador = this.jugadores.find((j) => j.jugador_dni === r.jugador_dni);
-        if (jugador) Object.assign(jugador, r);
+        const player = this.players.find((p) => p.jugador_dni === r.jugador_dni);
+        if (player) Object.assign(player, r);
       });
     });
   }
 
-  guardar() {
-    this.rendimientoService
-      .savePerformance(this.data.eventoId, this.jugadores)
+  save() {
+    this.performanceService
+      .savePerformance(this.data.eventoId, this.players)
       .subscribe(() => this.dialogRef.close(true));
   }
 
-  cerrar(refresh = false) {
+  close(refresh = false) {
     this.dialogRef.close(refresh);
   }
 
-  limitarNumero(obj: any, campo: string, min: number, max: number) {
-    if (obj[campo] === null || obj[campo] === undefined) return;
-
-    if (obj[campo] < min) obj[campo] = min;
-    if (obj[campo] > max) obj[campo] = max;
+  clampNumber(obj: any, field: string, min: number, max: number) {
+    if (obj[field] === null || obj[field] === undefined) return;
+    if (obj[field] < min) obj[field] = min;
+    if (obj[field] > max) obj[field] = max;
   }
 }

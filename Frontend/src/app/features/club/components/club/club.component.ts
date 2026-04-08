@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ClubService } from '../../../../../services/club/club.service';
-import { TeamService } from '../../../../../services/equipo/team.service';
+import { TeamService } from '../../../../../services/team/team.service';
 import { HeaderComponent } from '../../../../layout/header/header.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
@@ -28,28 +28,28 @@ import { TransferUserModalComponent } from '../../modals/transfer-user-modal/tra
 export class ClubComponent implements OnInit {
   clubId!: number;
   club: any = null;
-  equipos: any[] = [];
+  teams: any[] = [];
   loading: boolean = true;
-  resumen: any = null;
-  equiposFiltrados: any[] = [];
-  buscado = false;
+  summary: any = null;
+  filteredTeams: any[] = [];
+  searched = false;
 
   editMode: boolean = false;
   selectedFile: File | null = null;
-  escudoPreview: string | ArrayBuffer | null = null;
+  shieldPreview: string | ArrayBuffer | null = null;
   editForm: any = {};
 
-  filtrosEquipos = {
-    nombre: '',
-    categoria: '',
-    temporada: '',
+  teamFilters = {
+    name: '',
+    category: '',
+    season: '',
   };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private clubService: ClubService,
-    private equipoService: TeamService,
+    private teamService: TeamService,
     private dialog: MatDialog,
     private authService: AuthService,
   ) {}
@@ -100,11 +100,11 @@ export class ClubComponent implements OnInit {
       next: (club) => {
         this.club = club;
 
-        this.equipoService.getTeamsByClub(this.clubId).subscribe({
-          next: (equipos) => {
-            this.equipos = equipos;
-            this.equiposFiltrados = [];
-            this.buscado = false;
+        this.teamService.getTeamsByClub(this.clubId).subscribe({
+          next: (teams) => {
+            this.teams = teams;
+            this.filteredTeams = [];
+            this.searched = false;
             this.loading = false;
           },
           error: (err) => {
@@ -114,7 +114,7 @@ export class ClubComponent implements OnInit {
         });
 
         this.clubService.getClubSummary(this.clubId).subscribe({
-          next: (data) => (this.resumen = data),
+          next: (data) => (this.summary = data),
         });
       },
       error: (err) => {
@@ -124,13 +124,13 @@ export class ClubComponent implements OnInit {
     });
   }
 
-  loadResumen() {
+  loadSummary() {
     this.clubService.getClubSummary(this.clubId).subscribe({
-      next: (data) => (this.resumen = data),
+      next: (data) => (this.summary = data),
     });
   }
 
-  abrirModalTraspasos() {
+  openTransferModal() {
     const dialogRef = this.dialog.open(TransferUserModalComponent, {
       width: '800px',
       data: { clubId: this.clubId },
@@ -139,18 +139,18 @@ export class ClubComponent implements OnInit {
     dialogRef.afterClosed().subscribe((refresh) => {
       if (refresh) {
         // Refrescamos KPIs y datos del club
-        this.loadResumen();
+        this.loadSummary();
         this.loadClubData();
       }
     });
   }
 
-  loadEquipos() {
-    this.equipoService.getTeamsByClub(this.clubId).subscribe({
+  loadTeams() {
+    this.teamService.getTeamsByClub(this.clubId).subscribe({
       next: (data) => {
-        this.equipos = data;
-        this.equiposFiltrados = [];
-        this.buscado = false;
+        this.teams = data;
+        this.filteredTeams = [];
+        this.searched = false;
         this.loading = false;
       },
       error: () => {
@@ -163,57 +163,57 @@ export class ClubComponent implements OnInit {
   }
 
   onInputChange() {
-    const { nombre, categoria, temporada } = this.filtrosEquipos;
+    const { name, category, season } = this.teamFilters;
 
-    if (!nombre && !categoria && !temporada) {
-      this.buscado = false;
-      this.equiposFiltrados = [];
+    if (!name && !category && !season) {
+      this.searched = false;
+      this.filteredTeams = [];
     }
   }
 
-  editarClub() {
+  editClub() {
     this.router.navigate(['/admin'], { queryParams: { editClub: this.clubId } });
   }
 
-  abrirEquipo(id: number) {
+  openTeam(id: number) {
     this.router.navigate(['/equipo', id]);
   }
 
-  crearEquipo() {
+  createTeam() {
     this.router.navigate(['/equipo/crear'], {
       queryParams: { clubId: this.clubId },
     });
   }
 
-  abrirEquiposClub() {
+  openClubTeams() {
     this.router.navigate([`/club/${this.clubId}/equipos`]);
   }
 
-  buscarEquipos() {
-    const { nombre, categoria, temporada } = this.filtrosEquipos;
-    this.buscado = true;
+  searchTeams() {
+    const { name, category, season } = this.teamFilters;
+    this.searched = true;
 
-    this.equiposFiltrados = this.equipos.filter(
-      (e) =>
-        (!nombre || e.nombre.toLowerCase().includes(nombre.toLowerCase())) &&
-        (!categoria || e.categoria.toLowerCase().includes(categoria.toLowerCase())) &&
-        (!temporada || e.temporada.toLowerCase().includes(temporada.toLowerCase())),
+    this.filteredTeams = this.teams.filter(
+      (t) =>
+        (!name || t.nombre.toLowerCase().includes(name.toLowerCase())) &&
+        (!category || t.categoria.toLowerCase().includes(category.toLowerCase())) &&
+        (!season || t.temporada.toLowerCase().includes(season.toLowerCase())),
     );
   }
 
-  iniciarEdicion() {
+  startEditing() {
     this.editMode = true;
     // Creamos una copia para no modificar el objeto original hasta guardar
     this.editForm = { ...this.club };
-    this.escudoPreview = null;
+    this.shieldPreview = null;
     this.selectedFile = null;
   }
 
-  cancelarEdicion(event?: Event) {
+  cancelEditing(event?: Event) {
     if (event) event.stopPropagation();
     this.editMode = false;
     this.selectedFile = null;
-    this.escudoPreview = null;
+    this.shieldPreview = null;
   }
 
   onFileSelected(event: any) {
@@ -222,12 +222,12 @@ export class ClubComponent implements OnInit {
       this.selectedFile = file;
       // Vista previa de la imagen
       const reader = new FileReader();
-      reader.onload = () => (this.escudoPreview = reader.result);
+      reader.onload = () => (this.shieldPreview = reader.result);
       reader.readAsDataURL(file);
     }
   }
 
-  guardarCambios(event: Event) {
+  saveChanges(event: Event) {
     event.stopPropagation();
     this.loading = true;
 

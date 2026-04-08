@@ -1,0 +1,49 @@
+<div class="mini-calendario">
+  <div class="mini-header">
+    <span>{{ monthName }} {{ year }}</span>
+    <button (click)="goToCalendar()">Ver</button>
+  </div>
+
+  <div class="dias-semana">
+    <span *ngFor="let d of weekDays">{{ d }}</span>
+  </div>
+
+  <div class="dias-mes">
+    <span
+      *ngFor="let day of days"
+      class="dia"
+      [class.hoy]="day.isToday"
+      [class.partido]="day.type === 'partido'"
+      [class.entrenamiento]="day.type === 'entrenamiento'"
+      [class.reunion]="day.type === 'reunion'"
+      [class.otro]="day.type === 'otro'"
+      [class.clickable]="day.hasEvent"
+      (click)="openDayDetail($event, day)"
+    >
+      {{ day.number }}
+    </span>
+  </div>
+
+  <div class="mini-leyenda">
+    <div class="item">
+      <span class="dot partido"></span>
+      <span>Partido</span>
+    </div>
+    <div class="item">
+      <span class="dot entrenamiento"></span>
+      <span>Entrenamiento</span>
+    </div>
+    <div class="item">
+      <span class="dot reunion"></span>
+      <span>Reunión</span>
+    </div>
+    <div class="item">
+      <span class="dot otro"></span>
+      <span>Otro</span>
+    </div>
+    <div class="item">
+      <span class="dot hoy"></span>
+      <span>Hoy</span>
+    </div>
+  </div>
+</div>

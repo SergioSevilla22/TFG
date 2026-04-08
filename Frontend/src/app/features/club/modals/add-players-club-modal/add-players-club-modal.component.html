@@ -1,51 +1,41 @@
 <h2 mat-dialog-title>Gestionar jugadores del club</h2>
 
 <div mat-dialog-content class="content">
-
   <mat-form-field appearance="outline" class="full">
     <mat-label>Buscar jugador (DNI o nombre)</mat-label>
-    <input matInput [(ngModel)]="busqueda" (input)="buscar()" />
+    <input matInput [(ngModel)]="searchQuery" (input)="search()" />
   </mat-form-field>
 
-  <div *ngIf="resultadosBusqueda.length; else empty">
-
-    <div class="row" *ngFor="let j of resultadosBusqueda">
-
+  <div *ngIf="searchResults.length; else empty">
+    <div class="row" *ngFor="let player of searchResults">
       <div class="info">
-        <strong>{{ j.nombre }}</strong>
-        <div class="muted">DNI: {{ j.DNI }}</div>
+        <strong>{{ player.nombre }}</strong>
+        <div class="muted">DNI: {{ player.DNI }}</div>
 
-        <div class="muted" *ngIf="j.club_id === data.clubId">
-          Ya pertenece a este club
-        </div>
+        <div class="muted" *ngIf="player.club_id === data.clubId">Ya pertenece a este club</div>
 
-        <div class="muted" *ngIf="j.club_id && j.club_id !== data.clubId">
+        <div class="muted" *ngIf="player.club_id && player.club_id !== data.clubId">
           Pertenece a otro club
         </div>
 
-        <div class="muted" *ngIf="!j.club_id">
-          Sin club
-        </div>
+        <div class="muted" *ngIf="!player.club_id">Sin club</div>
       </div>
 
       <button
         mat-raised-button
-        [color]="j.club_id === data.clubId ? 'warn' : 'primary'"
-        (click)="accionJugador(j)"
+        [color]="player.club_id === data.clubId ? 'warn' : 'primary'"
+        (click)="handlePlayerAction(player)"
       >
-        {{ j.club_id === data.clubId ? 'Quitar del club' : 'Añadir al club' }}
+        {{ player.club_id === data.clubId ? 'Quitar del club' : 'Añadir al club' }}
       </button>
-
     </div>
-
   </div>
 
   <ng-template #empty>
     <p class="muted">No hay jugadores que coincidan.</p>
   </ng-template>
-
 </div>
 
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="cerrar()">Cerrar</button>
+  <button mat-button (click)="close()">Cerrar</button>
 </div>

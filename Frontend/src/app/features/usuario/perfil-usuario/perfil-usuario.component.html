@@ -7,36 +7,25 @@
       <img [src]="getProfileImage()" alt="Foto de perfil" class="foto-perfil-redonda" />
 
       <div class="acciones-foto">
-
-        <!-- Botón Editar foto (solo si NO es dependiente) -->
-        <button *ngIf="!selectedFile && !isDependiente"
-                class="btn-editar-foto"
-                (click)="fileInput.click()">
+        <button
+          *ngIf="!selectedFile && !isDependent"
+          class="btn-editar-foto"
+          (click)="fileInput.click()"
+        >
           Editar foto
         </button>
 
-        <!-- Botones Guardar/Cancelar foto (solo si NO es dependiente) -->
-        <div *ngIf="selectedFile && !isDependiente" class="acciones-edicion">
-          <button class="btn-guardar-foto"
-                  (click)="guardarSoloFoto()"
-                  [disabled]="loading">
+        <div *ngIf="selectedFile && !isDependent" class="acciones-edicion">
+          <button class="btn-guardar-foto" (click)="savePhoto()" [disabled]="loading">
             Guardar
           </button>
 
-          <button class="btn-cancelar-foto"
-                  type="button"
-                  (click)="cancelarFoto()">
-            Cancelar
-          </button>
+          <button class="btn-cancelar-foto" type="button" (click)="cancelPhoto()">Cancelar</button>
         </div>
 
-        <!-- Cambiar contraseña (solo si NO es dependiente) -->
-        <button class="btn-cambiar-pass"
-                *ngIf="!isDependiente"
-                (click)="toggleChangePass()">
+        <button class="btn-cambiar-pass" *ngIf="!isDependent" (click)="toggleChangePass()">
           Cambiar contraseña
         </button>
-
       </div>
 
       <input
@@ -49,23 +38,42 @@
     </div>
 
     <!-- Tarjeta cambiar contraseña -->
-    <div class="change-pass-card" *ngIf="showChangePass && !isDependiente">
+    <div class="change-pass-card" *ngIf="showChangePass && !isDependent">
       <h2>Cambiar contraseña</h2>
       <form class="perfil-form">
         <label>Contraseña actual</label>
-        <input type="password" [(ngModel)]="actualPassword" name="actualPassword" placeholder="********" />
+        <input
+          type="password"
+          [(ngModel)]="currentPassword"
+          name="currentPassword"
+          placeholder="********"
+        />
 
         <label>Nueva contraseña</label>
-        <input type="password" [(ngModel)]="nuevaPassword" name="nuevaPassword" placeholder="********" />
+        <input
+          type="password"
+          [(ngModel)]="newPassword"
+          name="newPassword"
+          placeholder="********"
+        />
 
         <label>Confirmar nueva contraseña</label>
-        <input type="password" [(ngModel)]="confirmarPassword" name="confirmarPassword" placeholder="********" />
+        <input
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="********"
+        />
 
-        <p *ngIf="passwordsNoCoinciden" class="error">Las contraseñas no coinciden</p>
+        <p *ngIf="passwordsMismatch" class="error">Las contraseñas no coinciden</p>
 
         <div class="actions">
-          <button class="btn-changepassword" type="button" (click)="onChangePassword()" 
-                  [disabled]="loading || passwordsNoCoinciden">
+          <button
+            class="btn-changepassword"
+            type="button"
+            (click)="onChangePassword()"
+            [disabled]="loading || passwordsMismatch"
+          >
             Guardar Contraseña
           </button>
 
@@ -87,7 +95,6 @@
     </div>
 
     <div *ngIf="user; else noUser" class="perfil-card">
-
       <!-- Información (modo lectura) -->
       <div class="info" *ngIf="!editMode; else editForm">
         <p><strong>DNI:</strong> {{ user.DNI }}</p>
@@ -96,14 +103,10 @@
         <p><strong>Teléfono:</strong> {{ user.telefono }}</p>
         <p><strong>Rol:</strong> {{ user.Rol }}</p>
 
-        <p *ngIf="isDependiente" class="dependiente-msg">
-          Este perfil está gestionado por un tutor.
-        </p>
+        <p *ngIf="isDependent" class="dependiente-msg">Este perfil está gestionado por un tutor.</p>
 
         <div class="actions">
-          <!-- Botón EDITAR solo si NO es dependiente -->
-          <button *ngIf="!isDependiente" (click)="toggleEdit()">Editar perfil</button>
-
+          <button *ngIf="!isDependent" (click)="toggleEdit()">Editar perfil</button>
           <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
         </div>
       </div>
@@ -111,26 +114,25 @@
       <!-- Formulario edición -->
       <ng-template #editForm>
         <form class="perfil-form">
-
           <label>Nombre</label>
-          <input [(ngModel)]="user.nombre" name="nombre" [disabled]="isDependiente" />
+          <input [(ngModel)]="user.nombre" name="nombre" [disabled]="isDependent" />
 
           <label>Email</label>
-          <input [(ngModel)]="user.email" name="email" [disabled]="isDependiente" />
+          <input [(ngModel)]="user.email" name="email" [disabled]="isDependent" />
 
           <label>Teléfono</label>
-          <input [(ngModel)]="user.telefono" name="telefono" [disabled]="isDependiente" />
+          <input [(ngModel)]="user.telefono" name="telefono" [disabled]="isDependent" />
 
           <label>Rol</label>
-          <select [(ngModel)]="user.Rol" name="Rol" [disabled]="isDependiente">
+          <select [(ngModel)]="user.Rol" name="Rol" [disabled]="isDependent">
             <option value="jugador">Jugador</option>
             <option value="entrenador">Entrenador</option>
-            <option value="admin_plataforma">Administrador</option> <!-- ESTO NO DEBERIA SER ASI, ESTA PUESTO POR COMODIDAD, NUNCA SE TIENE QUE PODER EDITAR PARA SER ADMIN -->
+            <option value="admin_plataforma">Administrador</option>
+            <!-- ESTO NO DEBERIA SER ASI, ESTA PUESTO POR COMODIDAD, NUNCA SE TIENE QUE PODER EDITAR PARA SER ADMIN -->
           </select>
 
           <div class="actions">
-            <!-- Solo los NO dependientes pueden guardar -->
-            <button *ngIf="!isDependiente" type="button" (click)="guardarCambios()" [disabled]="loading">
+            <button *ngIf="!isDependent" type="button" (click)="saveChanges()" [disabled]="loading">
               {{ loading ? 'Guardando...' : 'Guardar cambios' }}
             </button>
 

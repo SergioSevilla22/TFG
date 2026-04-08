@@ -1,25 +1,28 @@
 <app-header></app-header>
 <div class="panel-container">
-
   <!-- Registrar dependiente -->
   <div class="card">
     <h3>Registrar Jugador</h3>
 
-    <form [formGroup]="DepForm" (ngSubmit)="registrarDependiente()">
-
+    <form [formGroup]="dependentForm" (ngSubmit)="registerDependent()">
       <label for="dni">DNI</label>
-      <input id="dni" type="text" formControlName="DNI" maxlength="9"/>
+      <input id="dni" type="text" formControlName="DNI" maxlength="9" />
 
-      <div class="error" *ngIf="DepForm.get('DNI')?.invalid && DepForm.get('DNI')?.touched">
-        <small *ngIf="DepForm.get('DNI')?.errors?.['required']">El DNI es obligatorio.</small>
-        <small *ngIf="DepForm.get('DNI')?.errors?.['pattern']">Formato inválido: 8 dígitos y una letra.</small>
+      <div
+        class="error"
+        *ngIf="dependentForm.get('DNI')?.invalid && dependentForm.get('DNI')?.touched"
+      >
+        <small *ngIf="dependentForm.get('DNI')?.errors?.['required']">El DNI es obligatorio.</small>
+        <small *ngIf="dependentForm.get('DNI')?.errors?.['pattern']"
+          >Formato inválido: 8 dígitos y una letra.</small
+        >
       </div>
 
       <label for="nombre">Nombre</label>
       <input id="nombre" type="text" formControlName="nombre" />
 
       <label for="anioNacimiento">Año de nacimiento</label>
-      <input id="anioNacimiento" type="number" formControlName="anioNacimiento"/>
+      <input id="anioNacimiento" type="number" formControlName="anioNacimiento" />
 
       <label for="email">Email</label>
       <input id="email" type="email" formControlName="email" />
@@ -27,9 +30,16 @@
       <label for="telefono">Teléfono</label>
       <input id="telefono" type="text" formControlName="telefono" />
 
-      <div class="error" *ngIf="DepForm.get('telefono')?.invalid && DepForm.get('telefono')?.touched">
-        <small *ngIf="DepForm.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</small>
-        <small *ngIf="DepForm.get('telefono')?.errors?.['pattern']">Debe tener 9 números.</small>
+      <div
+        class="error"
+        *ngIf="dependentForm.get('telefono')?.invalid && dependentForm.get('telefono')?.touched"
+      >
+        <small *ngIf="dependentForm.get('telefono')?.errors?.['required']"
+          >El teléfono es obligatorio.</small
+        >
+        <small *ngIf="dependentForm.get('telefono')?.errors?.['pattern']"
+          >Debe tener 9 números.</small
+        >
       </div>
 
       <label>Contraseña</label>
@@ -43,14 +53,15 @@
   <div class="card">
     <h3>Jugadores asociados</h3>
 
-    <div *ngFor="let d of dependientes" class="dependiente-card">
-      <p><strong>{{ d.nombre }}</strong></p>
-      <p>DNI: {{ d.DNI }}</p>
-      <p>Email: {{ d.email }}</p>
-      <p>Teléfono: {{ d.telefono }}</p>
+    <div *ngFor="let dependent of dependents" class="dependiente-card">
+      <p>
+        <strong>{{ dependent.nombre }}</strong>
+      </p>
+      <p>DNI: {{ dependent.DNI }}</p>
+      <p>Email: {{ dependent.email }}</p>
+      <p>Teléfono: {{ dependent.telefono }}</p>
 
-      <button (click)="quitarVinculo(d.DNI)">Quitar vínculo</button>
+      <button (click)="removeLink(dependent.DNI)">Quitar vínculo</button>
     </div>
   </div>
-
 </div>
