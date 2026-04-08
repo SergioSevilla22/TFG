@@ -1,0 +1,44 @@
+<app-header></app-header>
+<div class="panel-entrenador">
+  <h2>Mis Equipos</h2>
+
+  @for (team of teams; track $index) {
+    <div class="equipo-card">
+      <div class="equipo-header">
+        <h3>{{ team.nombre }} ({{ team.categoria }})</h3>
+        <p>{{ team.numeroJugadores }} jugadores | Última sesión: {{ team.ultimaSesion }}</p>
+      </div>
+
+      <table class="jugadores-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Fecha Nac.</th>
+            <th>Email</th>
+            <th>Minutos</th>
+            <th>Goles</th>
+            <th>Asistencias</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (player of getVisiblePlayers(team); track $index) {
+            <tr>
+              <td>{{ player.nombre }}</td>
+              <td>{{ player.fechaNacimiento }}</td>
+              <td>{{ player.email }}</td>
+              <td>{{ player.minutosJugados }}</td>
+              <td>{{ player.goles }}</td>
+              <td>{{ player.asistencias }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (team.jugadores.length > 1) {
+        <button class="ver-todos-btn" (click)="toggleExpand(team)">
+          {{ team.expanded ? 'Ocultar jugadores' : 'Ver todos' }}
+        </button>
+      }
+    </div>
+  }
+</div>

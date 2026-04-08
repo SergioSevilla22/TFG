@@ -17,7 +17,7 @@ export class PerfilUsuarioComponent {
 
   selectedFile: File | null = null;
   previewImage: string | ArrayBuffer | null = null;
-  isDependiente: boolean = false;
+  isDependent: boolean = false;
 
   loading = false;
   errorMsg = '';
@@ -26,9 +26,9 @@ export class PerfilUsuarioComponent {
 
   // Cambiar contraseña
   showChangePass = false;
-  actualPassword = '';
-  nuevaPassword = '';
-  confirmarPassword = '';
+  currentPassword = '';
+  newPassword = '';
+  confirmPassword = '';
   passMessage = '';
   passSuccess = false;
 
@@ -40,7 +40,7 @@ export class PerfilUsuarioComponent {
   ngOnInit(): void {
     this.user = this.authService.getUser();
     if (this.user && this.user.idTutor) {
-      this.isDependiente = true;
+      this.isDependent = true;
     }
   }
 
@@ -75,12 +75,12 @@ export class PerfilUsuarioComponent {
     reader.readAsDataURL(file);
   }
 
-  cancelarFoto() {
+  cancelPhoto() {
     this.selectedFile = null;
     this.previewImage = null;
   }
 
-  guardarSoloFoto() {
+  savePhoto() {
     if (!this.selectedFile || !this.user) return;
 
     const formData = new FormData();
@@ -102,21 +102,20 @@ export class PerfilUsuarioComponent {
     });
   }
 
-  validateTelefono(telefono: string): boolean {
+  validatePhone(phone: string): boolean {
     const regex = /^[0-9]{9}$/;
-    return regex.test(telefono);
+    return regex.test(phone);
   }
 
-  guardarCambios() {
+  saveChanges() {
     if (!this.user) return;
 
-    // Validación del teléfono
-    if (!this.validateTelefono(this.user.telefono)) {
+    if (!this.validatePhone(this.user.telefono)) {
       this.errorMsg = 'El teléfono debe tener 9 dígitos numéricos';
       return;
     }
 
-    this.errorMsg = ''; // limpiar mensaje de error
+    this.errorMsg = '';
 
     const formData = new FormData();
     formData.append('DNI', this.user.DNI);
@@ -150,22 +149,22 @@ export class PerfilUsuarioComponent {
     this.showChangePass = !this.showChangePass;
     this.passMessage = '';
     this.passSuccess = false;
-    this.actualPassword = '';
-    this.nuevaPassword = '';
-    this.confirmarPassword = '';
+    this.currentPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
   }
 
-  get passwordsNoCoinciden(): boolean {
+  get passwordsMismatch(): boolean {
     return (
-      this.confirmarPassword.trim().length > 0 &&
-      this.nuevaPassword.trim().length > 0 &&
-      this.nuevaPassword !== this.confirmarPassword
+      this.confirmPassword.trim().length > 0 &&
+      this.newPassword.trim().length > 0 &&
+      this.newPassword !== this.confirmPassword
     );
   }
 
   onChangePassword() {
     if (!this.user) return;
-    if (this.passwordsNoCoinciden) {
+    if (this.passwordsMismatch) {
       this.passMessage = 'Las contraseñas no coinciden.';
       this.passSuccess = false;
       return;
@@ -173,8 +172,8 @@ export class PerfilUsuarioComponent {
 
     const data = {
       email: this.user.email,
-      actualPassword: this.actualPassword,
-      nuevaPassword: this.nuevaPassword,
+      actualPassword: this.currentPassword,
+      nuevaPassword: this.newPassword,
     };
 
     this.loading = true;
@@ -185,9 +184,9 @@ export class PerfilUsuarioComponent {
         this.passMessage = res.message;
         this.passSuccess = true;
 
-        this.actualPassword = '';
-        this.nuevaPassword = '';
-        this.confirmarPassword = '';
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
 
         setTimeout(() => {
           this.showChangePass = false;

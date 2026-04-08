@@ -1,0 +1,109 @@
+<div class="modal-header">
+  <h2 mat-dialog-title>Cargar estadísticas del partido</h2>
+  <p class="subtitle">Introduce los datos individuales de cada jugador convocado.</p>
+</div>
+
+<div mat-dialog-content class="modal-content">
+  <div class="section-title">
+    <mat-icon>bar_chart</mat-icon>
+    <span>Estadísticas por Jugador</span>
+  </div>
+
+  <div class="stats-container">
+    <div class="stats-header">
+      <span class="player-col">Jugador</span>
+      <span>Asistencia</span>
+      <span>Min</span>
+      <span>Gol</span>
+      <span>Ast</span>
+      <span>TA</span>
+      <span>TR</span>
+    </div>
+
+    <div class="stats-row" *ngFor="let player of players">
+      <!-- JUGADOR -->
+      <div class="player-info">
+        <div class="avatar-mini">
+          <img
+            *ngIf="player.foto"
+            [src]="'http://localhost:3000' + player.foto"
+            class="avatar-img"
+          />
+          <span *ngIf="!player.foto">
+            {{ player.nombre[0] | uppercase }}
+          </span>
+        </div>
+
+        <div class="player-text">
+          <span class="name">{{ player.nombre }}</span>
+
+          <span *ngIf="player.estado_convocatoria === 'rechazado'" class="badge-rechazado">
+            Rechazó convocatoria
+          </span>
+          <span *ngIf="player.estado_convocatoria === 'pendiente'" class="badge-pendiente">
+            Pendiente de contestar
+          </span>
+          <span *ngIf="player.estado_convocatoria === 'confirmado'" class="badge-confirmado">
+            Confirmó asistencia
+          </span>
+        </div>
+      </div>
+
+      <select [(ngModel)]="player.estado_asistencia" class="custom-select">
+        <option value="presente">Presente</option>
+        <option value="tarde">Llegó tarde</option>
+        <option value="ausente">Ausente</option>
+        <option value="excusado">Ausencia justificada</option>
+      </select>
+
+      <input
+        type="number"
+        min="0"
+        [(ngModel)]="player.minutos"
+        [disabled]="player.estado_asistencia === 'ausente'"
+        class="custom-input small"
+      />
+
+      <input
+        type="number"
+        min="0"
+        [(ngModel)]="player.goles"
+        [disabled]="player.estado_asistencia === 'ausente'"
+        class="custom-input small"
+      />
+
+      <input
+        type="number"
+        min="0"
+        [(ngModel)]="player.asistencias"
+        [disabled]="player.estado_asistencia === 'ausente'"
+        class="custom-input small"
+      />
+
+      <input
+        type="number"
+        min="0"
+        [(ngModel)]="player.amarillas"
+        [disabled]="player.estado_asistencia === 'ausente'"
+        class="custom-input small"
+      />
+
+      <input
+        type="number"
+        min="0"
+        [(ngModel)]="player.rojas"
+        [disabled]="player.estado_asistencia === 'ausente'"
+        class="custom-input small"
+      />
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions align="end" class="modal-actions">
+  <button mat-button (click)="close(false)" class="btn-cancel">Cancelar</button>
+
+  <button mat-flat-button color="primary" (click)="save()" class="btn-publish">
+    <mat-icon>save</mat-icon>
+    Guardar estadísticas
+  </button>
+</div>

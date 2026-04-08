@@ -1,0 +1,106 @@
+<app-header></app-header>
+
+<div class="gestion-container">
+  <header class="gestion-header">
+    <div class="title-group">
+      <h1>Panel de Equipos</h1>
+      <p>Organiza la estructura deportiva de la entidad</p>
+    </div>
+    <div class="header-stats">
+      <div class="mini-stat">
+        <span class="num">{{ teamsByCategory.length }}</span>
+        <span class="lab">Categorías</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <div class="list-section">
+      <div class="section-top">
+        <h3><mat-icon>account_tree</mat-icon> Estructura Actual</h3>
+      </div>
+
+      <div class="categories-stack">
+        <div class="cat-group" *ngFor="let group of teamsByCategory">
+          <div
+            class="cat-header"
+            [class.is-open]="openCategory === group.categoria"
+            (click)="openCategory = openCategory === group.categoria ? null : group.categoria"
+          >
+            <div class="cat-title">
+              <mat-icon class="folder-icon">{{
+                openCategory === group.categoria ? 'keyboard_arrow_down' : 'keyboard_arrow_right'
+              }}</mat-icon>
+              <span>{{ group.categoria }}</span>
+            </div>
+            <span class="cat-count">{{ group.equipos.length }} equipos</span>
+          </div>
+
+          <div class="cat-body" *ngIf="openCategory === group.categoria">
+            <div class="team-grid">
+              <div
+                class="team-card-modern"
+                *ngFor="let team of group.equipos"
+                (click)="openTeam(team.id)"
+              >
+                <div class="team-initials">{{ team.nombre.substring(0, 2) | uppercase }}</div>
+                <div class="team-data">
+                  <h4>{{ team.nombre }}</h4>
+                  <span class="season-tag">{{ team.temporada }}</span>
+                </div>
+                <button class="btn-trash" (click)="deleteTeam(team.id); $event.stopPropagation()">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="empty-state-mini" *ngIf="group.equipos.length === 0">
+              <p>No hay equipos en esta categoría</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="form-section">
+      <div class="sticky-form">
+        <div class="create-card">
+          <div class="card-head">
+            <mat-icon>add_box</mat-icon>
+            <h3>Nuevo Equipo</h3>
+          </div>
+
+          <div class="card-body">
+            <div class="form-field">
+              <label>Nombre identificativo</label>
+              <input type="text" placeholder="Ej: Juvenil A" [(ngModel)]="newTeam.nombre" />
+            </div>
+
+            <div class="form-field">
+              <label>Categoría</label>
+              <select [(ngModel)]="newTeam.categoria_id">
+                <option [ngValue]="null" disabled>Seleccionar categoría...</option>
+                <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.nombre }}</option>
+              </select>
+            </div>
+
+            <button class="btn-submit" (click)="createTeam()">
+              Crear Equipo
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+
+            <div class="success-alert" *ngIf="message">
+              <mat-icon>check_circle</mat-icon>
+              {{ message }}
+            </div>
+          </div>
+        </div>
+
+        <div class="help-card">
+          <mat-icon>lightbulb</mat-icon>
+          <p>Los equipos creados aparecerán automáticamente en el directorio del club.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>{{ data.titulo }}</h2>
+
+<mat-dialog-content>
+  <textarea
+    rows="4"
+    [(ngModel)]="reason"
+    [placeholder]="data.placeholder || 'Escribe el motivo...'"
+  ></textarea>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="confirm()" [disabled]="!reason.trim()">
+    Enviar
+  </button>
+</mat-dialog-actions>

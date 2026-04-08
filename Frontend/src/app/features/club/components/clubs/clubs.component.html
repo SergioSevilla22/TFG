@@ -4,9 +4,7 @@
   <header class="page-header">
     <div class="header-content">
       <h1 class="page-title">Directorio de Clubes</h1>
-      <p class="page-subtitle">
-        Gestiona y explora las entidades registradas en la plataforma
-      </p>
+      <p class="page-subtitle">Gestiona y explora las entidades registradas en la plataforma</p>
     </div>
   </header>
 
@@ -18,7 +16,7 @@
           <input
             type="text"
             placeholder="Nombre del club..."
-            [(ngModel)]="filtros.nombre"
+            [(ngModel)]="filters.nombre"
             (input)="onInputChange()"
           />
         </div>
@@ -28,7 +26,7 @@
           <input
             type="text"
             placeholder="Provincia"
-            [(ngModel)]="filtros.provincia"
+            [(ngModel)]="filters.provincia"
             (input)="onInputChange()"
           />
         </div>
@@ -38,12 +36,12 @@
           <input
             type="text"
             placeholder="Población"
-            [(ngModel)]="filtros.poblacion"
+            [(ngModel)]="filters.poblacion"
             (input)="onInputChange()"
           />
         </div>
 
-        <button class="btn-search" (click)="buscar()">
+        <button class="btn-search" (click)="search()">
           <mat-icon>filter_alt</mat-icon>
           Buscar
         </button>
@@ -52,17 +50,13 @@
   </section>
 
   <section class="results-section">
-    <div *ngIf="clubes.length === 0" class="empty-state">
+    <div *ngIf="clubs.length === 0" class="empty-state">
       <mat-icon>domain_disabled</mat-icon>
       <p>No se han encontrado clubes con los criterios seleccionados.</p>
     </div>
 
-    <div class="clubs-grid" *ngIf="clubes.length > 0">
-      <div
-        class="club-card"
-        *ngFor="let club of clubes"
-        (click)="abrirClub(club.id)"
-      >
+    <div class="clubs-grid" *ngIf="clubs.length > 0">
+      <div class="club-card" *ngFor="let club of clubs" (click)="openClub(club.id)">
         <div class="card-image">
           <img
             *ngIf="club.escudo"
@@ -82,7 +76,7 @@
             <span class="provincia">{{ club.provincia }}</span>
           </div>
         </div>
-        
+
         <div class="card-footer">
           <span class="view-more">Ver equipos <mat-icon>chevron_right</mat-icon></span>
         </div>

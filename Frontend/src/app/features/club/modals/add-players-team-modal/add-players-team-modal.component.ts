@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { EquipoService } from '../../../../../services/equipo/team.service';
+import { TeamService } from '../../../../../services/team/team.service';
 
 @Component({
   selector: 'app-add-players-team-modal',
@@ -24,8 +24,8 @@ import { EquipoService } from '../../../../../services/equipo/team.service';
   styleUrls: ['./add-players-team-modal.component.scss'],
 })
 export class AddPlayersTeamModalComponent implements OnInit {
-  jugadoresClub: any[] = [];
-  busqueda = '';
+  clubPlayers: any[] = [];
+  searchQuery = '';
 
   constructor(
     private dialogRef: MatDialogRef<AddPlayersTeamModalComponent>,
@@ -38,46 +38,44 @@ export class AddPlayersTeamModalComponent implements OnInit {
       anioTemporada: number;
     },
     private clubService: ClubService,
-    private equipoService: EquipoService,
+    private teamService: TeamService,
   ) {}
 
   ngOnInit(): void {
-    this.cargarJugadoresEdadClub();
+    this.loadClubPlayersByAge();
   }
 
-  cargarJugadoresEdadClub() {
+  loadClubPlayersByAge() {
     this.clubService
-      .getJugadoresClubCategoria(
+      .getClubPlayersByCategory(
         this.data.clubId,
         this.data.anioTemporada,
         this.data.edadMin,
         this.data.edadMax,
       )
       .subscribe({
-        next: (res) => (this.jugadoresClub = res),
+        next: (res) => (this.clubPlayers = res),
         error: () => alert('Error cargando jugadores del club'),
       });
   }
 
-  get jugadoresFiltrados() {
-    const q = this.busqueda.toLowerCase().trim();
-    if (!q) return this.jugadoresClub;
+  get filteredPlayers() {
+    const q = this.searchQuery.toLowerCase().trim();
+    if (!q) return this.clubPlayers;
 
-    return this.jugadoresClub.filter(
-      (j) => j.nombre.toLowerCase().includes(q) || j.DNI.toLowerCase().includes(q),
+    return this.clubPlayers.filter(
+      (p) => p.nombre.toLowerCase().includes(q) || p.DNI.toLowerCase().includes(q),
     );
   }
 
-  asignarJugador(dni: string) {
-    this.equipoService.asignarJugadores(this.data.equipoId, [dni]).subscribe({
-      next: () => {
-        this.cargarJugadoresEdadClub();
-      },
+  assignPlayer(dni: string) {
+    this.teamService.assignPlayers(this.data.equipoId, [dni]).subscribe({
+      next: () => this.loadClubPlayersByAge(),
       error: (err) => alert(err.error?.message || 'Error asignando jugador'),
     });
   }
 
-  cerrar() {
+  close() {
     this.dialogRef.close(true);
   }
 }

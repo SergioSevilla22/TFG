@@ -1,0 +1,310 @@
+<div class="equipo-layout" *ngIf="!noTeam">
+  <main class="equipo-content">
+    <div class="panel-card main-panel">
+      <div class="panel-header">
+        <!-- FILA 1: Título -->
+        <div class="header-top">
+          <div class="header-info">
+            <h2>Convocatorias</h2>
+            <p class="subtitle">Gestión de citaciones y asistencia para partidos</p>
+          </div>
+
+          <button
+            class="btn-primary"
+            *ngIf="
+              authService.hasRole('entrenador') ||
+              authService.hasRole('admin_plataforma') ||
+              authService.hasRole('admin_club')
+            "
+            (click)="openCreateMatchCallModal()"
+          >
+            <span class="plus-icon">+</span> Nueva convocatoria
+          </button>
+        </div>
+
+        <!-- FILA 2: Filtros -->
+        <div class="filtros-bar">
+          <div class="filtro-item">
+            <label>Estado</label>
+            <select [(ngModel)]="statusFilter">
+              <option value="todas">Todas</option>
+              <option value="abiertas">Abiertas</option>
+              <option value="cerradas">Cerradas</option>
+            </select>
+          </div>
+
+          <div class="filtro-item">
+            <label>Mes</label>
+            <select [(ngModel)]="monthFilter">
+              <option [ngValue]="null">Todos</option>
+              <option *ngFor="let m of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]" [ngValue]="m">
+                {{
+                  [
+                    'Enero',
+                    'Febrero',
+                    'Marzo',
+                    'Abril',
+                    'Mayo',
+                    'Junio',
+                    'Julio',
+                    'Agosto',
+                    'Septiembre',
+                    'Octubre',
+                    'Noviembre',
+                    'Diciembre',
+                  ][m]
+                }}
+              </option>
+            </select>
+          </div>
+
+          <div class="filtro-item">
+            <label>Año</label>
+            <input type="number" [(ngModel)]="yearFilter" />
+          </div>
+
+          <div class="filtro-item filtro-busqueda">
+            <label>Buscar rival</label>
+            <input type="text" [(ngModel)]="textFilter" placeholder="Ej: Real Madrid" />
+          </div>
+        </div>
+      </div>
+
+      <div class="status-container" *ngIf="loadingMatchCalls">
+        <div class="spinner"></div>
+        <p>Cargando convocatorias...</p>
+      </div>
+
+      <div *ngIf="!loadingMatchCalls && matchCalls.length === 0" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>Sin convocatorias</h3>
+        <p>No se han publicado convocatorias para los próximos encuentros.</p>
+      </div>
+
+      <div class="lista-convocatorias" *ngIf="!loadingMatchCalls && matchCalls.length > 0">
+        <div
+          class="conv-card"
+          *ngFor="let matchCall of paginatedMatchCalls"
+          [class.cerrada]="isMatchCallClosed(matchCall)"
+        >
+          <div class="conv-header-row">
+            <div class="match-info">
+              <div class="match-date">
+                <span class="day">{{ matchCall.fecha_partido | date: 'dd' }}</span>
+                <span class="month">{{ matchCall.fecha_partido | date: 'MMM' }}</span>
+              </div>
+              <div class="match-details">
+                <h3 class="rival-name">
+                  {{ matchCall.rival ? 'vs ' + matchCall.rival : 'Partido de Entrenamiento' }}
+                </h3>
+                <div class="match-meta">
+                  <span class="location" *ngIf="matchCall.lugar">
+                    Lugar: {{ matchCall.lugar }}
+                  </span>
+                  <span class="limit-tag" [class.danger]="isMatchCallClosed(matchCall)">
+                    Límite: {{ matchCall.fecha_limite_confirmacion | date: 'dd/MM HH:mm' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="time-slots">
+              <div class="time-box">
+                <span class="label">Quedada</span>
+                <span class="value">{{ matchCall.hora_quedada }}</span>
+              </div>
+              <div class="time-box highlight">
+                <span class="label">Inicio</span>
+                <span class="value">{{ matchCall.hora_inicio }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="conv-body">
+            <div class="section-player" *ngIf="authService.hasRole('jugador')">
+              <div class="player-status-bar" *ngIf="!isInvited(matchCall)">
+                <span class="status-pill gray">No convocado</span>
+              </div>
+
+              <div class="player-status-bar" *ngIf="isInvited(matchCall)">
+                <div class="decision-zone" *ngIf="!isMatchCallClosed(matchCall)">
+                  <ng-container
+                    *ngIf="
+                      !getPlayerStatus(matchCall) || getPlayerStatus(matchCall) === 'pendiente'
+                    "
+                  >
+                    <span class="pending-text">¿Confirmas tu asistencia?</span>
+                    <div class="btn-group">
+                      <button
+                        class="btn-action confirm"
+                        (click)="respondMatchCall(matchCall, 'confirmado')"
+                      >
+                        Confirmar <mat-icon>check</mat-icon>
+                      </button>
+                      <button class="btn-action reject" (click)="openReasonModal(matchCall)">
+                        Rechazar <mat-icon>cancel</mat-icon>
+                      </button>
+                    </div>
+                  </ng-container>
+
+                  <div
+                    class="already-responded"
+                    *ngIf="getPlayerStatus(matchCall) && getPlayerStatus(matchCall) !== 'pendiente'"
+                  >
+                    <span class="status-pill" [ngClass]="getPlayerStatus(matchCall)">
+                      Has respondido: {{ getPlayerStatus(matchCall) | uppercase }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="closed-zone" *ngIf="isMatchCallClosed(matchCall)">
+                  <span class="status-pill closed">CONVOCATORIA FINALIZADA</span>
+                  <span class="final-answer" *ngIf="isInvited(matchCall)">
+                    Tu estado: <b>{{ getPlayerStatus(matchCall) | titlecase }}</b>
+                  </span>
+                  <div
+                    *ngIf="isMatchCallClosed(matchCall) && isInvited(matchCall)"
+                    class="player-stats-zone"
+                  >
+                    <button class="btn-ver-stats" (click)="togglePlayerStats(matchCall.id)">
+                      {{ openStats[matchCall.id] ? 'Ocultar estadísticas' : 'Ver estadísticas' }}
+                    </button>
+
+                    <div
+                      class="stats-box"
+                      *ngIf="openStats[matchCall.id] && playerStats[matchCall.id]"
+                    >
+                      <div class="stat-item">
+                        Minutos: <b>{{ playerStats[matchCall.id]?.minutos || 0 }}</b>
+                      </div>
+                      <div class="stat-item">
+                        Goles: <b>{{ playerStats[matchCall.id]?.goles || 0 }}</b>
+                      </div>
+                      <div class="stat-item">
+                        Asistencias: <b>{{ playerStats[matchCall.id]?.asistencias || 0 }}</b>
+                      </div>
+                      <div class="stat-item">
+                        Amarillas: <b>{{ playerStats[matchCall.id]?.amarillas || 0 }}</b>
+                      </div>
+                      <div class="stat-item">
+                        Rojas: <b>{{ playerStats[matchCall.id]?.rojas || 0 }}</b>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="section-admin"
+              *ngIf="
+                authService.hasRole('entrenador') ||
+                authService.hasRole('admin_plataforma') ||
+                authService.hasRole('admin_club')
+              "
+            >
+              <div class="stats-pills">
+                <span class="pill total"
+                  ><mat-icon>group</mat-icon> <b>{{ matchCall.jugadores?.length || 0 }}</b></span
+                >
+                <span class="pill confirm"
+                  ><mat-icon>check</mat-icon>
+                  <b>{{ countByStatus(matchCall, 'confirmado') }}</b></span
+                >
+                <span class="pill reject"
+                  ><mat-icon>cancel</mat-icon>
+                  <b>{{ countByStatus(matchCall, 'rechazado') }}</b></span
+                >
+                <span class="pill pending"
+                  ><mat-icon>question_mark</mat-icon>
+                  <b>{{ countByStatus(matchCall, 'pendiente') }}</b></span
+                >
+              </div>
+
+              <div class="admin-actions">
+                <button
+                  class="btn-icon reminder"
+                  *ngIf="!isMatchCallClosed(matchCall)"
+                  (click)="sendReminder(matchCall)"
+                  matTooltip="Enviar recordatorio"
+                >
+                  <mat-icon>alarm</mat-icon>
+                </button>
+                <button
+                  class="btn-icon delete"
+                  matTooltip="Eliminar"
+                  (click)="deleteMatchCall(matchCall)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button
+                  class="btn-icon edit"
+                  [disabled]="isMatchCallClosed(matchCall)"
+                  [matTooltip]="
+                    isMatchCallClosed(matchCall)
+                      ? 'No se puede editar porque ya ha finalizado'
+                      : 'Editar convocatoria'
+                  "
+                  (click)="openEditMatchCallModal(matchCall)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  class="btn-icon stats"
+                  [disabled]="!isMatchCallClosed(matchCall)"
+                  [matTooltip]="
+                    isMatchCallClosed(matchCall)
+                      ? 'Cargar estadísticas del partido'
+                      : 'Las estadísticas se pueden cargar una vez que la convocatoria ha finalizado'
+                  "
+                  (click)="openStatsModal(matchCall)"
+                >
+                  <mat-icon>bar_chart</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <details class="conv-players-list">
+            <summary>
+              <span class="summary-content">
+                Ver lista de convocados
+                <span class="count-tag">{{ matchCall.jugadores?.length }}</span>
+              </span>
+            </summary>
+            <div class="players-grid">
+              <div class="player-item" *ngFor="let player of matchCall.jugadores">
+                <div class="player-info">
+                  <span class="player-name">{{ player.nombre }}</span>
+                  <span class="player-dni">{{ player.DNI }}</span>
+                </div>
+                <div class="player-status">
+                  <span class="mini-pill" [ngClass]="player.estado">{{
+                    statusLabel(player.estado)
+                  }}</span>
+                  <span class="reason" *ngIf="player.motivo" [title]="player.motivo">💬</span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="paginacion" *ngIf="totalPages > 1">
+        <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">←</button>
+
+        <button
+          *ngFor="let p of [].constructor(totalPages); let i = index"
+          (click)="changePage(i + 1)"
+          [class.activa]="currentPage === i + 1"
+        >
+          {{ i + 1 }}
+        </button>
+
+        <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+          →
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

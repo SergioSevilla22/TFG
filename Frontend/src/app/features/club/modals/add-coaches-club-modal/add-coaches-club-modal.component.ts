@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 import { ClubService } from '../../../../../services/club/club.service';
-import { CoachService } from '../../../../../services/entrenador/coach.service';
+import { CoachService } from '../../../../../services/coach/coach.service';
 
 @Component({
   selector: 'app-add-coaches-club-modal',
@@ -24,42 +24,42 @@ import { CoachService } from '../../../../../services/entrenador/coach.service';
   styleUrls: ['./add-coaches-club-modal.component.scss'],
 })
 export class AddCoachesClubModalComponent {
-  resultadosBusqueda: any[] = [];
-  busqueda = '';
+  searchResults: any[] = [];
+  searchQuery = '';
 
   constructor(
     private dialogRef: MatDialogRef<AddCoachesClubModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { clubId: number },
     private clubService: ClubService,
-    private entrenadorService: CoachService,
+    private coachService: CoachService,
   ) {}
 
-  buscar() {
-    if (!this.busqueda.trim()) {
-      this.resultadosBusqueda = [];
+  search() {
+    if (!this.searchQuery.trim()) {
+      this.searchResults = [];
       return;
     }
 
-    this.entrenadorService.searchCoachesGlobal(this.busqueda).subscribe({
-      next: (res) => (this.resultadosBusqueda = res as any[]),
+    this.coachService.searchCoachesGlobal(this.searchQuery).subscribe({
+      next: (res) => (this.searchResults = res as any[]),
     });
   }
 
-  accionEntrenador(entrenador: any) {
-    if (entrenador.club_id === this.data.clubId) {
-      this.clubService.removeClubCoach(this.data.clubId, entrenador.DNI).subscribe({
-        next: () => this.buscar(),
+  handleCoachAction(coach: any) {
+    if (coach.club_id === this.data.clubId) {
+      this.clubService.removeClubCoach(this.data.clubId, coach.DNI).subscribe({
+        next: () => this.search(),
         error: () => alert('Error quitando entrenador del club'),
       });
       return;
     }
-    this.clubService.addClubCoaches(this.data.clubId, [entrenador.DNI]).subscribe({
-      next: () => this.buscar(),
+    this.clubService.addClubCoaches(this.data.clubId, [coach.DNI]).subscribe({
+      next: () => this.search(),
       error: () => alert('Error añadiendo entrenador al club'),
     });
   }
 
-  cerrar() {
+  close() {
     this.dialogRef.close(false);
   }
 }

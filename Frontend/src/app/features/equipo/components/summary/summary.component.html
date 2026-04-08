@@ -1,0 +1,141 @@
+<div class="equipo-layout" *ngIf="!noTeam">
+  <main class="equipo-content">
+    <section class="resumen-grid" *ngIf="!loading && team">
+      <div
+        class="resumen-card clickable highlight-card"
+        [class.pending-border]="hasPendingEvents()"
+        [routerLink]="['/equipo', teamId, 'eventos']"
+      >
+        <div class="card-header">
+          <h2>Eventos</h2>
+          <span class="badge-pendiente" *ngIf="hasPendingEvents()">¡Tienes 1 pendiente!</span>
+        </div>
+
+        <ng-container *ngIf="nextEvent; else sinEventos">
+          <div class="main-info">
+            <p class="titulo">{{ nextEvent.titulo }}</p>
+            <div class="info-block">
+              <p class="info-item">
+                <mat-icon>calendar_today</mat-icon>
+                {{ nextEvent.fecha_inicio | date: 'EEEE dd/MM' | titlecase }}
+              </p>
+              <p class="info-item">
+                <mat-icon>schedule</mat-icon> {{ nextEvent.fecha_inicio | date: 'HH:mm' }}h -
+                {{ nextEvent.fecha_fin | date: 'HH:mm' }}h
+              </p>
+              <p class="info-item" *ngIf="nextEvent.descripcion">
+                <mat-icon>notes</mat-icon> {{ nextEvent.descripcion }}
+              </p>
+            </div>
+          </div>
+          <div
+            class="quick-actions"
+            *ngIf="
+              authService.hasRole('jugador') &&
+              nextEvent.requiere_confirmacion &&
+              getPlayerEventStatus(nextEvent) === 'pendiente'
+            "
+          >
+            <button
+              class="btn-confirm"
+              (click)="$event.stopPropagation(); respondToEvent(nextEvent, 'confirmado')"
+            >
+              Confirmar
+            </button>
+            <button
+              class="btn-reject"
+              (click)="$event.stopPropagation(); openEventReasonModal(nextEvent)"
+            >
+              Rechazar
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-template #sinEventos>
+          <p class="empty">No hay eventos programados</p>
+        </ng-template>
+        <span class="cta">Ver todos los eventos →</span>
+      </div>
+
+      <div
+        class="resumen-card clickable highlight-card"
+        [class.pending-border]="hasPendingMatchCalls()"
+        [routerLink]="['/equipo', teamId, 'convocatorias']"
+      >
+        <div class="card-header">
+          <h2>Convocatorias</h2>
+          <span class="badge-pendiente" *ngIf="hasPendingMatchCalls()">Pendiente de respuesta</span>
+        </div>
+
+        <ng-container *ngIf="nextMatchCall; else sinConvs">
+          <div class="main-info">
+            <p class="titulo">vs {{ nextMatchCall.rival || 'Rival' }}</p>
+            <div class="info-block">
+              <p class="info-item">
+                <mat-icon>calendar_today</mat-icon>
+                {{ nextMatchCall.fecha_partido | date: 'EEEE dd/MM' | titlecase }}
+              </p>
+              <p class="info-item">
+                <mat-icon>alarm</mat-icon> Quedada: {{ nextMatchCall.hora_quedada }}h
+              </p>
+              <p class="info-item">
+                <mat-icon>place</mat-icon> {{ nextMatchCall.lugar || 'Campo local' }}
+              </p>
+            </div>
+          </div>
+          <div
+            class="quick-actions"
+            *ngIf="
+              authService.hasRole('jugador') &&
+              isInvited(nextMatchCall) &&
+              getPlayerStatus(nextMatchCall) === 'pendiente' &&
+              !isMatchCallClosed(nextMatchCall)
+            "
+          >
+            <button
+              class="btn-confirm"
+              (click)="$event.stopPropagation(); respondMatchCall(nextMatchCall, 'confirmado')"
+            >
+              Asistiré
+            </button>
+            <button
+              class="btn-reject"
+              (click)="$event.stopPropagation(); openMatchCallReasonModal(nextMatchCall)"
+            >
+              No puedo
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-template #sinConvs>
+          <p class="empty">No hay convocatorias abiertas</p>
+        </ng-template>
+        <span class="cta">Ver todas →</span>
+      </div>
+
+      <div class="resumen-card clickable" [routerLink]="['/equipo', teamId, 'plantilla']">
+        <h2>Plantilla</h2>
+        <div class="plantilla-preview">
+          <div class="avatar-stack">
+            <div class="avatar" *ngFor="let player of playersPreview">
+              <img *ngIf="player.foto" [src]="'http://localhost:3000' + player.foto" />
+              <span *ngIf="!player.foto">{{ player.nombre[0] }}</span>
+            </div>
+          </div>
+        </div>
+        <span class="cta">Gestionar equipo →</span>
+      </div>
+
+      <div class="resumen-card clickable" [routerLink]="['/equipo', teamId, 'calendario']">
+        <h2>Calendario</h2>
+        <app-mini-calendario
+          [events]="events"
+          [matchCalls]="matchCalls"
+          [teamId]="teamId"
+        ></app-mini-calendario>
+      </div>
+    </section>
+
+    <ng-template #loadingTpl><p class="loading">Cargando equipo...</p></ng-template>
+  </main>
+</div>

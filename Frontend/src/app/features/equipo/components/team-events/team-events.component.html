@@ -1,0 +1,221 @@
+<div class="equipo-layout" *ngIf="!noTeam">
+  <main class="equipo-content">
+    <div class="panel-card main-panel">
+      <div class="panel-header">
+        <!-- FILA 1: Título -->
+        <div class="header-top">
+          <div class="header-info">
+            <h2>Eventos</h2>
+            <p class="subtitle">Gestiona entrenamientos, partidos y reuniones</p>
+          </div>
+
+          <button
+            class="btn-primary"
+            *ngIf="
+              authService.hasRole('admin_plataforma') ||
+              authService.hasRole('admin_club') ||
+              authService.hasRole('entrenador')
+            "
+            (click)="openCreateEventModal()"
+          >
+            <span class="plus-icon">+</span> Nuevo evento
+          </button>
+        </div>
+
+        <!-- FILA 2: Filtros -->
+        <div class="filtros-bar">
+          <div class="filtro-item">
+            <label>Tipo</label>
+            <select [(ngModel)]="typeFilter" (ngModelChange)="currentPage = 1">
+              <option value="todos">Todos</option>
+              <option value="partido">Partidos</option>
+              <option value="entrenamiento">Entrenamientos</option>
+              <option value="reunion">Reuniones</option>
+            </select>
+          </div>
+
+          <div class="filtro-item">
+            <label>Mes</label>
+            <select [(ngModel)]="monthFilter" (ngModelChange)="currentPage = 1">
+              <option [ngValue]="null">Todos</option>
+              <option *ngFor="let m of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]" [ngValue]="m">
+                {{
+                  [
+                    'Enero',
+                    'Febrero',
+                    'Marzo',
+                    'Abril',
+                    'Mayo',
+                    'Junio',
+                    'Julio',
+                    'Agosto',
+                    'Septiembre',
+                    'Octubre',
+                    'Noviembre',
+                    'Diciembre',
+                  ][m]
+                }}
+              </option>
+            </select>
+          </div>
+
+          <div class="filtro-item">
+            <label>Año</label>
+            <input type="number" [(ngModel)]="yearFilter" (ngModelChange)="currentPage = 1" />
+          </div>
+        </div>
+      </div>
+
+      <div class="status-container" *ngIf="loadingEvents">
+        <div class="spinner"></div>
+        <p>Cargando eventos...</p>
+      </div>
+
+      <div *ngIf="!loadingEvents && events.length === 0" class="empty-state">
+        <div class="empty-icon">📅</div>
+        <h3>No hay eventos programados</h3>
+        <p>Los próximos eventos del equipo aparecerán aquí.</p>
+      </div>
+
+      <div class="eventos-timeline" *ngIf="!loadingEvents && events.length > 0">
+        <div
+          class="evento-card"
+          *ngFor="let event of paginatedEvents"
+          [class.pasado]="isPastEvent(event)"
+          [ngClass]="'tipo-' + event.tipo"
+        >
+          <div class="type-indicator"></div>
+
+          <div class="evento-body">
+            <div class="evento-main-info">
+              <div class="date-badge">
+                <span class="day">{{ event.fecha_inicio | date: 'dd' }}</span>
+                <span class="month">{{ event.fecha_inicio | date: 'MMM' }}</span>
+              </div>
+
+              <div class="details">
+                <div class="title-row">
+                  <span class="event-type-tag">{{ event.tipo | titlecase }}</span>
+                  <h3 class="evento-title">{{ event.titulo }}</h3>
+                </div>
+
+                <p class="description" *ngIf="event.descripcion">{{ event.descripcion }}</p>
+
+                <div class="meta-info">
+                  <div class="meta-item">
+                    <mat-icon>access_time</mat-icon>
+                    {{ event.fecha_inicio | date: 'HH:mm' }} - {{ event.fecha_fin | date: 'HH:mm' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="actions-section player-actions"
+              *ngIf="event.requiere_confirmacion && authService.hasRole('jugador')"
+            >
+              <div class="status-label" *ngIf="!isInvited(event)">
+                <span class="badge gray">No requerido</span>
+              </div>
+
+              <ng-container *ngIf="isInvited(event)">
+                <div
+                  class="confirmed-status"
+                  *ngIf="getPlayerEventStatus(event) && getPlayerEventStatus(event) !== 'pendiente'"
+                >
+                  <span class="badge" [ngClass]="getPlayerEventStatus(event)">
+                    {{
+                      getPlayerEventStatus(event) === 'confirmado' ? '✓ Confirmado' : '✕ Rechazado'
+                    }}
+                  </span>
+                </div>
+
+                <div
+                  class="btn-group"
+                  *ngIf="
+                    !getPlayerEventStatus(event) || getPlayerEventStatus(event) === 'pendiente'
+                  "
+                >
+                  <button class="btn-action confirm" (click)="respondToEvent(event, 'confirmado')">
+                    Confirmar
+                  </button>
+                  <button
+                    class="btn-action late"
+                    *ngIf="event.tipo !== 'partido'"
+                    (click)="openLateArrivalModal(event)"
+                  >
+                    Tarde
+                  </button>
+                  <button class="btn-action reject" (click)="openReasonModal(event)">
+                    Rechazar
+                  </button>
+                </div>
+              </ng-container>
+            </div>
+
+            <div
+              class="actions-section admin-actions"
+              *ngIf="
+                authService.hasRole('admin_plataforma') ||
+                authService.hasRole('admin_club') ||
+                authService.hasRole('entrenador')
+              "
+            >
+              <div class="stats-pills" *ngIf="event.requiere_confirmacion">
+                <span class="pill total">
+                  <mat-icon>group</mat-icon> <b>{{ event.jugadores?.length || 0 }}</b>
+                </span>
+                <span class="pill confirm">
+                  <mat-icon>check</mat-icon> <b>{{ countByEventStatus(event, 'confirmado') }}</b>
+                </span>
+                <span class="pill reject">
+                  <mat-icon>cancel</mat-icon> <b>{{ countByEventStatus(event, 'rechazado') }}</b>
+                </span>
+                <span class="pill pending">
+                  <mat-icon>question_mark</mat-icon>
+                  <b>{{ countByEventStatus(event, 'pendiente') }}</b>
+                </span>
+              </div>
+
+              <div class="admin-btns">
+                <button
+                  class="btn-icon reminder"
+                  *ngIf="!isPastEvent(event)"
+                  (click)="sendEventReminder(event)"
+                  matTooltip="Enviar recordatorio"
+                >
+                  <mat-icon>alarm</mat-icon>
+                </button>
+                <button class="btn-icon delete" (click)="deleteEvent(event)" matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button
+                  class="btn-icon edit"
+                  [disabled]="isPastEvent(event)"
+                  [matTooltip]="
+                    isPastEvent(event)
+                      ? 'No se puede editar porque ya ha comenzado'
+                      : 'Editar evento'
+                  "
+                  (click)="openEditEventModal(event)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  *ngIf="event.tipo === 'entrenamiento' && isPastEvent(event)"
+                  class="btn-icon stats"
+                  (click)="openPerformanceModal(event)"
+                  matTooltip="Evaluar rendimiento"
+                >
+                  <mat-icon>show_chart</mat-icon>
+                </button>
+              </div>
+
+              <span class="event-closed" *ngIf="isPastEvent(event)">Finalizado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

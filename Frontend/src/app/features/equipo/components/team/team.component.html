@@ -1,0 +1,11 @@
+<app-header></app-header>
+
+<div class="equipo-layout" *ngIf="!noTeam && team">
+  <app-sidebar-equipo [team]="team" [dni]="activeDni" [teamId]="teamId"> </app-sidebar-equipo>
+
+  <main class="equipo-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<div *ngIf="loading" class="loading">Cargando equipo...</div>
