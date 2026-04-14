@@ -3,8 +3,8 @@ $color-partido: #ef4444; // Rojo
 $color-entrenamiento: #10b981; // Verde
 $color-reunion: #0ea5e9; // Azul
 $color-otro: #a855f7; // Violeta
-$color-hoy: #1ea83a;
-$primary-green: #1ea83a;
+$color-hoy: #059669;
+$primary-green: #059669;
 $secondary-blue: #0ea5e9;
 $dark-gray: #111827;
 $light-gray: #6b7280;
@@ -98,7 +98,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       background-color: rgba(30, 168, 58, 0.05) !important; // Un verde muy sutil de fondo
 
       .fc-daygrid-day-number {
-        background-color: #1ea83a; // Círculo verde en el número
+        background-color: #059669; // Círculo verde en el número
         color: white;
         border-radius: 50%;
         padding: 4px 8px;
@@ -123,8 +123,8 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     }
 
     .fc-button-active {
-      background-color: #1ea83a !important;
-      border-color: #1ea83a !important;
+      background-color: #059669 !important;
+      border-color: #059669 !important;
       color: white !important;
     }
 
