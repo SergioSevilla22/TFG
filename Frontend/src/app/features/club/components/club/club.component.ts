@@ -191,8 +191,13 @@ export class ClubComponent implements OnInit {
 
   searchTeams() {
     const { name, category, season } = this.teamFilters;
-    this.searched = true;
+    if (!name && !category && !season) {
+      this.searched = false;
+      this.filteredTeams = [];
+      return;
+    }
 
+    this.searched = true;
     this.filteredTeams = this.teams.filter(
       (t) =>
         (!name || t.nombre.toLowerCase().includes(name.toLowerCase())) &&
@@ -203,7 +208,6 @@ export class ClubComponent implements OnInit {
 
   startEditing() {
     this.editMode = true;
-    // Creamos una copia para no modificar el objeto original hasta guardar
     this.editForm = { ...this.club };
     this.shieldPreview = null;
     this.selectedFile = null;

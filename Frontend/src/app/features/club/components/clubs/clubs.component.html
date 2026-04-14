@@ -50,8 +50,13 @@
   </section>
 
   <section class="results-section">
-    <div *ngIf="clubs.length === 0" class="empty-state">
+    <div *ngIf="!searched" class="empty-state">
       <mat-icon>domain_disabled</mat-icon>
+      <p>Introduce filtros para buscar clubes.</p>
+    </div>
+
+    <div *ngIf="searched && clubs.length === 0 && !loading" class="empty-state">
+      <mat-icon>search_off</mat-icon>
       <p>No se han encontrado clubes con los criterios seleccionados.</p>
     </div>
 

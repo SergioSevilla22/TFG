@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ export class ClubsComponent implements OnInit {
   clubs: any[] = [];
   loading = false;
   searched = false; // 👈 clave UX
+  private debounceTimer: any;
 
   constructor(
     private clubService: ClubService,
@@ -34,6 +35,15 @@ export class ClubsComponent implements OnInit {
   search() {
     this.loading = true;
     this.searched = true;
+
+    const { nombre, provincia, poblacion } = this.filters;
+
+    if (!nombre && !provincia && !poblacion) {
+      this.clubs = [];
+      this.searched = false;
+      this.loading = false;
+      return;
+    }
 
     this.clubService.searchClubs(this.filters).subscribe({
       next: (res) => {
@@ -48,13 +58,14 @@ export class ClubsComponent implements OnInit {
   }
 
   onInputChange() {
-    const { nombre, provincia, poblacion } = this.filters;
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = setTimeout(() => {
+      this.search();
+    }, 300);
+  }
 
-    // Si todos los campos están vacíos → limpiar resultados
-    if (!nombre && !provincia && !poblacion) {
-      this.clubs = [];
-      this.searched = false;
-    }
+  ngOnDestroy() {
+    clearTimeout(this.debounceTimer);
   }
 
   openClub(id: number) {
