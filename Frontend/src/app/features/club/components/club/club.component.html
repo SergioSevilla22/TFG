@@ -104,19 +104,19 @@
             type="text"
             placeholder="Nombre..."
             [(ngModel)]="teamFilters.name"
-            (input)="onInputChange()"
+            (input)="searchTeams()"
           />
           <input
             type="text"
             placeholder="Categoría"
             [(ngModel)]="teamFilters.category"
-            (input)="onInputChange()"
+            (input)="searchTeams()"
           />
           <input
             type="text"
             placeholder="2025/2026"
             [(ngModel)]="teamFilters.season"
-            (input)="onInputChange()"
+            (input)="searchTeams()"
           />
           <button class="btn-search-icon" (click)="searchTeams()">
             <mat-icon>search</mat-icon>
@@ -137,6 +137,11 @@
           <div class="empty-msg" *ngIf="!searched">
             <mat-icon>info</mat-icon>
             <p>Introduce filtros para listar los equipos</p>
+          </div>
+
+          <div class="empty-msg" *ngIf="searched && filteredTeams.length === 0">
+            <mat-icon>search_off</mat-icon>
+            <p>No hay equipos para esa búsqueda</p>
           </div>
         </div>
       </section>
