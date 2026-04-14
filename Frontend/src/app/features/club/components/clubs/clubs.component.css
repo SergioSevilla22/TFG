@@ -1,37 +1,43 @@
+/* ============================================================
+   DIRECTORIO DE CLUBES - EMERALD PREMIUM STYLE
+   ============================================================ */
+
 .clubs-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
 }
 
-/* Cabecera */
+/* --- CABECERA --- */
 .page-header {
-  margin-bottom: 32px;
+  margin-bottom: 40px;
   
   .page-title {
-    font-size: 2.25rem;
+    font-size: 2.6rem;
     font-weight: 800;
-    color: #1e293b;
+    color: #0f172a; /* Azul noche profundo */
     margin: 0;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.04em;
   }
 
   .page-subtitle {
     color: #64748b;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     margin-top: 8px;
+    font-weight: 400;
   }
 }
 
-/* Filtros Estilo Premium */
+/* --- FILTROS (ESTILO UNIFICADO) --- */
 .filters-card {
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f1f5f9;
-  margin-bottom: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 45px;
 }
 
 .filters-grid {
@@ -40,7 +46,7 @@
   gap: 16px;
   align-items: center;
 
-  @media (max-width: 900px) {
+  @media (max-width: 950px) {
     grid-template-columns: 1fr;
   }
 }
@@ -52,160 +58,189 @@
 
   mat-icon {
     position: absolute;
-    left: 12px;
+    left: 14px;
     color: #94a3b8;
     font-size: 20px;
+    pointer-events: none;
   }
 
   input {
     width: 100%;
-    padding: 12px 12px 12px 40px;
-    border-radius: 12px;
+    height: 52px; /* Altura unificada con el resto de la app */
+    padding: 12px 12px 12px 45px;
+    border-radius: 14px;
     border: 1px solid #e2e8f0;
     background: #f8fafc;
     font-size: 0.95rem;
     color: #1e293b;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+
+    &::placeholder { color: #94a3b8; }
 
     &:focus {
       outline: none;
       background: #ffffff;
-      border-color: #1ea83a;
-      box-shadow: 0 0 0 4px rgba(30, 168, 58, 0.1);
+      border-color: #059669;
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
     }
   }
 }
 
 .btn-search {
-  background: #1ea83a;
+  background: #059669; /* Botón oscuro para contrastar con el Emerald */
   color: white;
   border: none;
-  padding: 12px 28px;
-  border-radius: 12px;
+  height: 52px;
+  padding: 0 30px;
+  border-radius: 14px;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: #16852d;
+    background: #046f4d;
     transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(30, 168, 58, 0.25);
+    box-shadow: 0 8px 15px rgba(15, 23, 42, 0.2);
   }
+
+  mat-icon { font-size: 20px; }
 }
 
-/* Cuadrícula de Clubes */
+/* --- GRID DE CLUBES --- */
 .clubs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
 }
 
 .club-card {
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
-  border: 1px solid #f1f5f9;
-  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    border-color: #1ea83a;
+    transform: translateY(-10px);
+    box-shadow: 0 25px 30px -10px rgba(0, 0, 0, 0.08);
+    border-color: #059669;
+
+    .card-footer .view-more { color: #059669; transform: translateX(5px); }
   }
 
   .card-image {
-    height: 180px;
-    background: #f8fafc;
+    height: 200px;
+    background: #fcfdfe;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 30px;
-    border-bottom: 1px solid #f1f5f9;
+    padding: 40px;
+    position: relative;
+    
+    /* Efecto decorativo de fondo */
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0,0,0,0.02), transparent);
+    }
 
     img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.08));
+      z-index: 1;
     }
 
-    .no-shield mat-icon {
-      font-size: 64px;
-      width: 64px;
-      height: 64px;
-      color: #cbd5e1;
+    .no-shield {
+      z-index: 1;
+      mat-icon { font-size: 70px; width: 70px; height: 70px; color: #cbd5e1; }
     }
   }
 
   .card-info {
-    padding: 20px;
+    padding: 24px;
     flex-grow: 1;
 
     h3 {
       margin: 0;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #1e293b;
-      line-height: 1.2;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
     }
 
     .location-info {
-      margin-top: 8px;
+      margin-top: 10px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       color: #64748b;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
 
       .separator { color: #cbd5e1; }
-      .provincia { font-weight: 500; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+      .provincia { 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        font-size: 0.7rem; 
+        letter-spacing: 0.05em;
+        background: #f1f5f9;
+        padding: 2px 8px;
+        border-radius: 6px;
+      }
     }
   }
 
   .card-footer {
-    padding: 15px 20px;
-    background: #fcfcfd;
+    padding: 18px 24px;
+    background: #fcfdfe;
     border-top: 1px solid #f1f5f9;
 
     .view-more {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      color: #1ea83a;
+      color: #94a3b8; /* Color neutro que cambia a verde en hover del card */
       font-weight: 700;
-      font-size: 0.85rem;
-      gap: 4px;
+      font-size: 0.9rem;
+      gap: 6px;
+      transition: all 0.3s ease;
 
-      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+      mat-icon { font-size: 20px; width: 20px; height: 20px; }
     }
   }
 }
 
-/* Estado Vacío */
+/* --- ESTADO VACÍO --- */
 .empty-state {
   text-align: center;
-  padding: 80px 0;
-  background: #f8fafc;
-  border-radius: 20px;
+  padding: 100px 40px;
+  background: white;
+  border-radius: 24px;
   border: 2px dashed #e2e8f0;
+  color: #64748b;
 
   mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    color: #94a3b8;
-    margin-bottom: 16px;
+    font-size: 60px;
+    width: 60px;
+    height: 60px;
+    color: #cbd5e1;
+    margin-bottom: 20px;
   }
 
   p {
-    color: #64748b;
-    font-size: 1.1rem;
-    font-weight: 500;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
   }
 }

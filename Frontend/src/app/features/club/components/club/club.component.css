@@ -71,7 +71,7 @@
     mat-icon { font-size: 20px; }
   }
 
-  .btn-primary { background: #1ea83a; color: white; &:hover { background: #16852d; transform: translateY(-2px); } }
+  .btn-primary { background: #059669; color: white; &:hover { background: #046f4d; transform: translateY(-2px); } }
   .btn-secondary { background: #f1f5f9; color: #475569; &:hover { background: #e2e8f0; } }
 }
 
@@ -103,8 +103,8 @@
     mat-icon { font-size: 28px; }
     
     &.equipos { background: #eff6ff; color: #3b82f6; }
-    &.jugadores { background: #fff7ed; color: #f59e0b; }
-    &.staff { background: #f0fdf4; color: #16a34a; }
+    &.jugadores { background: #fff7ed; color: #059669; }
+    &.staff { background: #f0fdf4; color: #bf160dbf; }
   }
 
   .stat-data {
@@ -144,7 +144,7 @@
     border-radius: 10px;
     border: 1px solid #e2e8f0;
     background: #f8fafc;
-    &:focus { outline: none; border-color: #1ea83a; background: white; }
+    &:focus { outline: none; border-color: #059669; background: white; }
   }
 
   .btn-search-icon {
@@ -170,7 +170,7 @@
   cursor: pointer;
   transition: 0.2s;
   
-  &:hover { background: #f8fafc; border-color: #1ea83a; transform: translateX(5px); }
+  &:hover { background: #f8fafc; border-color: #059669; transform: translateX(5px); }
   
   h4 { margin: 0; font-size: 1rem; color: #1e293b; }
   span { font-size: 0.85rem; color: #64748b; }
@@ -193,7 +193,7 @@
     justify-content: space-between;
     margin-bottom: 25px;
     h3 { margin: 0; font-size: 1.3rem; }
-    .edit-icon { color: #1ea83a; }
+    .edit-icon { color: #059669; }
   }
 
   .contact-item {
@@ -255,7 +255,7 @@
 
 .editing-img {
   filter: brightness(0.6);
-  border: 2px dashed #1ea83a !important;
+  border: 2px dashed #059669 !important;
 }
 
 .edit-overlay {
@@ -286,7 +286,7 @@
 }
 
 .sidebar-input:focus {
-  border-color: #1ea83a;
+  border-color: #059669;
 }
 
 .edit-group-sidebar {
@@ -298,3 +298,17 @@
 .sidebar-input.cp {
   width: 80px;
 }
+
+@media (max-width: 1024px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .club-hero { flex-direction: column; gap: 20px; text-align: center; }
+  .club-hero .hero-content { flex-direction: column; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .filters-inline { flex-direction: column; }
+}
+
+.loading-container { text-align: center; padding: 100px; color: #64748b; }

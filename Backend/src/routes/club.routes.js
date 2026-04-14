@@ -45,27 +45,14 @@ router.post(
 router.get(
   "/clubes",
   authMiddleware,
-  (req, res, next) => {
-    if (req.user.Rol === "admin_plataforma" || req.user.Rol === "admin_club") {
-      return next();
-    }
-    return res.status(403).json({ message: "Acceso denegado" });
-  },
+  requireAdminClub,
   getClubs
 );
 
 router.get(
   "/clubes/:id",
   authMiddleware,
-  (req, res, next) => {
-    if (
-      req.user.Rol === "admin_plataforma" ||
-      (req.user.Rol === "admin_club" && req.user.club_id == req.params.id)
-    ) {
-      return next();
-    }
-    return res.status(403).json({ message: "Acceso denegado" });
-  },
+  requireAdminClub,
   getClub
 );
 
@@ -92,12 +79,6 @@ router.get(
   "/clubes/:id/jugadores",
   authMiddleware,
   requireAdminClub,
-  (req, res, next) => {
-    if (req.user.club_id != req.params.id) {
-      return res.status(403).json({ message: "Acceso denegado" });
-    }
-    next();
-  },
   getClubPlayers
 );
 
@@ -105,12 +86,6 @@ router.get(
   "/clubes/:id/entrenadores",
   authMiddleware,
   requireAdminClub,
-  (req, res, next) => {
-    if (req.user.club_id != req.params.id) {
-      return res.status(403).json({ message: "Acceso denegado" });
-    }
-    next();
-  },
   getClubCoaches
 );
 

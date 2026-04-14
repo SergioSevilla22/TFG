@@ -6,9 +6,6 @@
 
   <nav class="nav-tabs">
 
-    <!-- TODOS -->
-    <a routerLink="/home" routerLinkActive="active">Inicio</a>
-
     <!-- ADMIN PLATAFORMA -->
     <a *ngIf="authService.isAdminPlataforma()"
        routerLink="/clubes"

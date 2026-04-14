@@ -2,12 +2,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #2e2e2e;
+  background: #059669;
   color: white;
   padding: 0.5rem 1.5rem;
   height: 65px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border-bottom: 3px solid #1ea83a;
+  border-bottom: 3px solid #ffffff;
 }
 
 .logo {
@@ -24,7 +24,7 @@
 .logo span {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #1ea83a;
+  color: #efe8e8;
   letter-spacing: 1px;
 }
 
@@ -37,7 +37,7 @@
 
 .nav-tabs a {
   position: relative;
-  color: #ddd;
+  color: #efe8e8;
   text-decoration: none;
   font-size: 1rem;
   padding: 0.3rem 0;
@@ -51,7 +51,7 @@
   height: 3px;
   bottom: -5px;
   left: 0;
-  background: #1ea83a;
+  background: #059669;
   transition: width 0.25s ease-in-out;
 }
 
@@ -75,11 +75,11 @@
   height: 42px;
   width: 42px;
   border-radius: 50%;
-  border: 2px solid #1ea83a;
+  border: 2px solid #efe8e8;
   object-fit: cover;
   cursor: pointer;
   transition: transform 0.2s, border-color 0.2s;
-  background-color: white;
+  background-color: #ddd;
 }
 
 .profile img:hover {

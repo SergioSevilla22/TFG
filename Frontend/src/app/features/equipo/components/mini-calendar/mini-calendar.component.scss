@@ -20,7 +20,7 @@ $color-hoy: #1ea83a;
   .mini-header button {
     background: transparent;
     border: none;
-    color: #1ea83a;
+    color: #059669;
     font-weight: 700;
     cursor: pointer;
   }
@@ -49,12 +49,12 @@ $color-hoy: #1ea83a;
   }
   
   .dia.hoy {
-    background: #1ea83a;
+    background: #059669;
     color: white;
   }
   
   .dia.con-evento {
-    border-bottom: 3px solid #1ea83a;
+    border-bottom: 3px solid #059669;
   }
 
   .dia {
@@ -69,7 +69,7 @@ $color-hoy: #1ea83a;
   
   /* HOY */
   .dia.hoy {
-    background: #1ea83a;
+    background: #059669;
     color: white;
   }
   
