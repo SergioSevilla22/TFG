@@ -52,7 +52,7 @@
     </a>
 
     <a
-      *ngIf="dni"
+      *ngIf="showMyProfile"
       class="nav-item"
       [class.active]="isMyProfileActive"
       [routerLink]="['/equipo', teamId, 'jugador', dni]"

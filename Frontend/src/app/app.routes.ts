@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
-import { HomeComponent } from './layout/home/home.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { CoachPanelComponent } from './features/coach/coach-panel/coach-panel.component';
 import { RegisterComponent } from './features/auth/register/register.component';
@@ -25,7 +24,6 @@ export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, title: 'Login' },
   { path: 'register', component: RegisterComponent, title: 'Registro' },
-  { path: 'home', component: HomeComponent, title: 'Home Page' },
   { path: 'entrenador', component: CoachPanelComponent },
   { path: 'perfil', component: PerfilUsuarioComponent, title: 'Perfil' },
   { path: 'forgot-password', component: ForgotPasswordComponent, title: 'ForgotPassword' },

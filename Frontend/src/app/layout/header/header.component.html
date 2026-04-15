@@ -5,32 +5,22 @@
   </div>
 
   <nav class="nav-tabs">
-
     <!-- ADMIN PLATAFORMA -->
-    <a *ngIf="authService.isAdminPlataforma()"
-       routerLink="/clubes"
-       routerLinkActive="active">
+    <a *ngIf="authService.isAdminPlataforma()" routerLink="/clubes" routerLinkActive="active">
       Clubes
     </a>
 
-     <!-- ADMIN CLUB -->
-    <a *ngIf="authService.hasRole('admin_club')"
+    <!-- ADMIN CLUB -->
+    <a
+      *ngIf="authService.hasRole('admin_club')"
       [routerLink]="['/club', authService.getUser()?.club_id]"
-      routerLinkActive="active">
+      routerLinkActive="active"
+    >
       Mi club
     </a>
 
-    <a *ngIf="authService.isAnyAdmin()"
-       routerLink="/admin"
-       routerLinkActive="active">
+    <a *ngIf="authService.isAnyAdmin()" routerLink="/admin" routerLinkActive="active">
       Administrar
-    </a>
-
-    <!-- ENTRENADOR -->
-    <a *ngIf="authService.hasRole('entrenador')"
-       [routerLink]="['/equipo', authService.getUser()?.equipo_id]"
-       routerLinkActive="active">
-      Mi equipo
     </a>
 
     <!-- <a *ngIf="authService.hasRole('entrenador')"
@@ -38,22 +28,11 @@
        routerLinkActive="active">
       Registrar     ESTO ES EL REGISTER, VA UN POCO MAL Y NO SE SIQUIERA SI EL ENTRENADOR DEBERIA DE PODER REGISTRAR USUARIOS.
     </a> -->
-    
-
-    <!-- JUGADOR -->
-    <a *ngIf="authService.hasRole('jugador')"
-       [routerLink]="['/equipo', authService.getUser()?.equipo_id]"
-       routerLinkActive="active">
-      Mi equipo
-    </a>
 
     <!-- TUTOR -->
-    <a *ngIf="authService.hasRole('tutor')"
-       routerLink="/tutor-panel"
-       routerLinkActive="active">
+    <a *ngIf="authService.hasRole('tutor')" routerLink="/tutor-panel" routerLinkActive="active">
       Mis jugadores
     </a>
-
   </nav>
 
   <a class="profile" [routerLink]="['/perfil']">

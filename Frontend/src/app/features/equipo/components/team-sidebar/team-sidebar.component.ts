@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar-equipo',
@@ -10,13 +11,23 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './team-sidebar.component.html',
   styleUrls: ['./team-sidebar.component.css'],
 })
-export class TeamSidebarComponent {
+export class TeamSidebarComponent implements OnInit {
   @Input() team: any;
   @Input() teamId!: number;
   @Input() active: 'resumen' | 'plantilla' | 'calendario' | 'eventos' | 'convocatorias' = 'resumen';
   @Input() dni?: string;
 
-  constructor(private router: Router) {}
+  userRole: string | null = null;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
+
+  ngOnInit(): void {
+    const user = this.authService.getUser();
+    this.userRole = user?.Rol || null;
+  }
 
   navigate(route: string) {
     this.router.navigate(route ? ['/equipo', this.teamId, route] : ['/equipo', this.teamId]);
@@ -32,5 +43,11 @@ export class TeamSidebarComponent {
   get isMyProfileActive(): boolean {
     if (!this.dni) return false;
     return this.router.url.includes(`/jugador/${this.dni}`);
+  }
+
+  get showMyProfile(): boolean {
+    if (!this.dni) return false;
+
+    return this.userRole !== 'admin_club' && this.userRole !== 'admin_plataforma';
   }
 }

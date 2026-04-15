@@ -7,7 +7,6 @@
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f8fafc;
 }
 
 /* --- CABECERA --- */
@@ -16,17 +15,21 @@
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 35px;
-  
-  h1 { 
-    font-size: 2.6rem; 
-    font-weight: 800; 
-    color: #0f172a; 
-    margin: 0; 
-    letter-spacing: -0.04em; 
+
+  h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.04em;
   }
-  
-  p { color: #64748b; font-size: 1.1rem; margin: 4px 0 0; }
-  
+
+  p {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin: 4px 0 0;
+  }
+
   .header-stats {
     background: #ffffff;
     padding: 12px 24px;
@@ -38,8 +41,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      .num { font-size: 1.6rem; font-weight: 800; color: #059669; line-height: 1; }
-      .lab { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-top: 4px; }
+      .num {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #059669;
+        line-height: 1;
+      }
+      .lab {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-top: 4px;
+      }
     }
   }
 }
@@ -53,7 +67,9 @@
 }
 
 @media (max-width: 1100px) {
-  .main-grid { grid-template-columns: 1fr; } /* En tablets/móvil se pone una debajo de otra */
+  .main-grid {
+    grid-template-columns: 1fr;
+  } /* En tablets/móvil se pone una debajo de otra */
 }
 
 /* --- COLUMNA IZQUIERDA: EQUIPOS --- */
@@ -73,7 +89,7 @@
   margin-bottom: 16px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 
   .cat-header {
     padding: 20px 28px;
@@ -83,12 +99,14 @@
     cursor: pointer;
     background: #ffffff;
     transition: 0.2s;
-    
-    &:hover { background: #f8fafc; }
-    
-    &.is-open { 
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &.is-open {
       border-bottom: 1px solid #f1f5f9;
-      border-left: 5px solid #059669; 
+      border-left: 5px solid #059669;
     }
 
     .cat-title {
@@ -97,13 +115,15 @@
       gap: 14px;
       font-weight: 700;
       color: #1e293b;
-      .folder-icon { color: #059669; }
+      .folder-icon {
+        color: #059669;
+      }
     }
-    .cat-count { 
-      font-size: 0.8rem; 
-      color: #64748b; 
-      background: #f1f5f9; 
-      padding: 5px 14px; 
+    .cat-count {
+      font-size: 0.8rem;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 5px 14px;
       border-radius: 10px;
       font-weight: 600;
     }
@@ -133,8 +153,10 @@
   &:hover {
     border-color: #059669;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    .btn-trash { opacity: 1; }
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    .btn-trash {
+      opacity: 1;
+    }
   }
 
   .team-initials {
@@ -150,8 +172,16 @@
     border: 1px solid #d1fae5;
   }
 
-  .team-data h4 { margin: 0; font-size: 0.95rem; color: #1e293b; font-weight: 700; }
-  .team-data .season-tag { font-size: 0.8rem; color: #94a3b8; }
+  .team-data h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #1e293b;
+    font-weight: 700;
+  }
+  .team-data .season-tag {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
 
   .btn-trash {
     position: absolute;
@@ -167,7 +197,10 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    &:hover { background: #dc2626; color: white; }
+    &:hover {
+      background: #dc2626;
+      color: white;
+    }
   }
 }
 
@@ -182,46 +215,56 @@
   color: white;
   border-radius: 28px;
   padding: 32px;
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
-  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   .card-head {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 25px;
-    mat-icon { color: #059669; }
-    h3 { margin: 0; font-size: 1.3rem; font-weight: 800; }
+    mat-icon {
+      color: #059669;
+    }
+    h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
   }
 }
 
 .form-field {
   margin-bottom: 20px;
-  label { 
-    display: block; 
-    font-size: 0.75rem; 
-    color: #94a3b8; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-    margin-bottom: 8px; 
-    font-weight: 700; 
+  label {
+    display: block;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 700;
   }
-  input, select {
+  input,
+  select {
     width: 100%;
     box-sizing: border-box;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 14px;
     border-radius: 12px;
     color: white;
     font-size: 0.95rem;
-    &:focus { 
-      outline: none; 
-      border-color: #059669; 
-      background: rgba(255,255,255,0.08);
+    &:focus {
+      outline: none;
+      border-color: #059669;
+      background: rgba(255, 255, 255, 0.08);
     }
   }
-  select option { background: #0f172a; color: white; }
+  select option {
+    background: #0f172a;
+    color: white;
+  }
 }
 
 .btn-submit {
@@ -239,9 +282,9 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
-  
-  &:hover { 
-    background: #047857; 
+
+  &:hover {
+    background: #047857;
     transform: translateY(-2px);
   }
 }
@@ -254,8 +297,15 @@
   border-radius: 20px;
   display: flex;
   gap: 15px;
-  mat-icon { color: #f59e0b; }
-  p { margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.5; }
+  mat-icon {
+    color: #f59e0b;
+  }
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.5;
+  }
 }
 
 .success-alert {

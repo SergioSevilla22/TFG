@@ -44,10 +44,10 @@ export class AdminComponent implements OnInit {
     telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
     anioNacimiento: new FormControl<number | null>(null, [
       Validators.required,
-      Validators.min(1900),
+      Validators.min(1800),
       Validators.max(new Date().getFullYear()),
     ]),
-    Rol: new FormControl('usuario'),
+    Rol: new FormControl('', Validators.required),
     club_id: new FormControl<number | null>(null),
   });
 
@@ -69,7 +69,7 @@ export class AdminComponent implements OnInit {
   ClubForm = new FormGroup({
     nombre: new FormControl('', Validators.required),
     telefono: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]),
-    email: new FormControl(''),
+    email: new FormControl('', [Validators.required, Validators.email]),
     direccion: new FormControl(''),
     poblacion: new FormControl(''),
     provincia: new FormControl(''),
@@ -82,8 +82,8 @@ export class AdminComponent implements OnInit {
 
   CategoryForm = new FormGroup({
     nombre: new FormControl('', Validators.required),
-    edad_min: new FormControl<number | null>(null),
-    edad_max: new FormControl<number | null>(null),
+    edad_min: new FormControl('', Validators.required),
+    edad_max: new FormControl('', Validators.required),
   });
 
   // ---------- SEASON MANAGEMENT ----------

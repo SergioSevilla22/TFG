@@ -37,7 +37,7 @@
   </ng-template>
 
   <!-- ACCIONES -->
-  <div *ngIf="selectedUser" class="acciones">
+  <div *ngIf="selectedUser" class="acciones" #accionesSection>
     <h4>Acciones para {{ selectedUser.nombre }}</h4>
 
     <mat-form-field appearance="outline" class="full">
@@ -49,11 +49,13 @@
       </mat-select>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" [disabled]="!targetClubId" (click)="transfer()">
-      Traspasar
-    </button>
+    <div class="acciones-botones">
+      <button mat-raised-button color="primary" [disabled]="!targetClubId" (click)="transfer()">
+        Traspasar
+      </button>
 
-    <button mat-raised-button color="warn" (click)="delete()">Eliminar de la plataforma</button>
+      <button mat-raised-button color="warn" (click)="delete()">Eliminar de la plataforma</button>
+    </div>
   </div>
 </div>
 
