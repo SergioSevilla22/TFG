@@ -8,48 +8,89 @@
     </div>
 
     <div class="tabs">
-      <button *ngIf="userRole === 'admin_plataforma'" type="button" [class.active]="activeTab === 'eliminar'" (click)="activeTab = 'eliminar'">
+      <button
+        *ngIf="userRole === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'eliminar'"
+        (click)="activeTab = 'eliminar'"
+      >
         Eliminar Usuario
       </button>
 
-      <button *ngIf="userRole === 'admin_plataforma'" type="button" [class.active]="activeTab === 'roles'" (click)="activeTab = 'roles'">
+      <button
+        *ngIf="userRole === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'roles'"
+        (click)="activeTab = 'roles'"
+      >
         Gestión de Roles
       </button>
 
-      <button type="button" [class.active]="activeTab === 'registrar'" (click)="activeTab = 'registrar'">
+      <button
+        type="button"
+        [class.active]="activeTab === 'registrar'"
+        (click)="activeTab = 'registrar'"
+      >
         Registrar Usuarios
       </button>
 
-      <button *ngIf="userRole === 'admin_plataforma'" type="button" [class.active]="activeTab === 'clubes'" (click)="activeTab = 'clubes'">
+      <button
+        *ngIf="userRole === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'clubes'"
+        (click)="activeTab = 'clubes'"
+      >
         Gestión de Clubes
       </button>
 
-      <button *ngIf="userRole === 'admin_plataforma'" type="button" [class.active]="activeTab === 'categorias'" (click)="activeTab = 'categorias'">
+      <button
+        *ngIf="userRole === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'categorias'"
+        (click)="activeTab = 'categorias'"
+      >
         Categorías Base
       </button>
 
-      <button *ngIf="userRole === 'admin_plataforma'" type="button" [class.active]="activeTab === 'temporadas'" (click)="activeTab = 'temporadas'">
+      <button
+        *ngIf="userRole === 'admin_plataforma'"
+        type="button"
+        [class.active]="activeTab === 'temporadas'"
+        (click)="activeTab = 'temporadas'"
+      >
         Temporadas
       </button>
     </div>
 
     <div class="tab-content" *ngIf="activeTab === 'eliminar'">
       <h3>Eliminar Usuario</h3>
-      <p class="tab-description">Introduce el DNI del usuario que deseas dar de baja del sistema.</p>
-      
+      <p class="tab-description">
+        Introduce el DNI del usuario que deseas dar de baja del sistema.
+      </p>
+
       <div class="action-bar">
         <input type="text" [(ngModel)]="dniToDelete" placeholder="Ej: 12345678A" />
-        <button type="button" class="btn-rojo" (click)="deleteUser()">Eliminar permanentemente</button>
+        <button type="button" class="btn-rojo" (click)="deleteUser()">
+          Eliminar permanentemente
+        </button>
       </div>
       <p class="resultado" *ngIf="result">{{ result }}</p>
     </div>
 
     <div class="tab-content" *ngIf="activeTab === 'roles'">
       <h3>Buscar Usuario</h3>
-      <p class="tab-description">Localiza a un usuario para modificar sus permisos o editar su perfil.</p>
+      <p class="tab-description">
+        Localiza a un usuario para modificar sus permisos o editar su perfil.
+      </p>
 
       <div class="action-bar">
-        <input type="text" class="input-dni" [(ngModel)]="searchDni" (ngModelChange)="onDniChange()" placeholder="Introduce DNI..." />
+        <input
+          type="text"
+          class="input-dni"
+          [(ngModel)]="searchDni"
+          (ngModelChange)="onDniChange()"
+          placeholder="Introduce DNI..."
+        />
         <button type="button" (click)="searchUser()">Buscar</button>
       </div>
 
@@ -85,8 +126,12 @@
           </div>
 
           <div class="card-actions-footer">
-            <button type="button" class="btn-secondary" (click)="enableUserEdit()">Editar perfil</button>
-            <button type="button" class="btn-rojo" (click)="deleteUserById(foundUser.DNI)">Eliminar</button>
+            <button type="button" class="btn-secondary" (click)="enableUserEdit()">
+              Editar perfil
+            </button>
+            <button type="button" class="btn-rojo" (click)="deleteUserById(foundUser.DNI)">
+              Eliminar
+            </button>
           </div>
           <p class="resultado" *ngIf="roleResult">{{ roleResult }}</p>
         </div>
@@ -136,60 +181,132 @@
       <div class="register-form-container">
         <div class="register-header">
           <h3>Registro de Usuario</h3>
-          <p>Da de alta a jugadores, entrenadores y usuarios del club.</p>
+          <p>Da de alta a jugadores, entrenadores y usuarios.</p>
         </div>
 
         <form [formGroup]="RegisterForm" (ngSubmit)="onSubmit()" class="register-form">
           <div class="form-row">
             <div class="form-group">
-              <label for="dni">DNI</label>
+              <label for="dni">DNI <span class="required-asterisk">*</span></label>
               <input id="dni" type="text" formControlName="DNI" maxlength="9" />
-              <div class="error" *ngIf="RegisterForm.get('DNI')?.invalid && RegisterForm.get('DNI')?.touched">
-                <small *ngIf="RegisterForm.get('DNI')?.errors?.['required']">El DNI es obligatorio.</small>
-                <small *ngIf="RegisterForm.get('DNI')?.errors?.['pattern']">Formato inválido: 8 dígitos y una letra.</small>
+              <div
+                class="error"
+                *ngIf="RegisterForm.get('DNI')?.invalid && RegisterForm.get('DNI')?.touched"
+              >
+                <small *ngIf="RegisterForm.get('DNI')?.errors?.['required']"
+                  >El DNI es obligatorio.</small
+                >
+                <small *ngIf="RegisterForm.get('DNI')?.errors?.['pattern']"
+                  >Formato inválido: 8 dígitos y una letra.</small
+                >
               </div>
             </div>
 
             <div class="form-group">
-              <label for="nombre">Nombre</label>
+              <label for="nombre">Nombre<span class="required-asterisk">*</span></label>
               <input id="nombre" type="text" formControlName="nombre" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input id="email" type="email" formControlName="email" />
-            </div>
-
-            <div class="form-group">
-              <label for="telefono">Teléfono</label>
-              <input id="telefono" type="text" formControlName="telefono" />
-              <div class="error" *ngIf="RegisterForm.get('telefono')?.invalid && RegisterForm.get('telefono')?.touched">
-                <small *ngIf="RegisterForm.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</small>
-                <small *ngIf="RegisterForm.get('telefono')?.errors?.['pattern']">Debe tener 9 números.</small>
+              <div
+                class="error"
+                *ngIf="RegisterForm.get('nombre')?.invalid && RegisterForm.get('nombre')?.touched"
+              >
+                <small *ngIf="RegisterForm.get('nombre')?.errors?.['required']">
+                  El nombre es obligatorio.
+                </small>
               </div>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="anioNacimiento">Año de nacimiento</label>
-              <input id="anioNacimiento" type="number" formControlName="anioNacimiento" placeholder="Ej: 2010" />
+              <label for="email">Email <span class="required-asterisk">*</span></label>
+              <input id="email" type="email" formControlName="email" />
+              <div
+                class="error"
+                *ngIf="RegisterForm.get('email')?.invalid && RegisterForm.get('email')?.touched"
+              >
+                <small *ngIf="RegisterForm.get('email')?.errors?.['required']">
+                  El email es obligatorio.
+                </small>
+                <small *ngIf="RegisterForm.get('email')?.errors?.['email']">
+                  Introduce un email válido.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Teléfono <span class="required-asterisk">*</span></label>
+              <input id="telefono" type="text" formControlName="telefono" />
+              <div
+                class="error"
+                *ngIf="
+                  RegisterForm.get('telefono')?.invalid && RegisterForm.get('telefono')?.touched
+                "
+              >
+                <small *ngIf="RegisterForm.get('telefono')?.errors?.['required']"
+                  >El teléfono es obligatorio.</small
+                >
+                <small *ngIf="RegisterForm.get('telefono')?.errors?.['pattern']"
+                  >Debe tener 9 números.</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="anioNacimiento"
+                >Año de nacimiento <span class="required-asterisk">*</span></label
+              >
+              <input
+                id="anioNacimiento"
+                type="number"
+                formControlName="anioNacimiento"
+                placeholder="Ej: 2010"
+              />
+              <div
+                class="error"
+                *ngIf="
+                  RegisterForm.get('anioNacimiento')?.invalid &&
+                  RegisterForm.get('anioNacimiento')?.touched
+                "
+              >
+                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['required']">
+                  El año de nacimiento es obligatorio.
+                </small>
+                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['min']">
+                  El año debe ser mayor o igual que 1800.
+                </small>
+                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['max']">
+                  El año no puede ser mayor que el actual.
+                </small>
+              </div>
             </div>
             <div class="form-group">
-              <label for="rol">Rol</label>
+              <label for="rol">Rol <span class="required-asterisk">*</span></label>
               <select id="rol" formControlName="Rol">
                 <option value="tutor">Tutor</option>
                 <option value="jugador">Jugador</option>
                 <option value="entrenador">Entrenador</option>
-                <option *ngIf="userRole === 'admin_plataforma'" value="admin_club">Administrador de club</option>
+                <option *ngIf="userRole === 'admin_plataforma'" value="admin_club">
+                  Administrador de club
+                </option>
               </select>
+              <div
+                class="error"
+                *ngIf="RegisterForm.get('Rol')?.invalid && RegisterForm.get('Rol')?.touched"
+              >
+                <small *ngIf="RegisterForm.get('Rol')?.errors?.['required']">
+                  Debes seleccionar un rol.
+                </small>
+              </div>
             </div>
           </div>
 
-          <div class="form-group" *ngIf="userRole === 'admin_plataforma' && RegisterForm.value.Rol !== 'admin_plataforma'">
-            <label>Club</label>
+          <div
+            class="form-group"
+            *ngIf="userRole === 'admin_plataforma' && RegisterForm.value.Rol !== 'admin_plataforma'"
+          >
+            <label>Club <span class="required-asterisk">*</span></label>
             <select formControlName="club_id">
               <option [ngValue]="null" disabled>Selecciona un club</option>
               <option *ngFor="let club of clubs" [ngValue]="club.id">{{ club.nombre }}</option>
@@ -204,10 +321,18 @@
         <div class="register-massive-container">
           <div class="massive-info">
             <h4>Registro Masivo (CSV)</h4>
-            <p class="register-massive-text">Sube un archivo CSV para registrar varios miembros del club de una sola vez.</p>
+            <p class="register-massive-text">
+              Sube un archivo CSV para registrar varios miembros del club de una sola vez.
+            </p>
           </div>
           <div class="action-bar">
-            <input id="csvFile" class="file-input" type="file" (change)="onFileSelected($event)" accept=".csv" />
+            <input
+              id="csvFile"
+              class="file-input"
+              type="file"
+              (change)="onFileSelected($event)"
+              accept=".csv"
+            />
             <button type="button" (click)="uploadCSV()" class="btn-secondary">Subir CSV</button>
           </div>
         </div>
@@ -223,24 +348,50 @@
       <form [formGroup]="ClubForm" (ngSubmit)="saveClub()" class="register-form club-form-bg">
         <div class="form-row">
           <div class="form-group">
-            <label>Nombre del Club</label>
+            <label>Nombre del Club <span class="required-asterisk">*</span></label>
             <input type="text" formControlName="nombre" />
+            <div
+              class="error"
+              *ngIf="ClubForm.get('nombre')?.invalid && ClubForm.get('nombre')?.touched"
+            >
+              <small *ngIf="ClubForm.get('nombre')?.errors?.['required']">
+                El nombre del club es obligatorio.
+              </small>
+            </div>
           </div>
 
           <div class="form-group">
-            <label>Teléfono</label>
+            <label>Teléfono <span class="required-asterisk">*</span></label>
             <input type="text" formControlName="telefono" />
-            <div class="error" *ngIf="ClubForm.get('telefono')?.invalid && ClubForm.get('telefono')?.touched">
-              <small *ngIf="ClubForm.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</small>
-              <small *ngIf="ClubForm.get('telefono')?.errors?.['pattern']">Debe tener 9 números.</small>
+            <div
+              class="error"
+              *ngIf="ClubForm.get('telefono')?.invalid && ClubForm.get('telefono')?.touched"
+            >
+              <small *ngIf="ClubForm.get('telefono')?.errors?.['required']"
+                >El teléfono es obligatorio.</small
+              >
+              <small *ngIf="ClubForm.get('telefono')?.errors?.['pattern']"
+                >Debe tener 9 números.</small
+              >
             </div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Email</label>
+            <label>Email <span class="required-asterisk">*</span></label>
             <input type="email" formControlName="email" />
+            <div
+              class="error"
+              *ngIf="ClubForm.get('email')?.invalid && ClubForm.get('email')?.touched"
+            >
+              <small *ngIf="ClubForm.get('email')?.errors?.['required']">
+                El email es obligatorio.
+              </small>
+              <small *ngIf="ClubForm.get('email')?.errors?.['email']">
+                Introduce un email válido.
+              </small>
+            </div>
           </div>
           <div class="form-group">
             <label>Escudo (opcional)</label>
@@ -280,18 +431,33 @@
       <div class="section-divider"></div>
 
       <h4>Directorio de Clubes</h4>
-      <input type="text" class="search-full" placeholder="Buscar un club por nombre..." [(ngModel)]="clubSearch" (input)="filterClubs()" />
+      <input
+        type="text"
+        class="search-full"
+        placeholder="Buscar un club por nombre..."
+        [(ngModel)]="clubSearch"
+        (input)="filterClubs()"
+      />
 
       <div class="club-list">
-        <div class="club-card clickable" *ngFor="let club of filteredClubs" (click)="openClub(club.id)">
+        <div
+          class="club-card clickable"
+          *ngFor="let club of filteredClubs"
+          (click)="openClub(club.id)"
+        >
           <div class="club-image-wrapper">
-            <img *ngIf="club.escudo" [src]="'http://localhost:3000' + club.escudo" class="club-escudo" />
+            <img
+              *ngIf="club.escudo"
+              [src]="'http://localhost:3000' + club.escudo"
+              class="club-escudo"
+            />
             <div *ngIf="!club.escudo" class="no-escudo">ESC</div>
           </div>
           <div class="club-info">
             <h4>{{ club.nombre }}</h4>
             <div class="club-meta">
-              <span>{{ club.email || 'Sin email' }}</span> • <span>{{ club.telefono || 'Sin teléfono' }}</span>
+              <span>{{ club.email || 'Sin email' }}</span> •
+              <span>{{ club.telefono || 'Sin teléfono' }}</span>
             </div>
           </div>
           <div class="club-arrow">❯</div>
@@ -308,25 +474,55 @@
         <p>Configura las edades para agrupar a los jugadores (Alevín, Benjamín, etc.)</p>
       </div>
 
-      <form [formGroup]="CategoryForm" (ngSubmit)="saveCategory()" class="register-form club-form-bg">
+      <form
+        [formGroup]="CategoryForm"
+        (ngSubmit)="saveCategory()"
+        class="register-form club-form-bg"
+      >
         <div class="form-row">
           <div class="form-group">
-            <label>Nombre</label>
+            <label>Nombre <span class="required-asterisk">*</span></label>
             <input type="text" formControlName="nombre" placeholder="Ej: Benjamín" />
+            <div
+              class="error"
+              *ngIf="CategoryForm.get('nombre')?.invalid && CategoryForm.get('nombre')?.touched"
+            >
+              <small *ngIf="CategoryForm.get('nombre')?.errors?.['required']">
+                El nombre de la categoría es obligatorio.
+              </small>
+            </div>
           </div>
           <div class="form-group">
-            <label>Edad mínima</label>
+            <label>Edad mínima <span class="required-asterisk">*</span></label>
             <input type="number" formControlName="edad_min" />
+            <div
+              class="error"
+              *ngIf="CategoryForm.get('edad_min')?.invalid && CategoryForm.get('edad_min')?.touched"
+            >
+              <small *ngIf="CategoryForm.get('edad_min')?.errors?.['required']">
+                La edad mínima de la categoría es obligatoria.
+              </small>
+            </div>
           </div>
         </div>
 
         <div class="form-row align-end">
           <div class="form-group">
-            <label>Edad máxima</label>
+            <label>Edad máxima <span class="required-asterisk">*</span></label>
             <input type="number" formControlName="edad_max" />
+            <div
+              class="error"
+              *ngIf="CategoryForm.get('edad_max')?.invalid && CategoryForm.get('edad_max')?.touched"
+            >
+              <small *ngIf="CategoryForm.get('edad_max')?.errors?.['required']">
+                La edad máxima de la categoría es obligatoria.
+              </small>
+            </div>
           </div>
           <div class="btn-container-right">
-            <button type="submit">{{ editingCategoryId ? 'Actualizar Categoría' : 'Añadir Categoría' }}</button>
+            <button type="submit">
+              {{ editingCategoryId ? 'Actualizar Categoría' : 'Añadir Categoría' }}
+            </button>
           </div>
         </div>
       </form>
@@ -339,12 +535,16 @@
           <div class="catalog-info">
             <h4>{{ cat.nombre }}</h4>
             <p *ngIf="cat.edad_min || cat.edad_max">
-              <span class="age-badge">{{ cat.edad_min || '?' }} a {{ cat.edad_max || '?' }} años</span>
+              <span class="age-badge"
+                >{{ cat.edad_min || '?' }} a {{ cat.edad_max || '?' }} años</span
+              >
             </p>
           </div>
           <div class="catalog-actions">
             <button type="button" class="btn-secondary" (click)="editCategory(cat)">Editar</button>
-            <button type="button" class="btn-rojo" (click)="deleteCategory(cat.id)">Eliminar</button>
+            <button type="button" class="btn-rojo" (click)="deleteCategory(cat.id)">
+              Eliminar
+            </button>
           </div>
         </div>
       </div>
@@ -356,11 +556,23 @@
         <p>Gestiona los ciclos anuales de la plataforma.</p>
       </div>
 
-      <form [formGroup]="SeasonForm" (ngSubmit)="createNewSeason()" class="register-form club-form-bg">
+      <form
+        [formGroup]="SeasonForm"
+        (ngSubmit)="createNewSeason()"
+        class="register-form club-form-bg"
+      >
         <div class="action-bar align-end">
           <div class="form-group flex-1">
-            <label>Nombre de la temporada</label>
+            <label>Nombre de la temporada <span class="required-asterisk">*</span></label>
             <input type="text" formControlName="nombre" placeholder="Ej: 2024/2025" />
+            <div
+              class="error"
+              *ngIf="SeasonForm.get('nombre')?.invalid && SeasonForm.get('nombre')?.touched"
+            >
+              <small *ngIf="SeasonForm.get('nombre')?.errors?.['required']">
+                El nombre de la temporada es obligatorio.
+              </small>
+            </div>
           </div>
           <button type="submit" [disabled]="SeasonForm.invalid">Crear Temporada</button>
         </div>
@@ -378,7 +590,12 @@
             </h4>
           </div>
           <div class="catalog-actions">
-            <button type="button" class="btn-secondary" (click)="activateSeason(temp.id)" *ngIf="!temp.activa">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="activateSeason(temp.id)"
+              *ngIf="!temp.activa"
+            >
               Activar
             </button>
             <button type="button" class="btn-rojo" (click)="deleteSeason(temp.id)">Eliminar</button>

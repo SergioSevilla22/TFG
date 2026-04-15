@@ -6,14 +6,17 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #f8fafc;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* --- CABECERA --- */
 .page-header {
   margin-bottom: 40px;
-  
+
   .page-title {
     font-size: 2.6rem;
     font-weight: 800;
@@ -76,7 +79,9 @@
     transition: all 0.2s ease;
     box-sizing: border-box;
 
-    &::placeholder { color: #94a3b8; }
+    &::placeholder {
+      color: #94a3b8;
+    }
 
     &:focus {
       outline: none;
@@ -107,7 +112,9 @@
     box-shadow: 0 8px 15px rgba(15, 23, 42, 0.2);
   }
 
-  mat-icon { font-size: 20px; }
+  mat-icon {
+    font-size: 20px;
+  }
 }
 
 /* --- GRID DE CLUBES --- */
@@ -133,7 +140,10 @@
     box-shadow: 0 25px 30px -10px rgba(0, 0, 0, 0.08);
     border-color: #059669;
 
-    .card-footer .view-more { color: #059669; transform: translateX(5px); }
+    .card-footer .view-more {
+      color: #059669;
+      transform: translateX(5px);
+    }
   }
 
   .card-image {
@@ -144,27 +154,34 @@
     justify-content: center;
     padding: 40px;
     position: relative;
-    
+
     /* Efecto decorativo de fondo */
     &::after {
-      content: "";
+      content: '';
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       height: 40%;
-      background: linear-gradient(to top, rgba(0,0,0,0.02), transparent);
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.02), transparent);
     }
 
     img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.08));
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.08));
       z-index: 1;
     }
 
     .no-shield {
       z-index: 1;
-      mat-icon { font-size: 70px; width: 70px; height: 70px; color: #cbd5e1; }
+      mat-icon {
+        font-size: 70px;
+        width: 70px;
+        height: 70px;
+        color: #cbd5e1;
+      }
     }
   }
 
@@ -188,11 +205,13 @@
       color: #64748b;
       font-size: 0.95rem;
 
-      .separator { color: #cbd5e1; }
-      .provincia { 
-        font-weight: 700; 
-        text-transform: uppercase; 
-        font-size: 0.7rem; 
+      .separator {
+        color: #cbd5e1;
+      }
+      .provincia {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.7rem;
         letter-spacing: 0.05em;
         background: #f1f5f9;
         padding: 2px 8px;
@@ -216,7 +235,11 @@
       gap: 6px;
       transition: all 0.3s ease;
 
-      mat-icon { font-size: 20px; width: 20px; height: 20px; }
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
     }
   }
 }

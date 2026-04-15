@@ -13,7 +13,5 @@ export const adminGuard: CanActivateFn = () => {
     return true;
   }
 
-  // Si no es admin, fuera
-  router.navigate(['/home']);
   return false;
 };

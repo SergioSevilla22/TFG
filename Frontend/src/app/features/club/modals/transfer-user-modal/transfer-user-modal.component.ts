@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,6 +31,8 @@ export class TransferUserModalComponent implements OnInit {
 
   clubs: any[] = [];
   targetClubId: number | null = null;
+
+  @ViewChild('accionesSection') accionesSection?: ElementRef<HTMLDivElement>;
 
   constructor(
     private dialogRef: MatDialogRef<TransferUserModalComponent>,
@@ -68,6 +70,13 @@ export class TransferUserModalComponent implements OnInit {
   select(user: any) {
     this.selectedUser = user;
     this.targetClubId = null;
+
+    setTimeout(() => {
+      this.accionesSection?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 100);
   }
 
   transfer() {

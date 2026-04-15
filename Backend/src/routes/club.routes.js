@@ -42,19 +42,9 @@ router.post(
   createClub
 );
 
-router.get(
-  "/clubes",
-  authMiddleware,
-  requireAdminClub,
-  getClubs
-);
+router.get("/clubes", authMiddleware, requireAdminClub, getClubs);
 
-router.get(
-  "/clubes/:id",
-  authMiddleware,
-  requireAdminClub,
-  getClub
-);
+router.get("/clubes/:id", authMiddleware, requireAdminClub, getClub);
 
 router.put(
   "/clubes/:id",

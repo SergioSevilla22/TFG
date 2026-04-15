@@ -52,8 +52,6 @@ export class LoginComponent {
           this.router.navigate(['/admin']);
         } else if (user.Rol === 'tutor') {
           this.router.navigate(['/tutor-panel']);
-        } else {
-          this.router.navigate(['/home']);
         }
       },
       error: (err) => {

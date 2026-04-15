@@ -6,12 +6,18 @@ export const requireAdminPlataforma = (req, res, next) => {
 };
 
 export const requireAdminClub = (req, res, next) => {
-  if ((req.user.Rol === "admin_plataforma") || (req.user.Rol === "admin_club" && req.user.club_id == req.params.id)) {
-      return next();
+  if (req.user.Rol === "admin_plataforma") {
+    return next();
   }
-  
-   return res.status(403).json({ 
-      message: "No tienes permisos para gestionar este club o no perteneces a él" 
+  if (req.user.Rol === "admin_club" && !req.params.id) {
+    return next();
+  }
+  if (req.user.Rol === "admin_club" && req.user.club_id == req.params.id) {
+    return next();
+  }
+
+  return res.status(403).json({
+    message: "No tienes permisos para gestionar este club o no perteneces a él",
   });
 };
 
@@ -21,17 +27,16 @@ export const requireGestionClub = (req, res, next) => {
 
   // 1. El Admin de Plataforma es Dios, entra a cualquier club
   if (Rol === "admin_plataforma") {
-      return next();
+    return next();
   }
 
   // 2. Si es Admin de Club o Entrenador, verificamos que sea SU club
   if ((Rol === "admin_club" || Rol === "entrenador") && club_id == idClubUrl) {
-      return next();
+    return next();
   }
 
   // 3. Si no cumple nada de lo anterior, fuera
-  return res.status(403).json({ 
-      message: "No tienes permisos para gestionar este club o no perteneces a él" 
+  return res.status(403).json({
+    message: "No tienes permisos para gestionar este club o no perteneces a él",
   });
 };
-  
