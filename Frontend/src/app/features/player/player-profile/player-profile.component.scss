@@ -347,3 +347,149 @@
   font-size: 13px;
   color: #777;
 }
+
+.ai-teaser-card {
+  position: relative;
+  overflow: hidden;
+  background: #059669;
+  border-radius: 18px;
+  padding: 0;
+  box-shadow: 0 8px 32px rgba(30, 124, 69, 0.25);
+  grid-column: 1 / -1;
+
+  // Círculo decorativo de fondo
+  .ai-teaser-bg-decoration {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 40px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .ai-teaser-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 28px 32px;
+    flex-wrap: wrap;
+  }
+
+  // IZQUIERDA: icono + título
+  .ai-teaser-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .ai-teaser-icon-wrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .ai-teaser-text {
+    h3 {
+      margin: 0 0 4px 0;
+      font-size: 17px;
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.75);
+      white-space: nowrap;
+    }
+  }
+
+  // CENTRO: pills
+  .ai-teaser-center {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .ai-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 6px 14px;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+
+    .pill-icon {
+      font-size: 14px;
+    }
+  }
+
+  // DERECHA: botón
+  .ai-teaser-right {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .ai-teaser-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: #1e7c45;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s;
+    }
+
+    &:hover {
+      background: #f0faf4;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+
+      mat-icon {
+        transform: translateX(4px);
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CreateObservationModalComponent } from '../../equipo/modals/create-observation-modal/create-observation-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PlayerAiPanelComponent } from '../../ai/components/player-ai-panel/player-ai-panel.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-jugador-ficha',
@@ -19,6 +20,7 @@ import { PlayerAiPanelComponent } from '../../ai/components/player-ai-panel/play
   imports: [
     CommonModule,
     HeaderComponent,
+    RouterModule,
     TeamSidebarComponent,
     MatIconModule,
     MatDialogModule,

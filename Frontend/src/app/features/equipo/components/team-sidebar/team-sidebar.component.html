@@ -60,5 +60,15 @@
       <mat-icon>person</mat-icon>
       Mi ficha
     </a>
+
+    <a
+      *ngIf="showMyProfile"
+      class="nav-item nav-item--ai"
+      [class.active]="isAiPanelActive"
+      [routerLink]="['/equipo', teamId, 'jugador', dni, 'panel-ia']"
+    >
+      <mat-icon>psychology</mat-icon>
+      Panel IA
+    </a>
   </nav>
 </aside>
