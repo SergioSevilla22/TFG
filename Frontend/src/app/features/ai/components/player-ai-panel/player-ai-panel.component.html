@@ -1,90 +1,156 @@
-<section class="section-card">
-  <div class="section-header">
-    <h2>🤖 Análisis IA</h2>
-  </div>
-
-  <div *ngIf="loading">Analizando rendimiento del jugador...</div>
-
-  <div *ngIf="!loading && score !== null">
-    <!-- SCORE -->
-
-    <div class="score-box">
-      <div class="score-circle">
-        {{ score | number: '1.0-0' }}
+<div class="equipo-layout">
+  <main class="ai-page-content">
+    <!-- HEADER DE PÁGINA -->
+    <div class="ai-page-header">
+      <div class="ai-header-left">
+        <div class="ai-header-icon">🤖</div>
+        <div>
+          <h1>Panel de Inteligencia Artificial</h1>
+          <p *ngIf="player">
+            Análisis predictivo de <strong>{{ player.nombre }}</strong>
+          </p>
+        </div>
       </div>
-
-      <div class="score-label">Performance Score</div>
-
-      <div class="interpretation">
-        {{ getInterpretation() }}
-      </div>
+      <a class="back-btn" [routerLink]="['/equipo', teamId, 'jugador', dni]">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a la ficha
+      </a>
     </div>
 
-    <!-- RADAR -->
+    <!-- GRID PRINCIPAL -->
+    <div class="ai-grid">
+      <!-- TARJETA: PERFORMANCE SCORE -->
+      <div class="ai-card card-score">
+        <div class="card-title">
+          <mat-icon>insights</mat-icon>
+          Performance Score
+        </div>
 
-    <div *ngIf="isBrowser" class="chart-container">
-      <h3>Radar de rendimiento</h3>
+        <div *ngIf="loading" class="card-skeleton"></div>
 
-      <canvas baseChart [data]="radarChartData" [type]="radarChartType"> </canvas>
+        <div *ngIf="!loading && score !== null" class="score-content">
+          <div class="score-circle" [style.background]="getScoreGradient()">
+            {{ score | number: '1.0-0' }}
+          </div>
+          <div class="score-interpretation" [style.color]="getInterpretation().color">
+            {{ getInterpretation().text }}
+          </div>
+          <p class="score-desc">
+            Puntuación generada por IA a partir de goles, asistencias, minutos, disciplina y
+            participación.
+          </p>
+        </div>
+      </div>
+
+      <!-- TARJETA: RADAR -->
+      <div class="ai-card card-radar">
+        <div class="card-title">
+          <mat-icon>radar</mat-icon>
+          Radar de Rendimiento
+        </div>
+
+        <div *ngIf="loading" class="card-skeleton"></div>
+
+        <div *ngIf="!loading && isBrowser" class="radar-wrapper">
+          <canvas baseChart [data]="radarChartData" [type]="radarChartType"></canvas>
+        </div>
+      </div>
+
+      <!-- TARJETA: ASISTENCIA -->
+      <div class="ai-card card-attendance">
+        <div class="card-title">
+          <mat-icon>event_available</mat-icon>
+          Tendencia de Asistencia
+        </div>
+
+        <div *ngIf="loadingAttendance" class="card-skeleton"></div>
+
+        <ng-container *ngIf="!loadingAttendance && dropoutProbability !== null">
+          <div class="attendance-metrics">
+            <div class="metric-item">
+              <div class="metric-circle" [style.background]="getRiskColor()">
+                {{ (attendanceRatio ?? 0) * 100 | number: '1.0-0' }}%
+              </div>
+              <span class="metric-name">Nivel medio</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-item">
+              <div class="metric-circle" [style.background]="getRiskColor()">
+                {{ (dropoutProbability ?? 0) * 100 | number: '1.0-0' }}%
+              </div>
+              <div>
+                <span class="metric-name">Riesgo de baja</span>
+                <span class="metric-sub risk-label" [style.color]="getRiskColor()">
+                  {{ getRiskLabel() }}
+                </span>
+              </div>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-item">
+              <div class="trend-icon">{{ getTrendIcon() }}</div>
+              <div>
+                <span class="metric-name">Tendencia</span>
+                <span class="metric-sub">{{ trend }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="isBrowser" class="line-chart-wrapper">
+            <canvas
+              baseChart
+              [data]="lineChartData"
+              [options]="lineChartOptions"
+              [type]="lineChartType"
+            ></canvas>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- TARJETA: CLUSTERING -->
+      <div class="ai-card card-cluster">
+        <div class="card-title">
+          <mat-icon>hub</mat-icon>
+          Clasificación K-Means (Scouting)
+        </div>
+
+        <div *ngIf="loadingCluster" class="card-skeleton"></div>
+
+        <ng-container *ngIf="!loadingCluster">
+          <div *ngIf="clusterData" class="cluster-content">
+            <div class="cluster-badge" [style.border-left-color]="clusterColor">
+              <div class="cluster-icon-circle" [style.background]="clusterColor">
+                {{ clusterIcon }}
+              </div>
+              <div>
+                <h3>{{ clusterData.nombre_perfil }}</h3>
+                <p>Perfil detectado automáticamente por IA a partir de patrones estadísticos.</p>
+              </div>
+            </div>
+
+            <div *ngIf="clusterData.jugadores_similares?.length > 0" class="similar-section">
+              <h4>
+                <mat-icon>people</mat-icon>
+                Jugadores con perfil similar
+              </h4>
+              <div class="chips-row">
+                <span class="chip" *ngFor="let sim of clusterData.jugadores_similares">
+                  <mat-icon>person</mat-icon>{{ sim }}
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="clusterData.jugadores_similares?.length === 0" class="empty-similar">
+              <mat-icon>search_off</mat-icon>
+              <p>No hay jugadores con perfil similar en el club.</p>
+            </div>
+          </div>
+
+          <div *ngIf="!clusterData" class="no-cluster">
+            <mat-icon>info_outline</mat-icon>
+            <p>No hay suficientes datos para clasificar a este jugador.</p>
+          </div>
+        </ng-container>
+      </div>
     </div>
-
-    <!-- ========================= -->
-    <!-- TENDENCIA DE ASISTENCIA -->
-    <!-- ========================= -->
-
-    <div *ngIf="isBrowser && dropoutProbability !== null" class="chart-container">
-      <h3>Tendencia de asistencia (últimos 5 partidos)</h3>
-
-      <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType">
-      </canvas>
-      <div class="attendance-summary">
-        <h4>Nivel medio de asistencia</h4>
-        <p class="metric-description">
-          Porcentaje de asistencia del jugador considerando
-          <strong>todos los partidos registrados</strong>.
-        </p>
-        <div class="risk-circle" [style.background]="getRiskColor()">
-          {{ (attendanceRatio ?? 0) * 100 | number: '1.0-0' }}%
-        </div>
-      </div>
-
-      <div class="risk-score">
-        <h4>Riesgo de baja del jugador</h4>
-        <p class="metric-description">
-          Probabilidad estimada de baja de un jugador a un partido mediante el modelo de
-          <strong>IA</strong> a partir del historial de asistencia.
-        </p>
-
-        <div class="risk-circle" [style.background]="getRiskColor()">
-          {{ (dropoutProbability ?? 0) * 100 | number: '1.0-0' }}%
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="clusterData" class="chart-container cluster-section">
-      <h3>Clasificación K-Means (Scouting)</h3>
-      
-      <div class="cluster-badge" [style.border-left-color]="clusterColor">
-        <div class="cluster-icon" [style.background-color]="clusterColor">
-          {{ clusterIcon }}
-        </div>
-        <div class="cluster-info">
-          <h4>{{ clusterData.nombre_perfil }}</h4>
-          <p>Perfil de juego detectado automáticamente según patrones estadísticos y actitud.</p>
-        </div>
-      </div>
-
-      <div class="similar-players" *ngIf="clusterData.jugadores_similares?.length > 0">
-        <h4>Jugadores del club con perfil similar:</h4>
-        <div class="chips-container">
-          <span class="chip" *ngFor="let sim of clusterData.jugadores_similares">
-            <i class="fas fa-user-circle"></i> {{ sim }}
-          </span>
-        </div>
-      </div>
-      <div *ngIf="clusterData.jugadores_similares?.length === 0" class="no-similares">
-        <p>No hay jugadores con un perfil similar en la base de datos.</p>
-      </div>
-    </div>
-  </div>
-</section>
+  </main>
+</div>

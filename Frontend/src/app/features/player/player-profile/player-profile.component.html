@@ -151,7 +151,50 @@
         </div>
       </section>
 
-      <app-player-ai-panel *ngIf="player" [dni]="player.DNI"></app-player-ai-panel>
+      <section class="ai-teaser-card" *ngIf="player">
+        <div class="ai-teaser-bg-decoration"></div>
+
+        <div class="ai-teaser-content">
+          <div class="ai-teaser-left">
+            <div class="ai-teaser-icon-wrapper">
+              <span class="ai-teaser-icon">🤖</span>
+            </div>
+            <div class="ai-teaser-text">
+              <h3>Panel de Inteligencia Artificial</h3>
+              <p>Análisis predictivo, rendimiento avanzado y clasificación automática de perfil.</p>
+            </div>
+          </div>
+
+          <div class="ai-teaser-center">
+            <div class="ai-pill">
+              <span class="pill-icon">⚡</span>
+              <span>Performance Score</span>
+            </div>
+            <div class="ai-pill">
+              <span class="pill-icon">📊</span>
+              <span>Radar de rendimiento</span>
+            </div>
+            <div class="ai-pill">
+              <span class="pill-icon">📅</span>
+              <span>Tendencia de asistencia</span>
+            </div>
+            <div class="ai-pill">
+              <span class="pill-icon">🎯</span>
+              <span>Clustering K-Means</span>
+            </div>
+          </div>
+
+          <div class="ai-teaser-right">
+            <a
+              class="ai-teaser-btn"
+              [routerLink]="['/equipo', teamId, 'jugador', player.DNI, 'panel-ia']"
+            >
+              <span>Ver análisis IA</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 </div>

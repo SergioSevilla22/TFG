@@ -55,9 +55,17 @@ export const routes: Routes = [
       { path: 'plantilla', component: SquadComponent },
 
       { path: 'jugador/:dni', component: PlayerProfileComponent },
+      {
+        path: 'jugador/:dni/panel-ia',
+        loadComponent: () =>
+          import('./features/ai/components/player-ai-panel/player-ai-panel.component').then(
+            (m) => m.PlayerAiPanelComponent,
+          ),
+      },
     ],
   },
   { path: 'clubes', component: ClubsComponent, title: 'Search Clubs', canActivate: [adminGuard] },
+  { path: 'jugador/:dni', component: PlayerProfileComponent },
 ];
 
 export default routes;

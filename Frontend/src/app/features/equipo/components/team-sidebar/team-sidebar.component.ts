@@ -14,7 +14,13 @@ import { AuthService } from '../../../../../services/auth/auth.service';
 export class TeamSidebarComponent implements OnInit {
   @Input() team: any;
   @Input() teamId!: number;
-  @Input() active: 'resumen' | 'plantilla' | 'calendario' | 'eventos' | 'convocatorias' = 'resumen';
+  @Input() active:
+    | 'resumen'
+    | 'plantilla'
+    | 'calendario'
+    | 'eventos'
+    | 'convocatorias'
+    | 'panel-ia' = 'resumen';
   @Input() dni?: string;
 
   userRole: string | null = null;
@@ -42,12 +48,17 @@ export class TeamSidebarComponent implements OnInit {
 
   get isMyProfileActive(): boolean {
     if (!this.dni) return false;
-    return this.router.url.includes(`/jugador/${this.dni}`);
+    const url = this.router.url;
+    return url.includes(`/jugador/${this.dni}`) && !url.includes('/panel-ia');
   }
 
   get showMyProfile(): boolean {
     if (!this.dni) return false;
 
     return this.userRole !== 'admin_club' && this.userRole !== 'admin_plataforma';
+  }
+
+  get isAiPanelActive(): boolean {
+    return this.router.url.includes('/panel-ia');
   }
 }
