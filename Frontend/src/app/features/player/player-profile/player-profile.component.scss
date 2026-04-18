@@ -177,9 +177,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #ffffff;
-  color: #1ea83a;
-  border: 2px solid #1ea83a;
+  background: #059669;
+  color: white;
+  border: none;
   padding: 8px 16px;
   border-radius: 12px;
   font-weight: 700;
@@ -195,7 +195,7 @@
   }
 
   &:hover {
-    background: #1ea83a;
+    background: #047857;
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(30, 168, 58, 0.2);

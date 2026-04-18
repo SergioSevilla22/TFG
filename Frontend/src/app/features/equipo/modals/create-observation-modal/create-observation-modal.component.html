@@ -1,23 +1,23 @@
-<div class="modal-header">
+<div class="modal-header-emerald">
   <h2 mat-dialog-title>Nueva Observación</h2>
   <p class="subtitle">Añade feedback técnico o personal para los jugadores.</p>
 </div>
 
-<div mat-dialog-content class="modal-content">
+<div mat-dialog-content class="modal-content-emerald">
   <div class="form-grid">
     <div class="field full-width">
-      <label>Título *</label>
+      <label>Título de la observación</label>
       <input
         type="text"
         [(ngModel)]="observationForm.titulo"
         placeholder="Ej: Mejora en control orientado"
-        class="custom-input"
+        class="emerald-input"
       />
     </div>
 
     <div class="field">
       <label>Categoría</label>
-      <select [(ngModel)]="observationForm.categoria" class="custom-input">
+      <select [(ngModel)]="observationForm.categoria" class="emerald-input">
         <option value="general">General</option>
         <option value="técnica">Técnica</option>
         <option value="táctica">Táctica</option>
@@ -28,7 +28,7 @@
 
     <div class="field">
       <label>Visibilidad</label>
-      <select [(ngModel)]="observationForm.visibilidad" class="custom-input">
+      <select [(ngModel)]="observationForm.visibilidad" class="emerald-input">
         <option value="jugador">Visible para el jugador</option>
         <option value="club">Solo Club/Entrenadores</option>
         <option value="privado">Privado (Solo yo)</option>
@@ -36,54 +36,50 @@
     </div>
 
     <div class="field full-width">
-      <label>Contenido de la observación *</label>
+      <label>Contenido detallado</label>
       <textarea
         [(ngModel)]="observationForm.contenido"
         rows="4"
-        class="custom-input"
-        placeholder="Escribe aquí tu análisis..."
+        class="emerald-input"
+        placeholder="Escribe aquí tu análisis técnico..."
       ></textarea>
     </div>
   </div>
 
-  <div class="section-title margin-top" *ngIf="!data.dniIndividual">
+  <div class="section-header-emerald margin-top" *ngIf="!data.dniIndividual">
     <mat-icon>groups</mat-icon>
     <span>Seleccionar Jugadores ({{ selected.size }})</span>
   </div>
 
-  <div class="player-selection-container" *ngIf="!data.dniIndividual">
-    <div class="player-list">
-      <label class="player-row" *ngFor="let player of players">
-        <div class="player-info">
+  <div class="player-selection-wrapper" *ngIf="!data.dniIndividual">
+    <div class="player-grid-emerald">
+      <label class="player-card-option" *ngFor="let player of players" [class.is-selected]="selected.has(player.DNI)">
+        <div class="player-card-content">
           <input
             type="checkbox"
             [checked]="selected.has(player.DNI)"
             (change)="togglePlayer(player.DNI)"
           />
-          <div class="avatar-mini">
-            <img
-              *ngIf="player.foto"
-              [src]="'http://localhost:3000' + player.foto"
-              class="avatar-img"
-            />
+          <div class="avatar-emerald">
+            <img *ngIf="player.foto" [src]="'http://localhost:3000' + player.foto" />
             <span *ngIf="!player.foto">{{ player.nombre[0] }}</span>
           </div>
-          <span class="name">{{ player.nombre }}</span>
+          <span class="player-name">{{ player.nombre }}</span>
         </div>
       </label>
     </div>
   </div>
 
-  <div class="error-container" *ngIf="message">
-    <mat-icon>error_outline</mat-icon>
+  <div class="error-toast-emerald" *ngIf="message">
+    <mat-icon>error</mat-icon>
     <span>{{ message }}</span>
   </div>
 </div>
 
-<div mat-dialog-actions align="end" class="modal-actions">
-  <button mat-button (click)="dialogRef.close()" class="btn-cancel">Cancelar</button>
-  <button mat-flat-button color="primary" [disabled]="loading" (click)="save()" class="btn-publish">
-    <mat-icon *ngIf="!loading">save</mat-icon>
-    {{ loading ? 'Enviando...' : 'Registrar Observación' }}
+<div mat-dialog-actions align="end" class="modal-actions-emerald">
+  <button mat-button (click)="dialogRef.close()" class="btn-cancel-emerald">Cancelar</button>
+  <button mat-flat-button [disabled]="loading" (click)="save()" class="btn-save-emerald">
+    <mat-icon *ngIf="!loading">check_circle</mat-icon>
+    {{ loading ? 'Registrando...' : 'Registrar Observación' }}
   </button>
 </div>

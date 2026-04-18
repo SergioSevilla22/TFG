@@ -9,3 +9,11 @@
 </div>
 
 <div *ngIf="loading" class="loading">Cargando equipo...</div>
+
+<div class="no-team-wrapper" *ngIf="noTeam && !loading">
+  <div class="no-team-message">
+    <mat-icon class="no-team-icon">group_off</mat-icon>
+    <h3>Aún no tienes un equipo asignado</h3>
+    <p>Contacta con tu club para que te incluyan en una plantilla y puedas ver tus estadísticas y convocatorias.</p>
+  </div>
+</div>

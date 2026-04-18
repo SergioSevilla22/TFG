@@ -16,3 +16,46 @@
   overflow-y: auto;
   height: 100%;
 }
+
+.no-team-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  text-align: center;
+}
+
+.no-team-message {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  max-width: 450px;
+}
+
+.no-team-message .icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.no-team-message h3 {
+  color: #0f172a;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.no-team-message p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.no-team-icon {
+  font-size: 80px;  
+  height: 80px;     
+  width: 80px;      
+  color: #94a3b8;
+  margin-bottom: 24px;
+  display: inline-block;
+}

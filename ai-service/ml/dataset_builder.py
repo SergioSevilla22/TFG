@@ -50,8 +50,8 @@ def load_attendance_dataset():
 
     connection = mysql.connector.connect(
         host="localhost",
-        user="tfguser",
-        password="tfguser",
+        user="root",
+        password="root",
         database="tfg"
     )
 
