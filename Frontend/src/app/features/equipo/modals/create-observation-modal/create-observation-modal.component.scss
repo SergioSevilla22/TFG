@@ -1,29 +1,33 @@
-/* Contenedor Principal del Modal */
-.modal-header {
-  padding: 24px 24px 10px;
-  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+/* ============================================================
+   MODAL OBSERVACIONES - EMERALD PREMIUM STYLE
+   ============================================================ */
+
+.modal-header-emerald {
+  padding: 32px 32px 16px;
+  background: #ffffff;
   
   h2 {
-    color: #1e293b;
+    color: #0f172a;
     font-weight: 800;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     margin: 0;
+    letter-spacing: -0.02em;
   }
   
   .subtitle {
     color: #64748b;
-    font-size: 0.9rem;
-    margin-top: 4px;
+    font-size: 0.95rem;
+    margin-top: 6px;
   }
 }
 
-.modal-content {
-  padding: 20px 24px !important;
+.modal-content-emerald {
+  padding: 8px 32px 24px !important;
 
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 20px;
 
     .full-width { grid-column: span 2; }
   }
@@ -31,112 +35,157 @@
   .field {
     label {
       display: block;
-      font-weight: 600;
-      font-size: 0.85rem;
-      color: #475569;
-      margin-bottom: 6px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #334155; /* Alto contraste */
+      margin-bottom: 8px;
+      margin-left: 4px;
     }
 
-    .custom-input {
+    /* Inputs Estilo Emerald */
+    .emerald-input {
       width: 100%;
-      background: #f1f5f9;
-      border: 2px solid transparent;
-      border-radius: 10px;
-      padding: 10px 12px;
+      box-sizing: border-box;
+      background: #ffffff;
+      border: 2px solid #cbd5e1; /* Borde marcado */
+      border-radius: 12px;
+      padding: 12px 16px;
       font-size: 0.95rem;
-      transition: all 0.2s;
-      outline: none;
+      color: #0f172a;
+      transition: all 0.2s ease;
+      font-family: inherit;
+
+      &::placeholder { color: #94a3b8; }
 
       &:focus {
-        background: #ffffff;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        outline: none;
+        border-color: #059669;
+        box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
       }
     }
     
-    textarea.custom-input { resize: vertical; min-height: 100px; }
+    textarea.emerald-input { resize: none; min-height: 110px; }
   }
 }
 
-/* Selección de Jugadores */
-.player-selection-container {
-  margin-top: 15px;
-  background: #f8fafc;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  max-height: 200px;
-  overflow-y: auto;
+/* Sección Jugadores */
+.section-header-emerald {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 30px 0 15px;
+  color: #0f172a;
+  
+  mat-icon { color: #059669; font-size: 22px; width: 22px; height: 22px; }
+  span { font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+}
 
-  .player-list {
+.player-selection-wrapper {
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 16px;
+
+  .player-grid-emerald {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
-    padding: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
   }
 
-  .player-row {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 8px;
-    display: flex;
-    align-items: center;
+  .player-card-option {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s;
 
-    &:hover { border-color: #3b82f6; background: #eff6ff; }
+    &:hover { border-color: #cbd5e1; background: #f1f5f9; }
     
-    .player-info {
+    &.is-selected {
+      border-color: #059669;
+      background: #f0fdf4;
+    }
+
+    .player-card-content {
       display: flex;
       align-items: center;
-      gap: 10px;
-      width: 100%;
+      gap: 12px;
 
       input[type="checkbox"] {
+        accent-color: #059669;
         width: 18px;
         height: 18px;
-        accent-color: #3b82f6;
       }
 
-      .avatar-mini {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: #3b82f6;
-        color: white;
+      .avatar-emerald {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #d1fae5;
+        color: #065f46;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        font-size: 0.8rem;
+        font-weight: 800;
+        font-size: 0.85rem;
         overflow: hidden;
+        border: 1px solid #a7f3d0;
 
         img { width: 100%; height: 100%; object-fit: cover; }
       }
 
-      .name { font-size: 0.85rem; font-weight: 600; color: #1e293b; }
+      .player-name { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
     }
   }
 }
 
-/* Botones de Acción */
-.modal-actions {
-  padding: 16px 24px !important;
+/* Mensaje Error */
+.error-toast-emerald {
+  margin-top: 20px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.9rem;
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+/* Footer de Acciones */
+.modal-actions-emerald {
+  padding: 24px 32px !important;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
+  gap: 12px;
 
-  .btn-cancel {
+  .btn-cancel-emerald {
     color: #64748b;
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
-  .btn-publish {
-    background: #1ea83a !important;
+  .btn-save-emerald {
+    background: #059669 !important;
     color: white !important;
-    border-radius: 10px;
-    padding: 0 24px;
-    font-weight: 700;
+    border-radius: 12px;
+    padding: 0 30px !important;
+    height: 48px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
     
-    &:disabled { opacity: 0.6; }
+    &:hover:not(:disabled) { background: #047857 !important; transform: translateY(-1px); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    
+    mat-icon { margin-right: 8px; }
   }
 }

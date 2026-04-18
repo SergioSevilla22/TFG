@@ -44,8 +44,8 @@ export class LoginComponent {
         alert(`Bienvenido ${user.email}`);
 
         // 🔁 Redirección según rol
-        if ((user.Rol === 'jugador' || user.Rol === 'entrenador') && user.equipo_id) {
-          this.router.navigate(['/equipo', user.equipo_id]);
+        if ((user.Rol === 'jugador' || user.Rol === 'entrenador')) {
+          this.router.navigate(['/equipo', user.equipo_id ? user.equipo_id : 'sin-asignar']);
         } else if (user.Rol === 'admin_club' && user.club_id) {
           this.router.navigate(['/club', user.club_id]);
         } else if (user.Rol === 'admin_plataforma') {
