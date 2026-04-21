@@ -5,7 +5,7 @@
 .modal-header-emerald {
   padding: 32px 32px 16px;
   background: #ffffff;
-  
+
   h2 {
     color: #0f172a;
     font-weight: 800;
@@ -13,7 +13,7 @@
     margin: 0;
     letter-spacing: -0.02em;
   }
-  
+
   .subtitle {
     color: #64748b;
     font-size: 0.95rem;
@@ -29,7 +29,9 @@
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 
-    .full-width { grid-column: span 2; }
+    .full-width {
+      grid-column: span 2;
+    }
   }
 
   .field {
@@ -57,7 +59,9 @@
       transition: all 0.2s ease;
       font-family: inherit;
 
-      &::placeholder { color: #94a3b8; }
+      &::placeholder {
+        color: #94a3b8;
+      }
 
       &:focus {
         outline: none;
@@ -65,8 +69,11 @@
         box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
       }
     }
-    
-    textarea.emerald-input { resize: none; min-height: 110px; }
+
+    textarea.emerald-input {
+      resize: none;
+      min-height: 110px;
+    }
   }
 }
 
@@ -77,9 +84,19 @@
   gap: 8px;
   margin: 30px 0 15px;
   color: #0f172a;
-  
-  mat-icon { color: #059669; font-size: 22px; width: 22px; height: 22px; }
-  span { font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  mat-icon {
+    color: #059669;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+  span {
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 }
 
 .player-selection-wrapper {
@@ -104,8 +121,11 @@
     cursor: pointer;
     transition: all 0.2s;
 
-    &:hover { border-color: #cbd5e1; background: #f1f5f9; }
-    
+    &:hover {
+      border-color: #cbd5e1;
+      background: #f1f5f9;
+    }
+
     &.is-selected {
       border-color: #059669;
       background: #f0fdf4;
@@ -116,7 +136,7 @@
       align-items: center;
       gap: 12px;
 
-      input[type="checkbox"] {
+      input[type='checkbox'] {
         accent-color: #059669;
         width: 18px;
         height: 18px;
@@ -136,10 +156,18 @@
         overflow: hidden;
         border: 1px solid #a7f3d0;
 
-        img { width: 100%; height: 100%; object-fit: cover; }
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
 
-      .player-name { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
+      .player-name {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1e293b;
+      }
     }
   }
 }
@@ -157,7 +185,11 @@
   color: #dc2626;
   font-weight: 600;
   font-size: 0.9rem;
-  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 /* Footer de Acciones */
@@ -182,10 +214,35 @@
     height: 48px;
     font-weight: 800;
     box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
-    
-    &:hover:not(:disabled) { background: #047857 !important; transform: translateY(-1px); }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
-    
-    mat-icon { margin-right: 8px; }
+
+    &:hover:not(:disabled) {
+      background: #047857 !important;
+      transform: translateY(-1px);
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    mat-icon {
+      margin-right: 8px;
+    }
   }
+}
+
+.required {
+  margin-left: 2px;
+}
+
+.field-error {
+  display: block;
+  color: #ef4444;
+  font-size: 0.78rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }

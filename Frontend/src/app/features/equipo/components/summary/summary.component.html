@@ -123,7 +123,8 @@
             </div>
           </div>
         </div>
-        <span class="cta">Gestionar equipo →</span>
+        <span class="cta" *ngIf="authService.hasRole('jugador')">Ver mi equipo →</span>
+        <span class="cta" *ngIf="authService.hasRole('entrenador')">Gestionar equipo →</span>
       </div>
 
       <div class="resumen-card clickable" [routerLink]="['/equipo', teamId, 'calendario']">

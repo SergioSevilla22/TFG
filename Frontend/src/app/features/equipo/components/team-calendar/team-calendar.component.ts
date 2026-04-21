@@ -38,10 +38,22 @@ export class TeamCalendarComponent implements OnInit {
     initialView: 'dayGridMonth',
     locale: 'es',
     firstDay: 1,
+    titleFormat: (date: any) => {
+      const month = date.date.marker.toLocaleString('es-ES', { month: 'long' });
+      const year = date.date.marker.getFullYear();
+      return month.charAt(0).toUpperCase() + month.slice(1) + ' ' + year;
+    },
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
       right: 'dayGridMonth,timeGridWeek',
+    },
+    buttonText: {
+      today: 'Hoy',
+      month: 'Mes',
+      week: 'Semana',
+      day: 'Día',
+      list: 'Lista',
     },
     events: [],
     eventTimeFormat: {
@@ -124,11 +136,11 @@ export class TeamCalendarComponent implements OnInit {
           events: events,
         };
 
-        this.loading = false; // 👈 OBLIGATORIO
+        this.loading = false;
       },
       error: (err) => {
         console.error('Error cargando calendario', err);
-        this.loading = false; // 👈 OBLIGATORIO
+        this.loading = false;
       },
     });
   }
@@ -138,7 +150,6 @@ export class TeamCalendarComponent implements OnInit {
   }
 
   openCreateConvocatoriaModal() {
-    // Verificación de seguridad
     if (!this.team) {
       alert('Cargando datos del equipo, por favor espera...');
       return;
@@ -148,12 +159,12 @@ export class TeamCalendarComponent implements OnInit {
       width: '700px',
       data: {
         equipoId: this.teamId,
-        jugadoresEquipo: this.team.jugadores, // Ahora ya no será null
+        jugadoresEquipo: this.team.jugadores,
       },
     });
 
     ref.afterClosed().subscribe((r) => {
-      if (r) this.loadCalendar(); // Recargamos el calendario completo
+      if (r) this.loadCalendar();
     });
   }
 
@@ -169,7 +180,7 @@ export class TeamCalendarComponent implements OnInit {
     });
 
     ref.afterClosed().subscribe((refresh) => {
-      if (refresh) this.loadCalendar(); // Recargamos el calendario completo
+      if (refresh) this.loadCalendar();
     });
   }
 }

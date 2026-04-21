@@ -203,7 +203,7 @@ export class TeamsEventsComponent implements OnInit {
 
   openReasonModal(event: any) {
     const ref = this.dialog.open(ReasonModalComponent, {
-      width: '400px',
+      width: '600px',
       data: { titulo: 'Motivo de la ausencia' },
     });
 
@@ -306,6 +306,20 @@ export class TeamsEventsComponent implements OnInit {
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+    }
+  }
+
+  eventStatusLabel(status: string | null | undefined): string {
+    switch (status) {
+      case 'confirmado':
+        return 'Confirmado';
+      case 'confirmado_tarde':
+        return 'Llega tarde';
+      case 'rechazado':
+        return 'Rechazado';
+      case 'pendiente':
+      default:
+        return 'Pendiente';
     }
   }
 }

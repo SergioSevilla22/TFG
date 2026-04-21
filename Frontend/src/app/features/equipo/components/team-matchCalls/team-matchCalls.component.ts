@@ -155,7 +155,7 @@ export class TeamMatchCallsComponent implements OnInit {
 
   openReasonModal(matchCall: any) {
     const ref = this.dialog.open(ReasonModalComponent, {
-      width: '400px',
+      width: '600px',
       data: { titulo: 'Motivo de la ausencia' },
     });
 
@@ -307,5 +307,10 @@ export class TeamMatchCallsComponent implements OnInit {
       next: () => (this.matchCalls = this.matchCalls.filter((x) => x.id !== matchCall.id)),
       error: () => alert('No se pudo eliminar la convocatoria'),
     });
+  }
+
+  getPlayerReason(matchCall: any): string {
+    const user = this.authService.getUser();
+    return matchCall.jugadores?.find((j: any) => j.DNI === user?.DNI)?.motivo || '';
   }
 }

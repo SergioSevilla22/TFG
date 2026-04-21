@@ -61,6 +61,7 @@
 .evento-card {
   position: relative;
   display: flex;
+  flex-direction: column;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
@@ -72,10 +73,113 @@
     transform: translateX(8px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
   }
-  &.pasado {
-    opacity: 0.7;
-    filter: grayscale(0.3);
+}
+
+.evento-card.pasado .type-indicator,
+.evento-card.pasado .date-badge,
+.evento-card.pasado .details,
+.evento-card.pasado .event-type-tag,
+.evento-card.pasado .evento-title,
+.evento-card.pasado .description,
+.evento-card.pasado .meta-info,
+.evento-card.pasado .stats-pills,
+.evento-card.pasado .event-closed,
+.evento-card.pasado .conv-players-list {
+  opacity: 0.8;
+  filter: grayscale(0.4);
+}
+
+.evento-inner {
+  display: flex;
+  flex: 1;
+}
+
+.player-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: block;
+}
+
+.player-dni {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: block;
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.admin-btns {
+  display: flex;
+  gap: 8px;
+  border-left: 1px solid #e2e8f0;
+  padding-left: 12px;
+}
+
+.mini-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  &.confirmado {
+    background: #dcfce7;
+    color: #166534;
   }
+  &.rechazado {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  &.pendiente {
+    background: #fefce8;
+    color: #854d0e;
+  }
+}
+
+.conv-players-list {
+  background: white;
+  summary {
+    padding: 15px 24px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #475569;
+    border-top: 1px solid #f1f5f9;
+    list-style: none;
+    &::-webkit-details-marker {
+      display: none;
+    }
+    .count-tag {
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      margin-left: 8px;
+    }
+  }
+  &[open] summary {
+    color: #059669;
+  }
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  padding: 0 24px 24px 24px;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
 }
 
 .type-indicator {

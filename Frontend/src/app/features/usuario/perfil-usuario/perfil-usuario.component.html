@@ -1,5 +1,5 @@
 <app-header></app-header>
-
+<button class="btn-volver" (click)="goBack()">← Volver</button>
 <div class="perfil-container">
   <!-- 📸 Columna izquierda: Foto de perfil -->
   <div class="perfil-image">
@@ -124,11 +124,9 @@
           <input [(ngModel)]="user.telefono" name="telefono" [disabled]="isDependent" />
 
           <label>Rol</label>
-          <select [(ngModel)]="user.Rol" name="Rol" [disabled]="isDependent">
+          <select [(ngModel)]="user.Rol" name="Rol" [disabled]="isDependent || !isAdminRole()">
             <option value="jugador">Jugador</option>
             <option value="entrenador">Entrenador</option>
-            <option value="admin_plataforma">Administrador</option>
-            <!-- ESTO NO DEBERIA SER ASI, ESTA PUESTO POR COMODIDAD, NUNCA SE TIENE QUE PODER EDITAR PARA SER ADMIN -->
           </select>
 
           <div class="actions">

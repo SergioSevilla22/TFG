@@ -17,11 +17,13 @@
         [(ngModel)]="eventForm.titulo"
         placeholder="Ej: Entrenamiento Táctico"
         class="custom-input"
+        [class.input-error]="submitted && !eventForm.titulo"
       />
+      <span class="field-error" *ngIf="submitted && !eventForm.titulo">Campo obligatorio</span>
     </div>
 
     <div class="field full-width">
-      <label>Descripción</label>
+      <label>Descripción <span class="opcional">(opcional)</span></label>
       <textarea
         [(ngModel)]="eventForm.descripcion"
         rows="3"
@@ -35,7 +37,6 @@
       <div class="select-wrapper">
         <select [(ngModel)]="eventForm.tipo" class="custom-input">
           <option value="entrenamiento">⚽ Entrenamiento</option>
-          <option value="partido">🏆 Partido</option>
           <option value="reunion">📋 Reunión</option>
           <option value="otro">✨ Otro</option>
         </select>
@@ -44,12 +45,26 @@
 
     <div class="field">
       <label>Fecha y Hora Inicio *</label>
-      <input type="datetime-local" [(ngModel)]="eventForm.fecha_inicio" class="custom-input" />
+      <input
+        type="datetime-local"
+        [(ngModel)]="eventForm.fecha_inicio"
+        class="custom-input"
+        [class.input-error]="submitted && !eventForm.fecha_inicio"
+      />
+      <span class="field-error" *ngIf="submitted && !eventForm.fecha_inicio"
+        >Campo obligatorio</span
+      >
     </div>
 
     <div class="field">
       <label>Fecha y Hora Fin *</label>
-      <input type="datetime-local" [(ngModel)]="eventForm.fecha_fin" class="custom-input" />
+      <input
+        type="datetime-local"
+        [(ngModel)]="eventForm.fecha_fin"
+        class="custom-input"
+        [class.input-error]="submitted && !eventForm.fecha_fin"
+      />
+      <span class="field-error" *ngIf="submitted && !eventForm.fecha_fin">Campo obligatorio</span>
     </div>
   </div>
 

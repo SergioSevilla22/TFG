@@ -197,3 +197,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   padding: 40px;
   overflow-y: auto;
 }
+
+::ng-deep .fc-toolbar-title {
+  text-transform: capitalize;
+}

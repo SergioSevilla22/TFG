@@ -201,4 +201,32 @@ export class PerfilUsuarioComponent {
       },
     });
   }
+
+  goBack() {
+    const rol = this.user?.Rol;
+
+    if (rol === 'jugador' || rol === 'entrenador') {
+      const equipoId = this.user?.equipo_id;
+      if (equipoId) {
+        this.router.navigate(['/equipo', equipoId]);
+      } else {
+        this.router.navigate(['/']);
+      }
+    } else if (rol === 'admin_club') {
+      const clubId = this.user?.club_id;
+      if (clubId) {
+        this.router.navigate(['/club', clubId]);
+      } else {
+        this.router.navigate(['/']);
+      }
+    } else if (rol === 'admin_plataforma') {
+      this.router.navigate(['/admin']);
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
+  isAdminRole(): boolean {
+    return this.user?.Rol === 'admin_plataforma' || this.user?.Rol === 'admin_club';
+  }
 }

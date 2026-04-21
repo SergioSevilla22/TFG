@@ -17,8 +17,19 @@
         <div class="muted" *ngIf="!coach.equipo_nombre">Sin equipo</div>
       </div>
 
-      <button mat-raised-button color="primary" (click)="assign(coach.DNI)">
-        {{ coach.equipo_id ? 'Mover' : 'Asignar' }}
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="coach.equipo_id === data.equipoId"
+        (click)="assign(coach.DNI)"
+      >
+        {{
+          coach.equipo_id === data.equipoId
+            ? 'Ya está en este equipo'
+            : coach.equipo_id
+              ? 'Mover'
+              : 'Asignar'
+        }}
       </button>
     </div>
   </div>

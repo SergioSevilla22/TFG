@@ -37,6 +37,7 @@ export class CreateEventModalComponent implements OnInit {
   selected: Set<string> = new Set();
   loading = false;
   message = '';
+  submitted = false;
 
   mode: 'crear' | 'editar' = 'crear';
 
@@ -87,14 +88,20 @@ export class CreateEventModalComponent implements OnInit {
   }
 
   save() {
+    this.submitted = true;
+
     const user = this.authService.getUser();
     if (!user?.DNI) {
       this.message = 'Usuario no encontrado';
       return;
     }
 
-    if (!this.eventForm.titulo || !this.eventForm.fecha_inicio || !this.eventForm.fecha_fin) {
-      this.message = 'Completa los campos obligatorios';
+    if (
+      !this.eventForm.titulo ||
+      !this.eventForm.fecha_inicio ||
+      !this.eventForm.fecha_fin ||
+      (this.eventForm.requiere_confirmacion && !this.eventForm.fecha_limite_confirmacion)
+    ) {
       return;
     }
 

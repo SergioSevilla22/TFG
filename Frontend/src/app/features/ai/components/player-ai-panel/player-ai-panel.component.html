@@ -3,7 +3,6 @@
     <!-- HEADER DE PÁGINA -->
     <div class="ai-page-header">
       <div class="ai-header-left">
-        <div class="ai-header-icon">🤖</div>
         <div>
           <h1>Panel de Inteligencia Artificial</h1>
           <p *ngIf="player">
@@ -13,7 +12,7 @@
       </div>
       <a class="back-btn" [routerLink]="['/equipo', teamId, 'jugador', dni]">
         <mat-icon>arrow_back</mat-icon>
-        Volver a la ficha
+        Volver a la ficha del jugador
       </a>
     </div>
 
@@ -110,7 +109,8 @@
       <div class="ai-card card-cluster">
         <div class="card-title">
           <mat-icon>hub</mat-icon>
-          Clasificación K-Means (Scouting)
+          Tipo de jugador
+          <span class="card-subtitle">· Detectado automáticamente por IA</span>
         </div>
 
         <div *ngIf="loadingCluster" class="card-skeleton"></div>
@@ -123,7 +123,6 @@
               </div>
               <div>
                 <h3>{{ clusterData.nombre_perfil }}</h3>
-                <p>Perfil detectado automáticamente por IA a partir de patrones estadísticos.</p>
               </div>
             </div>
 
@@ -132,16 +131,20 @@
                 <mat-icon>people</mat-icon>
                 Jugadores con perfil similar
               </h4>
-              <div class="chips-row">
-                <span class="chip" *ngFor="let sim of clusterData.jugadores_similares">
-                  <mat-icon>person</mat-icon>{{ sim }}
-                </span>
+              <div class="similar-grid">
+                <div class="similar-card" *ngFor="let sim of similarPlayers">
+                  <div class="similar-foto">
+                    <img *ngIf="sim.foto" [src]="sim.foto" [alt]="sim.nombre" />
+                    <span *ngIf="!sim.foto">{{ sim.nombre[0] }}</span>
+                  </div>
+                  <span class="similar-nombre">{{ sim.nombre }}</span>
+                </div>
               </div>
             </div>
 
             <div *ngIf="clusterData.jugadores_similares?.length === 0" class="empty-similar">
               <mat-icon>search_off</mat-icon>
-              <p>No hay jugadores con perfil similar en el club.</p>
+              <p>No hay jugadores con perfil similar en el equipo</p>
             </div>
           </div>
 

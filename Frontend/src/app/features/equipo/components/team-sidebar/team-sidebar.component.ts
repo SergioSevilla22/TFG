@@ -54,11 +54,12 @@ export class TeamSidebarComponent implements OnInit {
 
   get showMyProfile(): boolean {
     if (!this.dni) return false;
-
-    return this.userRole !== 'admin_club' && this.userRole !== 'admin_plataforma';
+    const rolesExcluidos = ['admin_club', 'admin_plataforma', 'entrenador'];
+    return !rolesExcluidos.includes(this.userRole ?? '');
   }
 
   get isAiPanelActive(): boolean {
-    return this.router.url.includes('/panel-ia');
+    if (!this.dni) return false;
+    return this.router.url.includes(`/jugador/${this.dni}/panel-ia`);
   }
 }

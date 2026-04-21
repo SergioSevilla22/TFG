@@ -67,38 +67,46 @@
         </div>
 
         <div class="timeline-container">
-          @for (item of observations(); track item.id) {
+          @for (item of visibleObservations; track item.id) {
             <div class="timeline-card" [attr.data-cat]="item.categoria">
-              <div class="timeline-aside">
-                <span class="date">{{ item.fecha | date: 'dd MMM' }}</span>
-                <span class="year">{{ item.fecha | date: 'yyyy' }}</span>
-                <div class="line"></div>
+              <div class="timeline-dot-col">
+                <div class="dot" [attr.data-cat]="item.categoria"></div>
+                <div class="connector"></div>
               </div>
 
-              <div class="timeline-main">
-                <div class="card-header">
-                  <span class="badge" [ngClass]="item.categoria">{{ item.categoria }}</span>
-                  <span class="visibilidad-tag" *ngIf="authService.getUserRole() === 'entrenador'">
-                    {{ item.visibilidad }}
-                  </span>
-                  <h3>{{ item.titulo }}</h3>
+              <div class="timeline-body">
+                <div class="timeline-date">
+                  {{ item.fecha | date: 'dd MMM yyyy' }}
                 </div>
 
-                <p class="content">{{ item.contenido }}</p>
+                <div class="timeline-main">
+                  <div class="card-top">
+                    <div class="card-tags">
+                      <span class="badge" [ngClass]="item.categoria">{{ item.categoria }}</span>
+                      <span
+                        class="visibilidad-tag"
+                        *ngIf="authService.getUserRole() === 'entrenador'"
+                      >
+                        <mat-icon style="font-size: 12px; width: 12px; height: 12px">
+                          {{ item.visibilidad === 'privada' ? 'lock' : 'public' }}
+                        </mat-icon>
+                        {{ item.visibilidad }}
+                      </span>
+                    </div>
+                    <h3 class="obs-titulo">{{ item.titulo }}</h3>
+                  </div>
 
-                <div class="card-footer">
-                  <div class="author-info">
+                  <p class="obs-contenido">{{ item.contenido }}</p>
+
+                  <div class="obs-author">
                     <div class="avatar-mini">
                       <img
                         *ngIf="item.foto_autor"
                         [src]="'http://localhost:3000' + item.foto_autor"
-                        alt="Autor"
                       />
                       <span *ngIf="!item.foto_autor">{{ item.nombre_autor[0] }}</span>
                     </div>
-                    <span
-                      >Por <strong>{{ item.nombre_autor }}</strong></span
-                    >
+                    <span class="author-name">{{ item.nombre_autor }}</span>
                   </div>
                 </div>
               </div>
@@ -110,6 +118,15 @@
             </div>
           }
         </div>
+
+        <button
+          *ngIf="observations().length > OBSERVATIONS_LIMIT"
+          class="btn-toggle-obs"
+          (click)="toggleObservations()"
+        >
+          <mat-icon>{{ showAllObservations ? 'expand_less' : 'expand_more' }}</mat-icon>
+          {{ showAllObservations ? 'Ocultar' : 'Ver más' }}
+        </button>
       </section>
 
       <!-- ESTADÍSTICAS -->
@@ -156,9 +173,6 @@
 
         <div class="ai-teaser-content">
           <div class="ai-teaser-left">
-            <div class="ai-teaser-icon-wrapper">
-              <span class="ai-teaser-icon">🤖</span>
-            </div>
             <div class="ai-teaser-text">
               <h3>Panel de Inteligencia Artificial</h3>
               <p>Análisis predictivo, rendimiento avanzado y clasificación automática de perfil.</p>

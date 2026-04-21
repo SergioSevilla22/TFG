@@ -37,6 +37,9 @@ export class PlayerProfileComponent implements OnInit {
   totals: any = {};
   observations = signal<any[]>([]);
 
+  showAllObservations = false;
+  readonly OBSERVATIONS_LIMIT = 2;
+
   constructor(
     private route: ActivatedRoute,
     public authService: AuthService,
@@ -78,6 +81,15 @@ export class PlayerProfileComponent implements OnInit {
         error: (err) => console.error('Error estadísticas:', err),
       });
     });
+  }
+
+  get visibleObservations() {
+    const obs = this.observations();
+    return this.showAllObservations ? obs : obs.slice(0, this.OBSERVATIONS_LIMIT);
+  }
+
+  toggleObservations() {
+    this.showAllObservations = !this.showAllObservations;
   }
 
   get age(): number {

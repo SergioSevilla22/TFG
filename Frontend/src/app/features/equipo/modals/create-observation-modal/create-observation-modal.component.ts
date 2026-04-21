@@ -24,6 +24,7 @@ export class CreateObservationModalComponent implements OnInit {
   selected: Set<string> = new Set();
   loading = false;
   message = '';
+  submitted = false;
 
   constructor(
     public dialogRef: MatDialogRef<CreateObservationModalComponent>,
@@ -45,12 +46,13 @@ export class CreateObservationModalComponent implements OnInit {
   }
 
   save() {
+    this.submitted = true;
+
     if (
       !this.observationForm.titulo ||
       !this.observationForm.contenido ||
       this.selected.size === 0
     ) {
-      this.message = 'Rellena los campos y selecciona al menos un jugador';
       return;
     }
 
