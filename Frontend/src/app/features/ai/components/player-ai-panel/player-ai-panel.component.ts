@@ -43,6 +43,7 @@ export class PlayerAiPanelComponent implements OnInit {
   clusterData: any = null;
   clusterIcon = '👤';
   clusterColor = '#bdc3c7';
+  similarPlayers: { nombre: string; foto: string }[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -109,6 +110,20 @@ export class PlayerAiPanelComponent implements OnInit {
         if (res && res.cluster_id !== undefined) {
           this.clusterData = res;
           this.setClusterStyling(res.cluster_id);
+
+          this.similarPlayers = [];
+          const dnis: string[] = res.jugadores_similares ?? [];
+          dnis.forEach((dni) => {
+            this.authService.getUserByDni(dni).subscribe({
+              next: (user) => {
+                this.similarPlayers.push({
+                  nombre: user.nombre,
+                  foto: user.foto ? 'http://localhost:3000' + user.foto : '',
+                });
+              },
+              error: () => {},
+            });
+          });
         }
         this.loadingCluster = false;
       },

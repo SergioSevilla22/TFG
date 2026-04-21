@@ -243,85 +243,91 @@ export const updateUser = (req, res) => {
       .json({ message: "El DNI es obligatorio para actualizar el usuario" });
   }
 
-  db.query("SELECT * FROM usuarios WHERE DNI = ?", [DNI], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0)
-      return res.status(404).json({ message: "Usuario no encontrado" });
-
-    const user = results[0];
-
-    let photoPath = null;
-    if (req.file) {
-      photoPath = `/uploads/${req.file.filename}`;
-      if (user.foto) {
-        const oldPath = path.join(
-          process.cwd(),
-          "public",
-          user.foto.replace(/^\//, "")
-        );
-        fs.access(oldPath, fs.constants.F_OK, (err) => {
-          if (!err) {
-            fs.unlink(oldPath, (unlinkErr) => {
-              if (unlinkErr)
-                console.log(
-                  "⚠️ Error al eliminar la foto anterior:",
-                  unlinkErr.message
-                );
-            });
-          }
-        });
-      }
-    }
-
-    const updates = [];
-    const params = [];
-    if (nombre) {
-      updates.push("nombre = ?");
-      params.push(nombre);
-    }
-    if (telefono) {
-      updates.push("telefono = ?");
-      params.push(telefono);
-    }
-    if (email) {
-      updates.push("email = ?");
-      params.push(email);
-    }
-    if (Rol) {
-      updates.push("Rol = ?");
-      params.push(Rol);
-    }
-    if (photoPath) {
-      updates.push("foto = ?");
-      params.push(photoPath);
-    }
-
-    if (updates.length === 0 && !req.file) {
-      return res.status(400).json({ message: "No hay campos para actualizar" });
-    }
-
-    params.push(DNI);
-    const sql = `UPDATE usuarios SET ${updates.join(", ")} WHERE DNI = ?`;
-
-    db.query(sql, params, (err) => {
+  db.query(
+    "SELECT DNI, nombre, telefono, email, Rol, foto, club_id, equipo_id, idTutor FROM usuarios WHERE DNI = ?",
+    [DNI],
+    (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
+      if (results.length === 0)
+        return res.status(404).json({ message: "Usuario no encontrado" });
 
-      db.query(
-        "SELECT DNI, nombre, telefono, email, Rol, foto FROM usuarios WHERE DNI = ?",
-        [DNI],
-        (err2, results2) => {
-          if (err2) return res.status(500).json({ error: err2.message });
-          if (results2.length === 0)
-            return res.status(404).json({ message: "Usuario no encontrado" });
+      const user = results[0];
 
-          res.json({
-            message: "Usuario actualizado correctamente",
-            user: results2[0],
+      let photoPath = null;
+      if (req.file) {
+        photoPath = `/uploads/${req.file.filename}`;
+        if (user.foto) {
+          const oldPath = path.join(
+            process.cwd(),
+            "public",
+            user.foto.replace(/^\//, "")
+          );
+          fs.access(oldPath, fs.constants.F_OK, (err) => {
+            if (!err) {
+              fs.unlink(oldPath, (unlinkErr) => {
+                if (unlinkErr)
+                  console.log(
+                    "⚠️ Error al eliminar la foto anterior:",
+                    unlinkErr.message
+                  );
+              });
+            }
           });
         }
-      );
-    });
-  });
+      }
+
+      const updates = [];
+      const params = [];
+      if (nombre) {
+        updates.push("nombre = ?");
+        params.push(nombre);
+      }
+      if (telefono) {
+        updates.push("telefono = ?");
+        params.push(telefono);
+      }
+      if (email) {
+        updates.push("email = ?");
+        params.push(email);
+      }
+      if (Rol) {
+        updates.push("Rol = ?");
+        params.push(Rol);
+      }
+      if (photoPath) {
+        updates.push("foto = ?");
+        params.push(photoPath);
+      }
+
+      if (updates.length === 0 && !req.file) {
+        return res
+          .status(400)
+          .json({ message: "No hay campos para actualizar" });
+      }
+
+      params.push(DNI);
+      const sql = `UPDATE usuarios SET ${updates.join(", ")} WHERE DNI = ?`;
+
+      db.query(sql, params, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        db.query(
+          "SELECT DNI, nombre, telefono, email, Rol, foto, club_id, equipo_id, idTutor FROM usuarios WHERE DNI = ?",
+          [DNI],
+          (err2, results2) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            if (results2.length === 0)
+              return res.status(404).json({ message: "Usuario no encontrado" });
+
+            res.json({
+              message: "Usuario actualizado correctamente",
+              user: results2[0],
+            });
+          }
+        );
+      });
+    }
+  );
 };
 
 export const deleteUser = (req, res) => {

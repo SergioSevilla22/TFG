@@ -59,7 +59,12 @@ export class MiniCalendarComponent implements OnInit, OnChanges {
     this.monthName = today.toLocaleString('es', { month: 'long' });
 
     const lastDay = new Date(this.year, month + 1, 0).getDate();
+    let firstWeekDay = new Date(this.year, month, 1).getDay();
+    firstWeekDay = firstWeekDay === 0 ? 6 : firstWeekDay - 1;
 
+    for (let i = 0; i < firstWeekDay; i++) {
+      this.days.push({ number: null, empty: true });
+    }
     for (let i = 1; i <= lastDay; i++) {
       const date = new Date(this.year, month, i);
 

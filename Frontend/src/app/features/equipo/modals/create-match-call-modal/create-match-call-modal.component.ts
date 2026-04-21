@@ -43,6 +43,7 @@ export class CreateMatchCallModalComponent implements OnInit {
   jugadores: any[] = [];
   seleccionados: Set<string> = new Set();
   errores: string[] = [];
+  submitted = false;
 
   mensaje = '';
   loading = false;
@@ -160,6 +161,8 @@ export class CreateMatchCallModalComponent implements OnInit {
   }
 
   guardar() {
+    this.submitted = true;
+
     const user = this.authService.getUser();
     if (!user?.DNI) {
       this.mensaje = 'No se encontró el usuario en sesión.';
@@ -172,7 +175,6 @@ export class CreateMatchCallModalComponent implements OnInit {
       !this.convocatoria.hora_quedada ||
       !this.convocatoria.fecha_limite_confirmacion
     ) {
-      this.mensaje = 'Completa los campos obligatorios.';
       return;
     }
 

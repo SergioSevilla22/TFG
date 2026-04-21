@@ -13,7 +13,7 @@
 
   <div class="form-grid">
     <div class="field full-width">
-      <label>Rival</label>
+      <label>Rival <span class="opcional">(opcional)</span></label>
       <input
         type="text"
         [(ngModel)]="convocatoria.rival"
@@ -23,7 +23,7 @@
     </div>
 
     <div class="field full-width">
-      <label>Lugar / Estadio</label>
+      <label>Lugar / Estadio <span class="opcional">(opcional)</span></label>
       <input
         type="text"
         [(ngModel)]="convocatoria.lugar"
@@ -33,27 +33,55 @@
     </div>
 
     <div class="field">
-      <label>Fecha del Partido</label>
-      <input type="date" [(ngModel)]="convocatoria.fecha_partido" class="custom-input" />
+      <label>Fecha del Partido *</label>
+      <input
+        type="date"
+        [(ngModel)]="convocatoria.fecha_partido"
+        class="custom-input"
+        [class.input-error]="submitted && !convocatoria.fecha_partido"
+      />
+      <span class="field-error" *ngIf="submitted && !convocatoria.fecha_partido">
+        Campo obligatorio
+      </span>
     </div>
 
     <div class="field">
-      <label>Hora Inicio</label>
-      <input type="time" [(ngModel)]="convocatoria.hora_inicio" class="custom-input" />
+      <label>Hora Inicio *</label>
+      <input
+        type="time"
+        [(ngModel)]="convocatoria.hora_inicio"
+        class="custom-input"
+        [class.input-error]="submitted && !convocatoria.hora_inicio"
+      />
+      <span class="field-error" *ngIf="submitted && !convocatoria.hora_inicio">
+        Campo obligatorio
+      </span>
     </div>
 
     <div class="field">
-      <label>Hora de Quedada</label>
-      <input type="time" [(ngModel)]="convocatoria.hora_quedada" class="custom-input" />
+      <label>Hora de Quedada *</label>
+      <input
+        type="time"
+        [(ngModel)]="convocatoria.hora_quedada"
+        class="custom-input"
+        [class.input-error]="submitted && !convocatoria.hora_quedada"
+      />
+      <span class="field-error" *ngIf="submitted && !convocatoria.hora_quedada">
+        Campo obligatorio
+      </span>
     </div>
 
     <div class="field">
-      <label>Límite de Confirmación</label>
+      <label>Límite de Confirmación *</label>
       <input
         type="datetime-local"
         [(ngModel)]="convocatoria.fecha_limite_confirmacion"
         class="custom-input"
+        [class.input-error]="submitted && !convocatoria.fecha_limite_confirmacion"
       />
+      <span class="field-error" *ngIf="submitted && !convocatoria.fecha_limite_confirmacion">
+        Campo obligatorio
+      </span>
     </div>
   </div>
 

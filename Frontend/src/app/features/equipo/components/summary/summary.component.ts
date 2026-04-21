@@ -392,7 +392,7 @@ export class SummaryComponent implements OnInit {
 
   openMatchCallReasonModal(matchCall: any) {
     const ref = this.dialog.open(ReasonModalComponent, {
-      width: '400px',
+      width: '600px',
       data: { titulo: 'Motivo de la ausencia' },
     });
 
@@ -430,7 +430,7 @@ export class SummaryComponent implements OnInit {
 
   openEventReasonModal(event: any) {
     const ref = this.dialog.open(ReasonModalComponent, {
-      width: '400px',
+      width: '600px',
       data: { titulo: 'Motivo de la ausencia' },
     });
 

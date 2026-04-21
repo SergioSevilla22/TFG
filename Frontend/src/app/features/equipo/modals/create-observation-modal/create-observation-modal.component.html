@@ -6,17 +6,21 @@
 <div mat-dialog-content class="modal-content-emerald">
   <div class="form-grid">
     <div class="field full-width">
-      <label>Título de la observación</label>
+      <label>Título de la observación <span class="required">*</span></label>
       <input
         type="text"
         [(ngModel)]="observationForm.titulo"
         placeholder="Ej: Mejora en control orientado"
         class="emerald-input"
+        [class.input-error]="submitted && !observationForm.titulo"
       />
+      <span class="field-error" *ngIf="submitted && !observationForm.titulo">
+        El título es obligatorio
+      </span>
     </div>
 
     <div class="field">
-      <label>Categoría</label>
+      <label>Categoría <span class="required">*</span></label>
       <select [(ngModel)]="observationForm.categoria" class="emerald-input">
         <option value="general">General</option>
         <option value="técnica">Técnica</option>
@@ -27,7 +31,7 @@
     </div>
 
     <div class="field">
-      <label>Visibilidad</label>
+      <label>Visibilidad <span class="required">*</span></label>
       <select [(ngModel)]="observationForm.visibilidad" class="emerald-input">
         <option value="jugador">Visible para el jugador</option>
         <option value="club">Solo Club/Entrenadores</option>
@@ -36,13 +40,17 @@
     </div>
 
     <div class="field full-width">
-      <label>Contenido detallado</label>
+      <label>Contenido detallado <span class="required">*</span></label>
       <textarea
         [(ngModel)]="observationForm.contenido"
         rows="4"
         class="emerald-input"
         placeholder="Escribe aquí tu análisis técnico..."
+        [class.input-error]="submitted && !observationForm.contenido"
       ></textarea>
+      <span class="field-error" *ngIf="submitted && !observationForm.contenido">
+        El contenido es obligatorio
+      </span>
     </div>
   </div>
 
@@ -53,7 +61,11 @@
 
   <div class="player-selection-wrapper" *ngIf="!data.dniIndividual">
     <div class="player-grid-emerald">
-      <label class="player-card-option" *ngFor="let player of players" [class.is-selected]="selected.has(player.DNI)">
+      <label
+        class="player-card-option"
+        *ngFor="let player of players"
+        [class.is-selected]="selected.has(player.DNI)"
+      >
         <div class="player-card-content">
           <input
             type="checkbox"
@@ -68,6 +80,9 @@
         </div>
       </label>
     </div>
+    <span class="field-error" *ngIf="submitted && selected.size === 0">
+      Selecciona al menos un jugador
+    </span>
   </div>
 
   <div class="error-toast-emerald" *ngIf="message">

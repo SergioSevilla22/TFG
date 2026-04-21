@@ -154,6 +154,16 @@
                     <span class="status-pill" [ngClass]="getPlayerStatus(matchCall)">
                       Has respondido: {{ getPlayerStatus(matchCall) | uppercase }}
                     </span>
+
+                    <span
+                      *ngIf="getPlayerReason(matchCall)"
+                      class="reason-tooltip"
+                      [matTooltip]="getPlayerReason(matchCall)"
+                      matTooltipPosition="above"
+                      style="cursor: pointer; margin-left: 8px"
+                    >
+                      💬 Ver motivo
+                    </span>
                   </div>
                 </div>
 
@@ -276,13 +286,20 @@
               <div class="player-item" *ngFor="let player of matchCall.jugadores">
                 <div class="player-info">
                   <span class="player-name">{{ player.nombre }}</span>
-                  <span class="player-dni">{{ player.DNI }}</span>
                 </div>
                 <div class="player-status">
                   <span class="mini-pill" [ngClass]="player.estado">{{
                     statusLabel(player.estado)
                   }}</span>
-                  <span class="reason" *ngIf="player.motivo" [title]="player.motivo">💬</span>
+                  <span
+                    class="reason"
+                    *ngIf="player.motivo"
+                    [matTooltip]="player.motivo"
+                    matTooltipPosition="above"
+                    style="cursor: pointer"
+                  >
+                    💬
+                  </span>
                 </div>
               </div>
             </div>

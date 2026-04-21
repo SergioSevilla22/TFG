@@ -31,7 +31,6 @@ const formatDateOnly = (d) => {
   return `${year}-${month}-${day}`;
 };
 
-// Convocatorias: if no duration is provided, we assume a 90-min match
 const DEFAULT_MATCH_DURATION_MIN = 90;
 
 /* =========================
@@ -59,7 +58,6 @@ const normalizeEvent = (ev) => {
 const normalizeMatchCall = (c) => {
   if (!c.fecha_partido || !c.hora_inicio) return null;
 
-  // 🔑 KEY: convert Date → YYYY-MM-DD
   const fecha =
     c.fecha_partido instanceof Date
       ? formatDateOnly(c.fecha_partido)
@@ -91,6 +89,7 @@ const getEventsByTeam = async (equipoId) => {
     `SELECT id, equipo_id, titulo, descripcion, fecha_inicio, fecha_fin, requiere_confirmacion, fecha_limite_confirmacion, tipo
      FROM eventos
      WHERE equipo_id = ?
+     AND deleted_at IS NULL
      ORDER BY fecha_inicio ASC`,
     [equipoId]
   );
@@ -101,6 +100,7 @@ const getMatchCallsByTeam = async (equipoId) => {
     `SELECT id, equipo_id, rival, lugar, fecha_partido, hora_inicio, hora_quedada, fecha_limite_confirmacion
      FROM convocatorias
      WHERE equipo_id = ?
+     AND deleted_at IS NULL
      ORDER BY fecha_partido ASC`,
     [equipoId]
   );
@@ -112,6 +112,7 @@ const getEventsByPlayer = async (dni) => {
      FROM eventos ev
      JOIN evento_jugadores ej ON ej.evento_id = ev.id
      WHERE ej.jugador_dni = ?
+     AND ev.deleted_at IS NULL
      ORDER BY ev.fecha_inicio ASC`,
     [dni]
   );
@@ -123,16 +124,12 @@ const getMatchCallsByPlayer = async (dni) => {
      FROM convocatorias c
      JOIN convocatoria_jugadores cj ON cj.convocatoria_id = c.id
      WHERE cj.jugador_dni = ?
+     AND c.deleted_at IS NULL
      ORDER BY c.fecha_partido ASC`,
     [dni]
   );
 };
 
-/**
- * NOTE:
- * Assuming the "equipos" table has a `club_id` column.
- * If it's named differently (idClub, clubId, etc.), update this query accordingly.
- */
 const getTeamIdsByClub = async (clubId) => {
   const rows = await query(`SELECT id FROM equipos WHERE club_id = ?`, [
     clubId,
@@ -147,6 +144,7 @@ const getEventsByTeams = async (equipoIds) => {
     `SELECT id, equipo_id, titulo, descripcion, fecha_inicio, fecha_fin, requiere_confirmacion, fecha_limite_confirmacion, tipo
      FROM eventos
      WHERE equipo_id IN (${placeholders})
+     AND deleted_at IS NULL
      ORDER BY fecha_inicio ASC`,
     equipoIds
   );
@@ -159,6 +157,7 @@ const getMatchCallsByTeams = async (equipoIds) => {
     `SELECT id, equipo_id, rival, lugar, fecha_partido, hora_inicio, hora_quedada, fecha_limite_confirmacion
      FROM convocatorias
      WHERE equipo_id IN (${placeholders})
+     AND deleted_at IS NULL
      ORDER BY fecha_partido ASC`,
     equipoIds
   );
@@ -180,7 +179,6 @@ const unify = (events, matchCalls) => {
 const buildICal = ({ name, events }) => {
   const cal = ical({
     name,
-    // Set timezone for proper Google Calendar interpretation in Spain:
     timezone: "Europe/Madrid",
   });
 

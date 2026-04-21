@@ -1,6 +1,6 @@
 // Colores base VERDE
-$primary: #16a34a; // Verde principal (Emerald 600)
-$primary-hover: #15803d;
+$primary: #059669;
+$primary-hover: #059669;
 $primary-light: #f0fdf4;
 $text-main: #1e293b;
 $text-muted: #64748b;
@@ -343,6 +343,31 @@ $error: #ef4444;
     background: #e2e8f0;
     border-color: #cbd5e1;
   }
+}
+
+.required {
+  color: $error;
+  margin-left: 2px;
+}
+
+.opcional {
+  color: $text-muted;
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.field-error {
+  display: block;
+  color: $error;
+  font-size: 0.78rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.input-error {
+  border-color: $error !important;
+  box-shadow: 0 0 0 3px rgba($error, 0.1) !important;
 }
 
 ::ng-deep .mat-tooltip {
