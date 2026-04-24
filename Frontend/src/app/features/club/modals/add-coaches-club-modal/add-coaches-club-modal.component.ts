@@ -26,6 +26,7 @@ import { CoachService } from '../../../../../services/coach/coach.service';
 export class AddCoachesClubModalComponent {
   searchResults: any[] = [];
   searchQuery = '';
+  errorMessage: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<AddCoachesClubModalComponent>,
@@ -35,6 +36,7 @@ export class AddCoachesClubModalComponent {
   ) {}
 
   search() {
+    this.errorMessage = '';
     if (!this.searchQuery.trim()) {
       this.searchResults = [];
       return;
@@ -46,16 +48,19 @@ export class AddCoachesClubModalComponent {
   }
 
   handleCoachAction(coach: any) {
+    this.errorMessage = '';
+
     if (coach.club_id === this.data.clubId) {
       this.clubService.removeClubCoach(this.data.clubId, coach.DNI).subscribe({
         next: () => this.search(),
-        error: () => alert('Error quitando entrenador del club'),
+        error: () => (this.errorMessage = 'Error quitando entrenador del club.'),
       });
       return;
     }
+
     this.clubService.addClubCoaches(this.data.clubId, [coach.DNI]).subscribe({
       next: () => this.search(),
-      error: () => alert('Error añadiendo entrenador al club'),
+      error: () => (this.errorMessage = 'Error añadiendo entrenador al club.'),
     });
   }
 

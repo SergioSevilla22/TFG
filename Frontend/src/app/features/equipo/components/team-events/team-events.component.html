@@ -2,7 +2,6 @@
   <main class="equipo-content">
     <div class="panel-card main-panel">
       <div class="panel-header">
-        <!-- FILA 1: Título -->
         <div class="header-top">
           <div class="header-info">
             <h2>Eventos</h2>
@@ -22,7 +21,6 @@
           </button>
         </div>
 
-        <!-- FILA 2: Filtros -->
         <div class="filtros-bar">
           <div class="filtro-item">
             <label>Tipo</label>
@@ -65,13 +63,19 @@
         </div>
       </div>
 
+      @if (errorMessage) {
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="alert alert-success">{{ successMessage }}</div>
+      }
+
       <div class="status-container" *ngIf="loadingEvents">
         <div class="spinner"></div>
         <p>Cargando eventos...</p>
       </div>
 
       <div *ngIf="!loadingEvents && events.length === 0" class="empty-state">
-        <div class="empty-icon">📅</div>
         <h3>No hay eventos programados</h3>
         <p>Los próximos eventos del equipo aparecerán aquí.</p>
       </div>
@@ -83,6 +87,23 @@
           [class.pasado]="isPastEvent(event)"
           [ngClass]="'tipo-' + event.tipo"
         >
+          <!-- CONFIRMACIÓN ELIMINAR — dentro de la tarjeta -->
+          @if (confirmingDeleteEvent?.id === event.id) {
+            <div class="confirm-delete-box">
+              <p class="confirm-text">
+                ¿Seguro que quieres eliminar el evento
+                <strong>{{ event.titulo }}</strong
+                >? Esta acción no se puede deshacer.
+              </p>
+              <div class="confirm-actions">
+                <button class="btn-action reject" (click)="deleteEvent(confirmingDeleteEvent)">
+                  Sí, eliminar
+                </button>
+                <button class="btn-cancel" (click)="cancelDeleteEvent()">Cancelar</button>
+              </div>
+            </div>
+          }
+
           <div class="evento-inner">
             <div class="type-indicator"></div>
 
@@ -201,7 +222,7 @@
                     </button>
                     <button
                       class="btn-icon delete"
-                      (click)="deleteEvent(event)"
+                      (click)="askDeleteEvent(event)"
                       matTooltip="Eliminar"
                     >
                       <mat-icon>delete</mat-icon>

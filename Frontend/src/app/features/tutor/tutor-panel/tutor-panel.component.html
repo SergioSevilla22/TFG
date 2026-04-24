@@ -1,5 +1,12 @@
 <app-header></app-header>
 <div class="panel-container">
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
   <!-- Registrar dependiente -->
   <div class="card">
     <h3>Registrar Jugador</h3>
@@ -7,7 +14,6 @@
     <form [formGroup]="dependentForm" (ngSubmit)="registerDependent()">
       <label for="dni">DNI</label>
       <input id="dni" type="text" formControlName="DNI" maxlength="9" />
-
       <div
         class="error"
         *ngIf="dependentForm.get('DNI')?.invalid && dependentForm.get('DNI')?.touched"
@@ -29,7 +35,6 @@
 
       <label for="telefono">Teléfono</label>
       <input id="telefono" type="text" formControlName="telefono" />
-
       <div
         class="error"
         *ngIf="dependentForm.get('telefono')?.invalid && dependentForm.get('telefono')?.touched"
@@ -61,7 +66,15 @@
       <p>Email: {{ dependent.email }}</p>
       <p>Teléfono: {{ dependent.telefono }}</p>
 
-      <button (click)="removeLink(dependent.DNI)">Quitar vínculo</button>
+      @if (confirmingUnlinkDNI === dependent.DNI) {
+        <div class="confirm-delete">
+          <span>¿Seguro que quieres desvincular a {{ dependent.nombre }}?</span>
+          <button (click)="confirmUnlink(dependent.DNI)">Sí, desvincular</button>
+          <button (click)="cancelUnlink()">Cancelar</button>
+        </div>
+      } @else {
+        <button (click)="askUnlink(dependent.DNI)">Quitar vínculo</button>
+      }
     </div>
   </div>
 </div>

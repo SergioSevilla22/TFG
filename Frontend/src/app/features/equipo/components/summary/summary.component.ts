@@ -52,6 +52,9 @@ export class SummaryComponent implements OnInit {
   loadingEvents = false;
   noTeam = false;
 
+  errorMessage: string = '';
+  successMessage: string = '';
+
   availablePlayers: any[] = [];
   availableCoaches: any[] = [];
 
@@ -73,25 +76,23 @@ export class SummaryComponent implements OnInit {
       const idParam = params.get('id');
       const id = Number(idParam);
 
-      // 1. Resetear estados para evitar glitches visuales
       this.loading = true;
       this.team = null;
       this.noTeam = false;
+      this.errorMessage = '';
+      this.successMessage = '';
 
-      // 2. Seguridad básica
       if (!user) {
         this.router.navigate(['/login']);
         return;
       }
 
-      // 3. Validar ID
       if (!idParam || isNaN(id)) {
         this.noTeam = true;
         this.loading = false;
         return;
       }
 
-      // 4. 🛡️ SEGURIDAD: Validación por Rol
       if (user.Rol === 'jugador') {
         if (!user.equipo_id) {
           this.noTeam = true;
@@ -106,7 +107,6 @@ export class SummaryComponent implements OnInit {
         }
       }
 
-      // 5. Carga de datos
       this.teamId = id;
       this.loadTeam();
     });
@@ -159,7 +159,11 @@ export class SummaryComponent implements OnInit {
   }
 
   sendReminder(matchCall: any) {
-    this.matchCallService.sendReminder(matchCall.id).subscribe(() => alert('Recordatorio enviado'));
+    this.errorMessage = '';
+    this.matchCallService.sendReminder(matchCall.id).subscribe({
+      next: () => (this.successMessage = 'Recordatorio enviado.'),
+      error: () => (this.errorMessage = 'Error enviando recordatorio.'),
+    });
   }
 
   countByStatus(matchCall: any, status: 'confirmado' | 'rechazado' | 'pendiente'): number {
@@ -198,6 +202,7 @@ export class SummaryComponent implements OnInit {
   }
 
   respondToEvent(event: any, status: string) {
+    this.errorMessage = '';
     this.eventService
       .respondToEvent(event.id, {
         jugador_dni: this.authService.getUser().DNI,
@@ -205,18 +210,17 @@ export class SummaryComponent implements OnInit {
       })
       .subscribe({
         next: () => {
-          alert('Respuesta registrada');
+          this.successMessage = 'Respuesta registrada.';
           this.loadEvents();
         },
         error: (err) => {
-          alert(err.error?.message || 'No se pudo responder');
+          this.errorMessage = err.error?.message || 'No se pudo responder.';
         },
       });
   }
 
   countByEventStatus(event: any, status: 'confirmado' | 'rechazado' | 'pendiente'): number {
     if (!event?.jugadores) return 0;
-
     return event.jugadores.filter((j: any) => {
       if (status === 'confirmado') {
         return j.estado === 'confirmado' || j.estado === 'confirmado_tarde';
@@ -225,35 +229,35 @@ export class SummaryComponent implements OnInit {
     }).length;
   }
 
-  deleteEvent(event: any) {
-    if (
-      !confirm(
-        `¿Estás seguro de eliminar el evento "${event.titulo}"? Esta acción no se puede deshacer.`,
-      )
-    ) {
-      return;
-    }
+  confirmingDeleteEvent: any = null;
 
+  askDeleteEvent(event: any) {
+    this.confirmingDeleteEvent = event;
+  }
+
+  cancelDeleteEvent() {
+    this.confirmingDeleteEvent = null;
+  }
+
+  deleteEvent(event: any) {
+    this.errorMessage = '';
+    this.confirmingDeleteEvent = null;
     this.eventService.deleteEvent(event.id).subscribe({
       next: () => {
         this.events = this.events.filter((ev) => ev.id !== event.id);
       },
       error: (err) => {
         console.error('Error al eliminar evento:', err);
-        alert('No se pudo eliminar el evento. Revisa la consola para más información.');
+        this.errorMessage = 'No se pudo eliminar el evento.';
       },
     });
   }
 
   sendEventReminder(event: any) {
+    this.errorMessage = '';
     this.eventService.sendReminder(event.id).subscribe({
-      next: () => {
-        alert('Recordatorio enviado');
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error enviando recordatorio');
-      },
+      next: () => (this.successMessage = 'Recordatorio enviado.'),
+      error: () => (this.errorMessage = 'Error enviando recordatorio.'),
     });
   }
 
@@ -270,9 +274,7 @@ export class SummaryComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((refresh) => {
-      if (refresh) {
-        this.loadTeam();
-      }
+      if (refresh) this.loadTeam();
     });
   }
 
@@ -292,6 +294,7 @@ export class SummaryComponent implements OnInit {
 
   loadTeam() {
     this.loading = true;
+    this.errorMessage = '';
 
     this.teamService.getTeamById(this.teamId).subscribe({
       next: (data) => {
@@ -302,9 +305,9 @@ export class SummaryComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
+        this.errorMessage = 'No se pudo cargar el equipo.';
         this.loadMatchCalls();
         this.loadEvents();
-        alert('No se pudo cargar el equipo');
       },
     });
   }
@@ -313,42 +316,36 @@ export class SummaryComponent implements OnInit {
     this.router.navigate(['/club', this.team.club.id]);
   }
 
-  /* ================================
-      ASIGNAR ENTRENADOR
-  =================================*/
   assignCoach(dni: string) {
+    this.errorMessage = '';
     this.teamService.assignCoach(this.teamId, dni).subscribe({
       next: () => this.loadTeam(),
-      error: () => alert('Error al asignar entrenador'),
+      error: () => (this.errorMessage = 'Error al asignar entrenador.'),
     });
   }
 
-  /* ================================
-      ASIGNAR JUGADORES
-  =================================*/
   assignPlayer(dni: string) {
+    this.errorMessage = '';
     this.teamService.assignPlayers(this.teamId, [dni]).subscribe({
       next: () => this.loadTeam(),
-      error: () => alert('Error al asignar jugador'),
+      error: () => (this.errorMessage = 'Error al asignar jugador.'),
     });
   }
 
   removePlayer(dni: string) {
+    this.errorMessage = '';
     this.teamService.movePlayer(dni, null).subscribe({
       next: () => this.loadTeam(),
-      error: () => alert('Error al eliminar jugador'),
+      error: () => (this.errorMessage = 'Error al eliminar jugador.'),
     });
   }
 
-  /* ================================
-      DRAG & DROP
-  =================================*/
   onDropPlayer(event: any) {
     const playerDNI = event.dataTransfer.getData('text/dni');
-
+    this.errorMessage = '';
     this.teamService.movePlayer(playerDNI, this.teamId).subscribe({
       next: () => this.loadTeam(),
-      error: () => alert('Error moviendo jugador'),
+      error: () => (this.errorMessage = 'Error moviendo jugador.'),
     });
   }
 
@@ -361,9 +358,10 @@ export class SummaryComponent implements OnInit {
   }
 
   removeCoach(dni: string) {
+    this.errorMessage = '';
     this.teamService.removeCoachFromTeam(dni).subscribe({
       next: () => this.loadTeam(),
-      error: () => alert('Error al quitar entrenador del equipo'),
+      error: () => (this.errorMessage = 'Error al quitar entrenador del equipo.'),
     });
   }
 
@@ -398,7 +396,6 @@ export class SummaryComponent implements OnInit {
 
     ref.afterClosed().subscribe((reason) => {
       if (!reason) return;
-
       this.matchCallService
         .respondMatchCall(matchCall.id, {
           jugador_dni: this.authService.getUser().DNI,
@@ -417,7 +414,6 @@ export class SummaryComponent implements OnInit {
 
     ref.afterClosed().subscribe((reason) => {
       if (!reason) return;
-
       this.eventService
         .respondToEvent(event.id, {
           jugador_dni: this.authService.getUser().DNI,
@@ -436,7 +432,6 @@ export class SummaryComponent implements OnInit {
 
     ref.afterClosed().subscribe((reason) => {
       if (!reason) return;
-
       this.eventService
         .respondToEvent(event.id, {
           jugador_dni: this.authService.getUser().DNI,
@@ -449,7 +444,6 @@ export class SummaryComponent implements OnInit {
 
   hasPending(): boolean {
     const user = this.authService.getUser();
-
     return (
       this.matchCalls.some((c) =>
         c.jugadores?.some((j: any) => j.DNI === user?.DNI && j.estado === 'pendiente'),

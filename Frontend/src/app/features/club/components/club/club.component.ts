@@ -39,6 +39,10 @@ export class ClubComponent implements OnInit {
   shieldPreview: string | ArrayBuffer | null = null;
   editForm: any = {};
 
+  errorMessage: string = '';
+  successMessage: string = '';
+  teamsErrorMessage: string = '';
+
   teamFilters = {
     name: '',
     category: '',
@@ -57,30 +61,23 @@ export class ClubComponent implements OnInit {
   ngOnInit(): void {
     const user = this.authService.getUser();
 
-    // 🔐 ADMIN CLUB → IGNORAR URL
     if (user?.Rol === 'admin_club') {
       if (!user.club_id) {
-        if (this.isBrowser()) {
-          alert('No tienes club asignado.');
-        }
+        this.errorMessage = 'No tienes club asignado.';
         this.router.navigate(['/login']);
         return;
       }
-
       this.clubId = user.club_id;
       this.loadClubData();
       return;
     }
 
-    // 🔓 ADMIN PLATAFORMA → club por URL
     const routeId = this.route.snapshot.paramMap.get('id');
     if (routeId) {
       this.clubId = Number(routeId);
       this.loadClubData();
     } else {
-      if (this.isBrowser()) {
-        alert('Club no válido.');
-      }
+      this.errorMessage = 'Club no válido.';
       this.router.navigate(['/admin']);
     }
   }
@@ -90,11 +87,11 @@ export class ClubComponent implements OnInit {
   }
 
   loadClubData() {
-    if (!this.isBrowser()) {
-      return; // ⛔ NO SSR
-    }
+    if (!this.isBrowser()) return;
 
     this.loading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
 
     this.clubService.getClubById(this.clubId).subscribe({
       next: (club) => {
@@ -138,7 +135,6 @@ export class ClubComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((refresh) => {
       if (refresh) {
-        // Refrescamos KPIs y datos del club
         this.loadSummary();
         this.loadClubData();
       }
@@ -146,6 +142,7 @@ export class ClubComponent implements OnInit {
   }
 
   loadTeams() {
+    this.teamsErrorMessage = '';
     this.teamService.getTeamsByClub(this.clubId).subscribe({
       next: (data) => {
         this.teams = data;
@@ -155,16 +152,13 @@ export class ClubComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        if (this.isBrowser()) {
-          alert('Error al cargar equipos.');
-        }
+        this.teamsErrorMessage = 'Error al cargar equipos.';
       },
     });
   }
 
   onInputChange() {
     const { name, category, season } = this.teamFilters;
-
     if (!name && !category && !season) {
       this.searched = false;
       this.filteredTeams = [];
@@ -211,6 +205,8 @@ export class ClubComponent implements OnInit {
     this.editForm = { ...this.club };
     this.shieldPreview = null;
     this.selectedFile = null;
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
   cancelEditing(event?: Event) {
@@ -218,13 +214,14 @@ export class ClubComponent implements OnInit {
     this.editMode = false;
     this.selectedFile = null;
     this.shieldPreview = null;
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
-      // Vista previa de la imagen
       const reader = new FileReader();
       reader.onload = () => (this.shieldPreview = reader.result);
       reader.readAsDataURL(file);
@@ -234,6 +231,8 @@ export class ClubComponent implements OnInit {
   saveChanges(event: Event) {
     event.stopPropagation();
     this.loading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
 
     const formData = new FormData();
     formData.append('nombre', this.editForm.nombre);
@@ -251,13 +250,13 @@ export class ClubComponent implements OnInit {
     this.clubService.updateClub(this.clubId, formData).subscribe({
       next: () => {
         this.editMode = false;
+        this.successMessage = 'Club actualizado correctamente.';
         this.loadClubData();
-        if (this.isBrowser()) alert('Club actualizado correctamente');
       },
       error: (err) => {
         this.loading = false;
         console.error(err);
-        if (this.isBrowser()) alert('Error al actualizar el club');
+        this.errorMessage = 'Error al actualizar el club.';
       },
     });
   }

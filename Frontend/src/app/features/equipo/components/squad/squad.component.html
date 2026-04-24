@@ -1,8 +1,10 @@
 <div class="equipo-layout">
   <main class="plantilla-content" *ngIf="!loading && team">
-    <!-- =========================
-         ENTRENADORES
-    ========================== -->
+    @if (errorMessage) {
+      <div class="alert alert-danger">{{ errorMessage }}</div>
+    }
+
+    <!-- ENTRENADORES -->
     <section class="bloque">
       <div class="bloque-header">
         <h1>Entrenadores: {{ team.entrenadores.length }}</h1>
@@ -36,9 +38,7 @@
       </div>
     </section>
 
-    <!-- =========================
-         JUGADORES
-    ========================== -->
+    <!-- JUGADORES -->
     <section class="bloque">
       <div class="bloque-header">
         <h1>Jugadores: {{ team.jugadores.length }}</h1>

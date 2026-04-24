@@ -53,6 +53,13 @@
     </div>
 
     <div class="club-actions-top">
+      @if (successMessage) {
+        <div class="alert alert-success">{{ successMessage }}</div>
+      }
+      @if (errorMessage) {
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+      }
+
       <ng-container *ngIf="!editMode">
         <button class="btn-primary" (click)="openTransferModal()">
           <mat-icon>swap_horiz</mat-icon> Traspasos
@@ -87,8 +94,8 @@
     <div class="stat-card">
       <div class="stat-icon staff"><mat-icon>sports</mat-icon></div>
       <div class="stat-data">
-        <span class="label">Staff Técnico</span
-        ><span class="value">{{ summary.totalEntrenadores }}</span>
+        <span class="label">Staff Técnico</span>
+        <span class="value">{{ summary.totalEntrenadores }}</span>
       </div>
     </div>
   </div>
@@ -122,7 +129,12 @@
             <mat-icon>search</mat-icon>
           </button>
         </div>
+
         <div class="equipos-results">
+          @if (teamsErrorMessage) {
+            <div class="alert alert-danger">{{ teamsErrorMessage }}</div>
+          }
+
           <div
             class="equipo-item-card"
             *ngFor="let team of filteredTeams"
@@ -134,6 +146,7 @@
             </div>
             <mat-icon class="arrow-icon">arrow_forward_ios</mat-icon>
           </div>
+
           <div class="empty-msg" *ngIf="!searched">
             <mat-icon>info</mat-icon>
             <p>Introduce filtros para listar los equipos</p>

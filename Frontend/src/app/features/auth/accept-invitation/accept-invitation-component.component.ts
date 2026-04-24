@@ -13,10 +13,20 @@ import { CommonModule } from '@angular/common';
 })
 export class AcceptInvitationComponent implements OnInit {
   token!: string;
+  errorMessage: string = '';
+  successMessage: string = '';
+
   form = new FormGroup({
     password: new FormControl('', Validators.required),
     confirm: new FormControl('', Validators.required),
   });
+
+  get password() {
+    return this.form.get('password');
+  }
+  get confirm() {
+    return this.form.get('confirm');
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -29,8 +39,16 @@ export class AcceptInvitationComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.invalid || this.form.value.password !== this.form.value.confirm) {
-      alert('Las contraseñas no coinciden');
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    if (this.form.value.password !== this.form.value.confirm) {
+      this.errorMessage = 'Las contraseñas no coinciden.';
       return;
     }
 
@@ -40,11 +58,13 @@ export class AcceptInvitationComponent implements OnInit {
         password: this.form.value.password!,
       })
       .subscribe({
-        next: (res) => {
-          alert('Cuenta activada. Ya puedes iniciar sesión');
-          this.router.navigate(['/login']);
+        next: () => {
+          this.successMessage = 'Cuenta activada. Ya puedes iniciar sesión.';
+          setTimeout(() => this.router.navigate(['/login']), 2000);
         },
-        error: (err) => alert(err.error.message || 'Error al activar cuenta'),
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Error al activar cuenta.';
+        },
       });
   }
 }

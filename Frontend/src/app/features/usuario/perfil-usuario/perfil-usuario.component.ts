@@ -221,6 +221,8 @@ export class PerfilUsuarioComponent {
       }
     } else if (rol === 'admin_plataforma') {
       this.router.navigate(['/admin']);
+    } else if (rol === 'tutor') {
+      this.router.navigate(['/tutor-panel']);
     } else {
       this.router.navigate(['/']);
     }

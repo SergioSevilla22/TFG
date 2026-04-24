@@ -6,6 +6,10 @@
     <input matInput [(ngModel)]="searchQuery" (input)="search()" />
   </mat-form-field>
 
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
+
   <div *ngIf="searchResults.length; else empty">
     <div class="row" *ngFor="let coach of searchResults">
       <div class="info">
@@ -13,11 +17,9 @@
         <div class="muted">DNI: {{ coach.DNI }}</div>
 
         <div class="muted" *ngIf="coach.club_id === data.clubId">Ya pertenece a este club</div>
-
         <div class="muted" *ngIf="coach.club_id && coach.club_id !== data.clubId">
           Pertenece a otro club
         </div>
-
         <div class="muted" *ngIf="!coach.club_id">Sin club</div>
       </div>
 

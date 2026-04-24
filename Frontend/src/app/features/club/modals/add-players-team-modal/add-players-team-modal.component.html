@@ -6,17 +6,30 @@
     <input matInput [(ngModel)]="searchQuery" />
   </mat-form-field>
 
+  @if (errorMessage) {
+    <div class="alert alert-danger">{{ errorMessage }}</div>
+  }
+
   <div *ngIf="filteredPlayers.length; else empty">
     <div class="row" *ngFor="let player of filteredPlayers">
       <div class="info">
-        <strong>{{ player.nombre }}</strong>
-        <div class="muted">DNI: {{ player.DNI }}</div>
-
-        <div class="muted" *ngIf="player.equipo_nombre">
-          Equipo actual: {{ player.equipo_nombre }}
+        <div class="user-avatar">
+          <img
+            *ngIf="player.foto"
+            [src]="'http://localhost:3000' + player.foto"
+            class="avatar-img"
+          />
+          <div *ngIf="!player.foto" class="avatar-placeholder">
+            {{ player.nombre[0] }}
+          </div>
+          <div class="user-data">
+            <strong>{{ player.nombre }}</strong>
+            <div class="muted" *ngIf="player.equipo_nombre">
+              Equipo actual: {{ player.equipo_nombre }}
+            </div>
+            <div class="muted" *ngIf="!player.equipo_nombre">Sin equipo</div>
+          </div>
         </div>
-
-        <div class="muted" *ngIf="!player.equipo_nombre">Sin equipo</div>
       </div>
 
       <button

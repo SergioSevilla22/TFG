@@ -32,6 +32,9 @@ export class TransferUserModalComponent implements OnInit {
   clubs: any[] = [];
   targetClubId: number | null = null;
 
+  errorMessage: string = '';
+  confirmingDelete: boolean = false;
+
   @ViewChild('accionesSection') accionesSection?: ElementRef<HTMLDivElement>;
 
   constructor(
@@ -50,6 +53,8 @@ export class TransferUserModalComponent implements OnInit {
     this.userType = type;
     this.selectedUser = null;
     this.targetClubId = null;
+    this.errorMessage = '';
+    this.confirmingDelete = false;
     this.loadUsers();
   }
 
@@ -70,6 +75,8 @@ export class TransferUserModalComponent implements OnInit {
   select(user: any) {
     this.selectedUser = user;
     this.targetClubId = null;
+    this.errorMessage = '';
+    this.confirmingDelete = false;
 
     setTimeout(() => {
       this.accionesSection?.nativeElement.scrollIntoView({
@@ -81,27 +88,35 @@ export class TransferUserModalComponent implements OnInit {
 
   transfer() {
     if (!this.selectedUser || !this.targetClubId) return;
+    this.errorMessage = '';
 
     this.userService.transferUser(this.selectedUser.DNI, this.targetClubId).subscribe({
       next: () => {
         this.selectedUser = null;
+        this.confirmingDelete = false;
         this.loadUsers();
       },
-      error: () => alert('Error al traspasar usuario'),
+      error: () => (this.errorMessage = 'Error al traspasar usuario.'),
     });
   }
 
-  delete() {
-    if (!confirm('¿Seguro que quieres eliminar este usuario de la plataforma?')) {
-      return;
-    }
+  askDelete() {
+    this.confirmingDelete = true;
+  }
 
+  cancelDelete() {
+    this.confirmingDelete = false;
+  }
+
+  confirmDelete() {
+    this.errorMessage = '';
     this.userService.deleteUser(this.selectedUser.DNI).subscribe({
       next: () => {
         this.selectedUser = null;
+        this.confirmingDelete = false;
         this.loadUsers();
       },
-      error: () => alert('Error eliminando usuario'),
+      error: () => (this.errorMessage = 'Error eliminando usuario.'),
     });
   }
 

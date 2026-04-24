@@ -26,6 +26,7 @@ import { TeamService } from '../../../../../services/team/team.service';
 export class AddPlayersTeamModalComponent implements OnInit {
   clubPlayers: any[] = [];
   searchQuery = '';
+  errorMessage: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<AddPlayersTeamModalComponent>,
@@ -46,6 +47,7 @@ export class AddPlayersTeamModalComponent implements OnInit {
   }
 
   loadClubPlayersByAge() {
+    this.errorMessage = '';
     this.clubService
       .getClubPlayersByCategory(
         this.data.clubId,
@@ -55,7 +57,7 @@ export class AddPlayersTeamModalComponent implements OnInit {
       )
       .subscribe({
         next: (res) => (this.clubPlayers = res),
-        error: () => alert('Error cargando jugadores del club'),
+        error: () => (this.errorMessage = 'Error cargando jugadores del club.'),
       });
   }
 
@@ -69,9 +71,10 @@ export class AddPlayersTeamModalComponent implements OnInit {
   }
 
   assignPlayer(dni: string) {
+    this.errorMessage = '';
     this.teamService.assignPlayers(this.data.equipoId, [dni]).subscribe({
       next: () => this.loadClubPlayersByAge(),
-      error: (err) => alert(err.error?.message || 'Error asignando jugador'),
+      error: (err) => (this.errorMessage = err.error?.message || 'Error asignando jugador.'),
     });
   }
 

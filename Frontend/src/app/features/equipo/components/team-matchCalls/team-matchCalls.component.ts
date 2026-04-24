@@ -45,6 +45,10 @@ export class TeamMatchCallsComponent implements OnInit {
   playerStats: { [key: number]: any } = {};
   openStats: { [key: number]: boolean } = {};
 
+  errorMessage: string = '';
+  successMessage: string = '';
+  confirmingDeleteMatchCall: any = null;
+
   statusFilter: 'todas' | 'abiertas' | 'cerradas' = 'todas';
   monthFilter: number | null = null;
   yearFilter: number | null = new Date().getFullYear();
@@ -91,6 +95,7 @@ export class TeamMatchCallsComponent implements OnInit {
 
   loadTeam() {
     this.loading = true;
+    this.errorMessage = '';
 
     this.teamService.getTeamById(this.teamId).subscribe({
       next: (data) => {
@@ -100,7 +105,7 @@ export class TeamMatchCallsComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        alert('No se pudo cargar el equipo');
+        this.errorMessage = 'No se pudo cargar el equipo.';
       },
     });
   }
@@ -161,7 +166,6 @@ export class TeamMatchCallsComponent implements OnInit {
 
     ref.afterClosed().subscribe((reason) => {
       if (!reason) return;
-
       this.matchCallService
         .respondMatchCall(matchCall.id, {
           jugador_dni: this.authService.getUser().DNI,
@@ -173,7 +177,12 @@ export class TeamMatchCallsComponent implements OnInit {
   }
 
   sendReminder(matchCall: any) {
-    this.matchCallService.sendReminder(matchCall.id).subscribe(() => alert('Recordatorio enviado'));
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.matchCallService.sendReminder(matchCall.id).subscribe({
+      next: () => (this.successMessage = 'Recordatorio enviado.'),
+      error: () => (this.errorMessage = 'Error enviando recordatorio.'),
+    });
   }
 
   countByStatus(matchCall: any, status: 'confirmado' | 'rechazado' | 'pendiente'): number {
@@ -183,11 +192,7 @@ export class TeamMatchCallsComponent implements OnInit {
 
   isMatchCallClosed(matchCall: any): boolean {
     if (!matchCall.fecha_limite_confirmacion) return false;
-
-    const now = new Date();
-    const deadline = new Date(matchCall.fecha_limite_confirmacion);
-
-    return now > deadline;
+    return new Date() > new Date(matchCall.fecha_limite_confirmacion);
   }
 
   statusLabel(status: string | null | undefined): string {
@@ -253,31 +258,45 @@ export class TeamMatchCallsComponent implements OnInit {
     }
   }
 
+  askDeleteMatchCall(matchCall: any) {
+    this.confirmingDeleteMatchCall = matchCall;
+    this.errorMessage = '';
+  }
+
+  cancelDeleteMatchCall() {
+    this.confirmingDeleteMatchCall = null;
+  }
+
+  deleteMatchCall(matchCall: any) {
+    this.errorMessage = '';
+    this.confirmingDeleteMatchCall = null;
+
+    this.matchCallService.deleteMatchCall(matchCall.id).subscribe({
+      next: () => (this.matchCalls = this.matchCalls.filter((x) => x.id !== matchCall.id)),
+      error: () => (this.errorMessage = 'No se pudo eliminar la convocatoria.'),
+    });
+  }
+
+  getPlayerReason(matchCall: any): string {
+    const user = this.authService.getUser();
+    return matchCall.jugadores?.find((j: any) => j.DNI === user?.DNI)?.motivo || '';
+  }
+
   get filteredMatchCalls() {
     let data = [...this.matchCalls];
 
     if (this.statusFilter === 'abiertas') {
       data = data.filter((c) => !this.isMatchCallClosed(c));
     }
-
     if (this.statusFilter === 'cerradas') {
       data = data.filter((c) => this.isMatchCallClosed(c));
     }
-
     if (this.monthFilter !== null) {
-      data = data.filter((c) => {
-        const date = new Date(c.fecha_partido);
-        return date.getMonth() === this.monthFilter;
-      });
+      data = data.filter((c) => new Date(c.fecha_partido).getMonth() === this.monthFilter);
     }
-
     if (this.yearFilter) {
-      data = data.filter((c) => {
-        const date = new Date(c.fecha_partido);
-        return date.getFullYear() === this.yearFilter;
-      });
+      data = data.filter((c) => new Date(c.fecha_partido).getFullYear() === this.yearFilter);
     }
-
     if (this.textFilter.trim()) {
       data = data.filter((c) => c.rival?.toLowerCase().includes(this.textFilter.toLowerCase()));
     }
@@ -298,19 +317,5 @@ export class TeamMatchCallsComponent implements OnInit {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
-  }
-
-  deleteMatchCall(matchCall: any) {
-    if (!confirm('¿Eliminar esta convocatoria?')) return;
-
-    this.matchCallService.deleteMatchCall(matchCall.id).subscribe({
-      next: () => (this.matchCalls = this.matchCalls.filter((x) => x.id !== matchCall.id)),
-      error: () => alert('No se pudo eliminar la convocatoria'),
-    });
-  }
-
-  getPlayerReason(matchCall: any): string {
-    const user = this.authService.getUser();
-    return matchCall.jugadores?.find((j: any) => j.DNI === user?.DNI)?.motivo || '';
   }
 }

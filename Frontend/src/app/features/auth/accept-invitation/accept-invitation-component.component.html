@@ -1,14 +1,42 @@
 <div class="invitation-container">
-    <h2>Activar cuenta</h2>
-    <p>Crea tu contraseña para acceder al sistema</p>
+  <h2>Activar cuenta</h2>
+  <p>Crea tu contraseña para acceder al sistema</p>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <label>Nueva contraseña</label>
-      <input type="password" formControlName="password" />
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>Nueva contraseña</label>
+    <input type="password" formControlName="password" />
 
-      <label>Confirmar contraseña</label>
-      <input type="password" formControlName="confirm" />
+    @if (password?.invalid && (password?.dirty || password?.touched)) {
+      <div class="alert alert-danger">
+        @if (password?.hasError('required')) {
+          <div>La contraseña es obligatoria.</div>
+        }
+      </div>
+    }
 
-      <button type="submit">Guardar contraseña</button>
-    </form>
-  </div>
+    <label>Confirmar contraseña</label>
+    <input type="password" formControlName="confirm" />
+
+    @if (confirm?.invalid && (confirm?.dirty || confirm?.touched)) {
+      <div class="alert alert-danger">
+        @if (confirm?.hasError('required')) {
+          <div>Debes confirmar la contraseña.</div>
+        }
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="alert alert-success">
+        {{ successMessage }}
+      </div>
+    }
+
+    <button type="submit">Guardar contraseña</button>
+  </form>
+</div>

@@ -44,4 +44,10 @@ button {
   padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 6px;
+  cursor: pointer;
+}
+
+.sin-equipo-text {
+  color: #9ca3af;
+  font-style: italic;
 }
