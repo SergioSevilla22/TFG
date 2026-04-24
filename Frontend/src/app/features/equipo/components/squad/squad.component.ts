@@ -24,6 +24,7 @@ export class SquadComponent implements OnInit {
   team: any = null;
   loading = true;
   noTeam = false;
+  errorMessage: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -33,13 +34,9 @@ export class SquadComponent implements OnInit {
     public authService: AuthService,
   ) {}
 
-  /* ================================
-        INIT
-  =================================*/
   ngOnInit(): void {
     const user = this.authService.getUser();
 
-    // 🧑‍🦱 JUGADOR SIN EQUIPO
     if (user?.Rol === 'jugador' && !user.equipo_id) {
       this.noTeam = true;
       this.loading = false;
@@ -66,11 +63,9 @@ export class SquadComponent implements OnInit {
     this.loadTeam();
   }
 
-  /* ================================
-        CARGAR EQUIPO
-  =================================*/
   loadTeam() {
     this.loading = true;
+    this.errorMessage = '';
 
     this.teamService.getTeamById(this.teamId).subscribe({
       next: (data) => {
@@ -79,15 +74,18 @@ export class SquadComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
-        alert('No se pudo cargar el equipo');
+        this.errorMessage = 'No se pudo cargar el equipo.';
       },
     });
   }
 
-  /* ================================
-        MODAL AÑADIR JUGADORES
-  =================================*/
   openAddPlayersModal() {
+    console.log('equipo completo:', this.team);
+    console.log('temporada:', this.team.temporada);
+    console.log('categoria:', this.team.categoria);
+    console.log('anioTemporada:', this.team.temporada?.anio);
+    console.log('edadMin:', this.team.categoria?.edadMin);
+    console.log('edadMax:', this.team.categoria?.edadMax);
     const dialogRef = this.dialog.open(AddPlayersTeamModalComponent, {
       width: '700px',
       data: {
@@ -100,15 +98,10 @@ export class SquadComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((refresh) => {
-      if (refresh) {
-        this.loadTeam();
-      }
+      if (refresh) this.loadTeam();
     });
   }
 
-  /* ================================
-        MODAL AÑADIR ENTRENADOR
-  =================================*/
   openAssignCoachModal() {
     const dialogRef = this.dialog.open(AssignCoachTeamModalComponent, {
       width: '700px',
@@ -123,29 +116,22 @@ export class SquadComponent implements OnInit {
     });
   }
 
-  /* ================================
-        ELIMINAR JUGADOR
-  =================================*/
   removePlayer(dni: string) {
+    this.errorMessage = '';
     this.teamService.movePlayer(dni, null).subscribe({
       next: () => this.loadTeam(),
-      error: () => alert('Error al eliminar jugador'),
+      error: () => (this.errorMessage = 'Error al eliminar jugador.'),
     });
   }
 
-  /* ================================
-        ELIMINAR ENTRENADOR
-  =================================*/
   removeCoach(dni: string) {
+    this.errorMessage = '';
     this.teamService.removeCoachFromTeam(dni).subscribe({
       next: () => this.loadTeam(),
-      error: () => alert('Error al quitar entrenador del equipo'),
+      error: () => (this.errorMessage = 'Error al quitar entrenador del equipo.'),
     });
   }
 
-  /* ================================
-        VOLVER AL CLUB (ADMIN)
-  =================================*/
   goBackToClub() {
     this.router.navigate(['/club', this.team.club.id]);
   }

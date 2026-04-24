@@ -26,16 +26,38 @@ import { SeasonService } from '../../../services/admin/season.service';
 export class AdminComponent implements OnInit {
   activeTab: string = 'eliminar';
 
+  // ---------- MENSAJES ----------
+  deleteUserError: string = '';
+  deleteUserSuccess: string = '';
+  searchResult: string = '';
+  roleResult: string = '';
+  editResult: string = '';
+  registerResult: string = '';
+  registerError: string = '';
+  csvResult: string = '';
+  csvError: string = '';
+  clubResult: string = '';
+  clubError: string = '';
+  categoryResult: string = '';
+  categoryError: string = '';
+  seasonResult: string = '';
+  seasonError: string = '';
+  foundUserToDelete: any = null;
+
+  // CONFIRMACIONES
+  confirmingDeleteUserId: string | null = null;
+  confirmingDeleteClubId: number | null = null;
+  confirmingDeleteCategoryId: number | null = null;
+  confirmingDeleteSeasonId: number | null = null;
+
   // ---------- USER MANAGEMENT ----------
   dniToDelete: string = '';
   result: string = '';
 
   searchDni = '';
   foundUser: any = null;
-  searchResult = '';
 
   newRole: string = '';
-  roleResult: string = '';
 
   RegisterForm = new FormGroup({
     DNI: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{8}[A-Za-z]$/)]),
@@ -56,7 +78,6 @@ export class AdminComponent implements OnInit {
   // ---- USER PROFILE EDITING (ADMIN) ----
   editUserMode = false;
   editUser: any = null;
-  editResult = '';
 
   // ---------- CLUB MANAGEMENT ----------
   clubs: any[] = [];
@@ -109,7 +130,6 @@ export class AdminComponent implements OnInit {
     this.userRole = user?.Rol || null;
     this.clubAdminClubId = user?.club_id || null;
 
-    // 🔒 If admin club, force registrar tab
     if (this.userRole === 'admin_club') {
       this.activeTab = 'registrar';
     }
@@ -142,7 +162,6 @@ export class AdminComponent implements OnInit {
 
   onDniChange() {
     if (!this.foundUser) return;
-
     if (this.searchDni !== this.foundUser.DNI) {
       this.foundUser = null;
       this.roleResult = '';
@@ -150,42 +169,65 @@ export class AdminComponent implements OnInit {
   }
 
   deleteUserById(dni: string) {
-    if (!confirm(`¿Seguro que quieres eliminar al usuario con DNI ${dni}?`)) return;
+    this.confirmingDeleteUserId = dni;
+  }
+
+  cancelDeleteUser() {
+    this.confirmingDeleteUserId = null;
+  }
+
+  confirmDeleteUser(dni: string) {
+    this.confirmingDeleteUserId = null;
+    this.deleteUserError = '';
+    this.deleteUserSuccess = '';
 
     this.authService.deleteUser(dni).subscribe({
       next: (res: any) => {
-        this.result = res.message;
+        this.deleteUserSuccess = res.message || 'Usuario eliminado correctamente.';
         this.searchDni = '';
         this.foundUser = null;
+        this.foundUserToDelete = null;
+        this.dniToDelete = '';
       },
       error: (err: any) => {
-        this.result = err.error?.message || 'Error al eliminar usuario';
+        this.deleteUserError = err.error?.message || 'Error al eliminar usuario.';
       },
     });
   }
 
   deleteUser() {
+    this.deleteUserError = '';
+    this.deleteUserSuccess = '';
+
     if (!this.dniToDelete) {
-      this.result = 'Debes introducir un DNI';
+      this.deleteUserError = 'Debes introducir un DNI.';
       return;
     }
 
-    if (!confirm(`¿Seguro que quieres eliminar al usuario con DNI ${this.dniToDelete}?`)) return;
-
-    this.authService.deleteUser(this.dniToDelete).subscribe({
-      next: (res: any) => {
-        this.result = res.message;
-        this.dniToDelete = '';
+    this.authService.getUserByDni(this.dniToDelete).subscribe({
+      next: (user: any) => {
+        this.foundUserToDelete = user;
+        this.deleteUserError = '';
       },
-      error: (err: any) => {
-        this.result = err.error?.message || 'Error al eliminar usuario';
+      error: (err) => {
+        this.foundUserToDelete = null;
+        this.deleteUserError = err.error?.message || 'Usuario no encontrado.';
       },
     });
   }
 
+  clearDeleteSearch() {
+    this.dniToDelete = '';
+    this.foundUserToDelete = null;
+    this.deleteUserError = '';
+    this.deleteUserSuccess = '';
+    this.confirmingDeleteUserId = null;
+  }
+
   searchUser() {
+    this.searchResult = '';
     if (!this.searchDni) {
-      this.searchResult = 'Introduce un DNI';
+      this.searchResult = 'Introduce un DNI.';
       return;
     }
 
@@ -196,32 +238,28 @@ export class AdminComponent implements OnInit {
       },
       error: (err) => {
         this.foundUser = null;
-        this.searchResult = err.error?.message || 'Error al buscar usuario';
+        this.searchResult = err.error?.message || 'Error al buscar usuario.';
       },
     });
   }
 
   changeRole() {
+    this.roleResult = '';
     if (!this.newRole) {
-      this.roleResult = 'Debes seleccionar un rol';
+      this.roleResult = 'Debes seleccionar un rol.';
       return;
     }
 
-    this.authService
-      .updateUserRole({
-        dni: this.foundUser.DNI,
-        nuevoRol: this.newRole,
-      })
-      .subscribe({
-        next: (res: any) => {
-          this.roleResult = res.message;
-          this.foundUser.Rol = this.newRole;
-          this.newRole = '';
-        },
-        error: (err) => {
-          this.roleResult = err.error?.message || 'Error al actualizar rol';
-        },
-      });
+    this.authService.updateUserRole({ dni: this.foundUser.DNI, nuevoRol: this.newRole }).subscribe({
+      next: (res: any) => {
+        this.roleResult = res.message || 'Rol actualizado correctamente.';
+        this.foundUser.Rol = this.newRole;
+        this.newRole = '';
+      },
+      error: (err) => {
+        this.roleResult = err.error?.message || 'Error al actualizar rol.';
+      },
+    });
   }
 
   enableUserEdit() {
@@ -237,10 +275,11 @@ export class AdminComponent implements OnInit {
   }
 
   saveUserEdit() {
+    this.editResult = '';
     if (!this.editUser) return;
 
     if (!/^[0-9]{9}$/.test(this.editUser.telefono)) {
-      this.editResult = 'El teléfono debe tener 9 dígitos';
+      this.editResult = 'El teléfono debe tener 9 dígitos.';
       return;
     }
 
@@ -255,15 +294,18 @@ export class AdminComponent implements OnInit {
       next: (res) => {
         this.foundUser = res.user;
         this.editUserMode = false;
-        this.editResult = 'Usuario actualizado correctamente';
+        this.editResult = 'Usuario actualizado correctamente.';
       },
       error: (err) => {
-        this.editResult = err.error?.message || 'Error al actualizar usuario';
+        this.editResult = err.error?.message || 'Error al actualizar usuario.';
       },
     });
   }
 
   onSubmit() {
+    this.registerResult = '';
+    this.registerError = '';
+
     if (this.RegisterForm.invalid) {
       this.RegisterForm.markAllAsTouched();
       return;
@@ -271,19 +313,8 @@ export class AdminComponent implements OnInit {
 
     const raw = this.RegisterForm.getRawValue();
 
-    // ============================
-    // ADMIN PLATAFORMA
-    // ============================
     if (this.userRole === 'admin_plataforma') {
-      const payload: {
-        DNI: string;
-        nombre: string;
-        email: string;
-        telefono: string;
-        anioNacimiento: number;
-        Rol: string;
-        club_id?: number;
-      } = {
+      const payload: any = {
         DNI: raw.DNI!,
         nombre: raw.nombre!,
         email: raw.email!,
@@ -297,31 +328,23 @@ export class AdminComponent implements OnInit {
       }
 
       this.authService.registerByPlatformAdmin(payload).subscribe({
-        next: () => alert('Usuario creado correctamente'),
-        error: (err) => alert(err.error?.message || 'Error al crear usuario'),
+        next: () => {
+          this.registerResult = 'Usuario creado correctamente.';
+          this.RegisterForm.reset();
+        },
+        error: (err) => (this.registerError = err.error?.message || 'Error al crear usuario.'),
       });
     }
 
-    // ============================
-    // ADMIN CLUB
-    // ============================
     if (this.userRole === 'admin_club') {
       const rol = raw.Rol;
 
-      // 🔒 Strict validation
       if (rol !== 'jugador' && rol !== 'entrenador' && rol !== 'tutor') {
-        alert('Rol no válido para admin de club');
+        this.registerError = 'Rol no válido para admin de club.';
         return;
       }
 
-      const payload: {
-        DNI: string;
-        nombre: string;
-        email: string;
-        telefono: string;
-        anioNacimiento: number;
-        Rol: 'jugador' | 'entrenador' | 'tutor';
-      } = {
+      const payload: any = {
         DNI: raw.DNI!,
         nombre: raw.nombre!,
         email: raw.email!,
@@ -331,8 +354,11 @@ export class AdminComponent implements OnInit {
       };
 
       this.authService.registerByClubAdmin(payload).subscribe({
-        next: () => alert('Usuario creado en tu club'),
-        error: (err) => alert(err.error?.message || 'Error al crear usuario'),
+        next: () => {
+          this.registerResult = 'Usuario creado en tu club.';
+          this.RegisterForm.reset();
+        },
+        error: (err) => (this.registerError = err.error?.message || 'Error al crear usuario.'),
       });
     }
   }
@@ -345,27 +371,28 @@ export class AdminComponent implements OnInit {
   }
 
   uploadCSV() {
+    this.csvResult = '';
+    this.csvError = '';
+
     if (!this.selectedFile) {
-      alert('Selecciona un archivo CSV.');
+      this.csvError = 'Selecciona un archivo CSV.';
       return;
     }
 
     const formData = new FormData();
     formData.append('file', this.selectedFile);
 
-    // 🔴 ADMIN PLATAFORMA (LEGACY)
     if (this.userRole === 'admin_plataforma') {
       this.authService.registerMassive(formData).subscribe({
-        next: (res) => alert(res.message),
-        error: (err) => alert(err.error?.message || 'Error'),
+        next: (res: any) => (this.csvResult = res.message || 'Usuarios registrados correctamente.'),
+        error: (err) => (this.csvError = err.error?.message || 'Error al procesar CSV.'),
       });
     }
 
-    // 🔵 ADMIN CLUB
     if (this.userRole === 'admin_club') {
       this.authService.bulkRegisterByClubAdmin(formData).subscribe({
-        next: (res) => alert(res.message),
-        error: (err) => alert(err.error?.message || 'Error'),
+        next: (res: any) => (this.csvResult = res.message || 'Usuarios registrados correctamente.'),
+        error: (err) => (this.csvError = err.error?.message || 'Error al procesar CSV.'),
       });
     }
   }
@@ -386,12 +413,10 @@ export class AdminComponent implements OnInit {
 
   filterClubs() {
     const text = this.clubSearch.toLowerCase().trim();
-
     if (text === '') {
       this.filteredClubs = [];
       return;
     }
-
     this.filteredClubs = this.clubs.filter((club) => club.nombre.toLowerCase().includes(text));
   }
 
@@ -407,6 +432,9 @@ export class AdminComponent implements OnInit {
   }
 
   saveClub() {
+    this.clubResult = '';
+    this.clubError = '';
+
     if (this.ClubForm.invalid) {
       this.ClubForm.markAllAsTouched();
       return;
@@ -414,7 +442,6 @@ export class AdminComponent implements OnInit {
 
     const formData = new FormData();
     const values = this.ClubForm.value;
-
     Object.entries(values).forEach(([key, value]) => {
       if (value) formData.append(key, value as string);
     });
@@ -426,27 +453,28 @@ export class AdminComponent implements OnInit {
     if (this.editingClubId) {
       this.clubService.updateClub(this.editingClubId, formData).subscribe({
         next: () => {
-          alert('Club actualizado');
+          this.clubResult = 'Club actualizado correctamente.';
           this.resetClubForm();
           this.loadClubs();
         },
-        error: (err) => alert(err.error?.message || 'Error al actualizar club'),
+        error: (err) => (this.clubError = err.error?.message || 'Error al actualizar club.'),
       });
     } else {
       this.clubService.createClub(formData).subscribe({
         next: () => {
-          alert('Club creado');
+          this.clubResult = 'Club creado correctamente.';
           this.resetClubForm();
           this.loadClubs();
         },
-        error: (err) => alert(err.error?.message || 'Error al crear club'),
+        error: (err) => (this.clubError = err.error?.message || 'Error al crear club.'),
       });
     }
   }
 
   editClub(club: any) {
     this.editingClubId = club.id;
-
+    this.clubResult = '';
+    this.clubError = '';
     this.ClubForm.patchValue({
       nombre: club.nombre,
       telefono: club.telefono,
@@ -456,16 +484,28 @@ export class AdminComponent implements OnInit {
       provincia: club.provincia,
       codigo_postal: club.codigo_postal,
     });
-
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  askDeleteClub(id: number) {
+    this.confirmingDeleteClubId = id;
+    this.clubError = '';
+  }
+
+  cancelDeleteClub() {
+    this.confirmingDeleteClubId = null;
+  }
+
   deleteClub(id: number) {
-    if (!confirm('¿Eliminar este club?')) return;
+    this.confirmingDeleteClubId = null;
+    this.clubError = '';
 
     this.clubService.deleteClub(id).subscribe({
-      next: () => this.loadClubs(),
-      error: (err) => alert(err.error?.message || 'Error al eliminar club'),
+      next: () => {
+        this.clubResult = 'Club eliminado correctamente.';
+        this.loadClubs();
+      },
+      error: (err) => (this.clubError = err.error?.message || 'Error al eliminar club.'),
     });
   }
 
@@ -487,6 +527,9 @@ export class AdminComponent implements OnInit {
   }
 
   saveCategory() {
+    this.categoryResult = '';
+    this.categoryError = '';
+
     if (this.CategoryForm.invalid) {
       this.CategoryForm.markAllAsTouched();
       return;
@@ -497,41 +540,56 @@ export class AdminComponent implements OnInit {
     if (this.editingCategoryId) {
       this.categoryService.updateCategory(this.editingCategoryId, payload).subscribe({
         next: () => {
-          alert('Categoría actualizada');
+          this.categoryResult = 'Categoría actualizada correctamente.';
           this.resetCategoryForm();
           this.loadCategories();
         },
-        error: (err) => alert(err.error?.message || 'Error al actualizar'),
+        error: (err) =>
+          (this.categoryError = err.error?.message || 'Error al actualizar categoría.'),
       });
     } else {
       this.categoryService.createCategory(payload).subscribe({
         next: () => {
-          alert('Categoría creada');
+          this.categoryResult = 'Categoría creada correctamente.';
           this.resetCategoryForm();
           this.loadCategories();
         },
-        error: (err) => alert(err.error?.message || 'Error al crear categoría'),
+        error: (err) => (this.categoryError = err.error?.message || 'Error al crear categoría.'),
       });
     }
   }
 
   editCategory(cat: any) {
     this.editingCategoryId = cat.id;
+    this.categoryResult = '';
+    this.categoryError = '';
     this.CategoryForm.patchValue({
       nombre: cat.nombre,
       edad_min: cat.edad_min,
       edad_max: cat.edad_max,
     });
-
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  askDeleteCategory(id: number) {
+    this.confirmingDeleteCategoryId = id;
+    this.categoryError = '';
+  }
+
+  cancelDeleteCategory() {
+    this.confirmingDeleteCategoryId = null;
+  }
+
   deleteCategory(id: number) {
-    if (!confirm('¿Eliminar esta categoría?')) return;
+    this.confirmingDeleteCategoryId = null;
+    this.categoryError = '';
 
     this.categoryService.deleteCategory(id).subscribe({
-      next: () => this.loadCategories(),
-      error: (err) => alert(err.error?.message || 'Error al eliminar categoría'),
+      next: () => {
+        this.categoryResult = 'Categoría eliminada correctamente.';
+        this.loadCategories();
+      },
+      error: (err) => (this.categoryError = err.error?.message || 'Error al eliminar categoría.'),
     });
   }
 
@@ -552,6 +610,9 @@ export class AdminComponent implements OnInit {
   }
 
   createNewSeason() {
+    this.seasonResult = '';
+    this.seasonError = '';
+
     if (this.SeasonForm.invalid) {
       this.SeasonForm.markAllAsTouched();
       return;
@@ -559,27 +620,46 @@ export class AdminComponent implements OnInit {
 
     this.seasonService.createSeason(this.SeasonForm.value).subscribe({
       next: () => {
-        alert('Temporada creada');
+        this.seasonResult = 'Temporada creada correctamente.';
         this.SeasonForm.reset();
         this.loadSeasons();
       },
-      error: (err) => alert(err.error?.message || 'Error al crear temporada'),
+      error: (err) => (this.seasonError = err.error?.message || 'Error al crear temporada.'),
     });
   }
 
   activateSeason(id: number) {
+    this.seasonResult = '';
+    this.seasonError = '';
+
     this.seasonService.activateSeason(id).subscribe({
-      next: () => this.loadSeasons(),
-      error: (err) => alert(err.error?.message || 'Error al activar temporada'),
+      next: () => {
+        this.seasonResult = 'Temporada activada correctamente.';
+        this.loadSeasons();
+      },
+      error: (err) => (this.seasonError = err.error?.message || 'Error al activar temporada.'),
     });
   }
 
+  askDeleteSeason(id: number) {
+    this.confirmingDeleteSeasonId = id;
+    this.seasonError = '';
+  }
+
+  cancelDeleteSeason() {
+    this.confirmingDeleteSeasonId = null;
+  }
+
   deleteSeason(id: number) {
-    if (!confirm('¿Eliminar esta temporada?')) return;
+    this.confirmingDeleteSeasonId = null;
+    this.seasonError = '';
 
     this.seasonService.deleteSeason(id).subscribe({
-      next: () => this.loadSeasons(),
-      error: (err) => alert(err.error?.message || 'Error al eliminar temporada'),
+      next: () => {
+        this.seasonResult = 'Temporada eliminada correctamente.';
+        this.loadSeasons();
+      },
+      error: (err) => (this.seasonError = err.error?.message || 'Error al eliminar temporada.'),
     });
   }
 }

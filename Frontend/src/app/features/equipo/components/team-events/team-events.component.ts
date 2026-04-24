@@ -33,9 +33,6 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./team-events.component.css'],
 })
 export class TeamsEventsComponent implements OnInit {
-  // ======================
-  // ESTADO GENERAL
-  // ======================
   teamId!: number;
   team: any = null;
 
@@ -45,6 +42,10 @@ export class TeamsEventsComponent implements OnInit {
   noTeam = false;
   currentPage = 1;
   itemsPerPage = 5;
+
+  errorMessage: string = '';
+  successMessage: string = '';
+  confirmingDeleteEvent: any = null;
 
   typeFilter: 'todos' | 'partido' | 'entrenamiento' | 'reunion' = 'todos';
   monthFilter: number | null = null;
@@ -59,19 +60,14 @@ export class TeamsEventsComponent implements OnInit {
     public authService: AuthService,
   ) {}
 
-  // ======================
-  // INIT
-  // ======================
   ngOnInit(): void {
     const user = this.authService.getUser();
 
-    // 🧑‍🦱 Jugador sin equipo
     if (user?.Rol === 'jugador' && !user.equipo_id) {
       this.noTeam = true;
       return;
     }
 
-    // 📌 ID equipo desde URL
     const idParam = this.route.parent?.snapshot.paramMap.get('id');
     if (!idParam) {
       this.noTeam = true;
@@ -88,23 +84,22 @@ export class TeamsEventsComponent implements OnInit {
     this.loadTeam();
   }
 
-  // ======================
-  // CARGA DE DATOS
-  // ======================
   loadTeam() {
+    this.errorMessage = '';
     this.teamService.getTeamById(this.teamId).subscribe({
       next: (data) => {
         this.team = data;
         this.loadEvents();
       },
       error: () => {
-        alert('No se pudo cargar el equipo');
+        this.errorMessage = 'No se pudo cargar el equipo.';
       },
     });
   }
 
   loadEvents() {
     this.loadingEvents = true;
+    this.errorMessage = '';
 
     this.eventService.getTeamEvents(this.teamId).subscribe({
       next: (data) => {
@@ -113,14 +108,11 @@ export class TeamsEventsComponent implements OnInit {
       },
       error: () => {
         this.loadingEvents = false;
-        alert('Error cargando eventos');
+        this.errorMessage = 'Error cargando eventos.';
       },
     });
   }
 
-  // ======================
-  // EVENTOS – ACCIONES
-  // ======================
   openCreateEventModal() {
     const ref = this.dialog.open(CreateEventModalComponent, {
       width: '700px',
@@ -131,33 +123,41 @@ export class TeamsEventsComponent implements OnInit {
     });
 
     ref.afterClosed().subscribe((refresh) => {
-      if (refresh) {
-        this.loadEvents();
-      }
+      if (refresh) this.loadEvents();
     });
   }
 
+  askDeleteEvent(event: any) {
+    this.confirmingDeleteEvent = event;
+    this.errorMessage = '';
+  }
+
+  cancelDeleteEvent() {
+    this.confirmingDeleteEvent = null;
+  }
+
   deleteEvent(event: any) {
-    if (!confirm(`¿Eliminar el evento "${event.titulo}"?`)) return;
+    this.errorMessage = '';
+    this.confirmingDeleteEvent = null;
 
     this.eventService.deleteEvent(event.id).subscribe({
       next: () => {
         this.events = this.events.filter((ev) => ev.id !== event.id);
       },
-      error: () => alert('No se pudo eliminar el evento'),
+      error: () => (this.errorMessage = 'No se pudo eliminar el evento.'),
     });
   }
 
   sendEventReminder(event: any) {
+    this.errorMessage = '';
+    this.successMessage = '';
+
     this.eventService.sendReminder(event.id).subscribe({
-      next: () => alert('Recordatorio enviado'),
-      error: () => alert('Error enviando recordatorio'),
+      next: () => (this.successMessage = 'Recordatorio enviado.'),
+      error: () => (this.errorMessage = 'Error enviando recordatorio.'),
     });
   }
 
-  // ======================
-  // RESPUESTAS JUGADOR
-  // ======================
   isInvited(event: any): boolean {
     const user = this.authService.getUser();
     return event.jugadores?.some((j: any) => j.DNI === user?.DNI);
@@ -169,6 +169,7 @@ export class TeamsEventsComponent implements OnInit {
   }
 
   respondToEvent(event: any, status: string) {
+    this.errorMessage = '';
     const user = this.authService.getUser();
 
     this.eventService
@@ -178,7 +179,7 @@ export class TeamsEventsComponent implements OnInit {
       })
       .subscribe({
         next: () => this.loadEvents(),
-        error: (err) => alert(err.error?.message || 'No se pudo responder'),
+        error: (err) => (this.errorMessage = err.error?.message || 'No se pudo responder.'),
       });
   }
 
@@ -190,7 +191,6 @@ export class TeamsEventsComponent implements OnInit {
 
     ref.afterClosed().subscribe((reason) => {
       if (!reason) return;
-
       this.eventService
         .respondToEvent(event.id, {
           jugador_dni: this.authService.getUser().DNI,
@@ -209,7 +209,6 @@ export class TeamsEventsComponent implements OnInit {
 
     ref.afterClosed().subscribe((reason) => {
       if (!reason) return;
-
       this.eventService
         .respondToEvent(event.id, {
           jugador_dni: this.authService.getUser().DNI,
@@ -220,16 +219,12 @@ export class TeamsEventsComponent implements OnInit {
     });
   }
 
-  // ======================
-  // UTILIDADES
-  // ======================
   isPastEvent(event: any): boolean {
     return new Date(event.fecha_inicio) < new Date();
   }
 
   countByEventStatus(event: any, status: 'confirmado' | 'rechazado' | 'pendiente'): number {
     if (!event?.jugadores) return 0;
-
     return event.jugadores.filter((j: any) => {
       if (status === 'confirmado') {
         return j.estado === 'confirmado' || j.estado === 'confirmado_tarde';
@@ -244,7 +239,7 @@ export class TeamsEventsComponent implements OnInit {
       data: {
         equipoId: this.teamId,
         jugadoresEquipo: this.team.jugadores,
-        evento: event, // 👈 clave
+        evento: event,
       },
     });
 
@@ -270,25 +265,16 @@ export class TeamsEventsComponent implements OnInit {
   get filteredEvents() {
     let data = [...this.events];
 
-    // Filtrar por tipo
     if (this.typeFilter !== 'todos') {
       data = data.filter((e) => e.tipo === this.typeFilter);
     }
 
-    // Filtrar por mes
     if (this.monthFilter !== null) {
-      data = data.filter((e) => {
-        const date = new Date(e.fecha_inicio);
-        return date.getMonth() === this.monthFilter;
-      });
+      data = data.filter((e) => new Date(e.fecha_inicio).getMonth() === this.monthFilter);
     }
 
-    // Filtrar por año
     if (this.yearFilter) {
-      data = data.filter((e) => {
-        const date = new Date(e.fecha_inicio);
-        return date.getFullYear() === this.yearFilter;
-      });
+      data = data.filter((e) => new Date(e.fecha_inicio).getFullYear() === this.yearFilter);
     }
 
     return data;

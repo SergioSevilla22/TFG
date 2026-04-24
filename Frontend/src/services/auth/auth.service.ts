@@ -122,9 +122,8 @@ export class AuthService {
    * 🔵 ADMIN CLUB - CSV
    */
   bulkRegisterByClubAdmin(formData: FormData): Observable<any> {
-    return this.http.post(`${this.apiBase}/club-admin/register-massive`, formData);
+    return this.http.post(`${this.apiBase}/clubes/register-massive`, formData);
   }
-
   // =====================
   // ⚠️ LEGACY REGISTRATIONS
   // =====================

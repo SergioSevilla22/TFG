@@ -10,7 +10,11 @@
       <div class="header-actions">
         <button
           class="btn-action primary"
-          *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
+          *ngIf="
+            authService.hasRole('entrenador') ||
+            authService.hasRole('admin_plataforma') ||
+            authService.hasRole('admin_club')
+          "
           [disabled]="!team"
           (click)="openCreateConvocatoriaModal()"
         >
@@ -19,7 +23,11 @@
 
         <button
           class="btn-action primary"
-          *ngIf="authService.hasRole('entrenador') || authService.hasRole('admin_plataforma')"
+          *ngIf="
+            authService.hasRole('entrenador') ||
+            authService.hasRole('admin_plataforma') ||
+            authService.hasRole('admin_club')
+          "
           [disabled]="!team"
           (click)="openCreateEventModal()"
         >

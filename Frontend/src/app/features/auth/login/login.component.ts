@@ -12,6 +12,8 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  loginError: string = '';
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -30,6 +32,8 @@ export class LoginComponent {
   }
 
   onSubmit() {
+    this.loginError = '';
+
     if (this.UserForm.invalid) {
       this.UserForm.markAllAsTouched();
       return;
@@ -41,10 +45,7 @@ export class LoginComponent {
       next: (res) => {
         const user = res.user;
 
-        alert(`Bienvenido ${user.email}`);
-
-        // 🔁 Redirección según rol
-        if ((user.Rol === 'jugador' || user.Rol === 'entrenador')) {
+        if (user.Rol === 'jugador' || user.Rol === 'entrenador') {
           this.router.navigate(['/equipo', user.equipo_id ? user.equipo_id : 'sin-asignar']);
         } else if (user.Rol === 'admin_club' && user.club_id) {
           this.router.navigate(['/club', user.club_id]);
@@ -56,7 +57,7 @@ export class LoginComponent {
       },
       error: (err) => {
         console.error('Error en login:', err);
-        alert(err.error.message || 'Error al iniciar sesión');
+        this.loginError = err.error?.message || 'Error al iniciar sesión';
       },
     });
   }

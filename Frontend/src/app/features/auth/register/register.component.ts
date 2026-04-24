@@ -14,11 +14,16 @@ import { HeaderComponent } from '../../../layout/header/header.component';
 export class RegisterComponent {
   constructor(private authService: AuthService) {}
 
+  errorMessage: string = '';
+  successMessage: string = '';
+  csvErrorMessage: string = '';
+  csvSuccessMessage: string = '';
+
   RegisterForm = new FormGroup({
     DNI: new FormControl('', Validators.required),
     nombre: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
-    telefono: new FormControl('', [Validators.required]),
+    telefono: new FormControl('', Validators.required),
     Rol: new FormControl('usuario'),
     club_id: new FormControl<number | null>(null),
   });
@@ -28,11 +33,20 @@ export class RegisterComponent {
   get DNI() {
     return this.RegisterForm.get('DNI');
   }
+  get nombre() {
+    return this.RegisterForm.get('nombre');
+  }
   get email() {
     return this.RegisterForm.get('email');
   }
+  get telefono() {
+    return this.RegisterForm.get('telefono');
+  }
 
   onSubmit() {
+    this.errorMessage = '';
+    this.successMessage = '';
+
     if (this.RegisterForm.invalid) {
       this.RegisterForm.markAllAsTouched();
       return;
@@ -48,17 +62,19 @@ export class RegisterComponent {
 
     this.authService.register(userData).subscribe({
       next: (res) => {
-        alert('Usuario registrado correctamente');
+        this.successMessage = 'Usuario registrado correctamente.';
+        this.RegisterForm.reset({ Rol: 'usuario' });
         console.log('Registro:', res);
       },
       error: (err) => {
         console.error('Error en registro:', err);
-        alert(err.error.message || 'Error al registrar usuario');
+        this.errorMessage = err.error?.message || 'Error al registrar usuario.';
       },
     });
   }
 
   onFileSelected(event: Event) {
+    this.csvErrorMessage = '';
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
@@ -66,8 +82,11 @@ export class RegisterComponent {
   }
 
   uploadCSV() {
+    this.csvErrorMessage = '';
+    this.csvSuccessMessage = '';
+
     if (!this.selectedFile) {
-      alert('Por favor selecciona un archivo CSV.');
+      this.csvErrorMessage = 'Por favor selecciona un archivo CSV.';
       return;
     }
 
@@ -76,12 +95,13 @@ export class RegisterComponent {
 
     this.authService.registerMassive(formData).subscribe({
       next: (res: any) => {
-        alert(res.message);
+        this.csvSuccessMessage = res.message || 'Usuarios registrados correctamente.';
+        this.selectedFile = null;
         console.log(res);
       },
       error: (err) => {
         console.error('Error en registro masivo:', err);
-        alert(err.error.message || 'Error al registrar usuarios');
+        this.csvErrorMessage = err.error?.message || 'Error al registrar usuarios.';
       },
     });
   }

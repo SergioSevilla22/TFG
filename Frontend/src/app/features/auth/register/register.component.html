@@ -1,50 +1,101 @@
 <app-header></app-header>
 <div class="register-container">
-  
   <div class="register-image">
     <img src="imagen-login.jpg" alt="Imagen de registro" />
   </div>
-  
-    <div class="register-form-container">
-      <div class="register-message">
-        <h2>Registro de Usuario</h2>
-        <p>Registra a los usuarios del club</p>
-      </div>
-  
-      <form [formGroup]="RegisterForm" (ngSubmit)="onSubmit()" class="register-form">
-        <label for="dni">DNI</label>
-        <input id="dni" type="text" formControlName="DNI" />
-        
-        <label for="nombre">Nombre</label>
-        <input id="nombre" type="text" formControlName="nombre" />
 
-        <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" />
-        
-        <label for="telefono">Teléfono</label>
-        <input id="telefono" type="text" formControlName="telefono" />
-        
-        <label for="anio">Año de nacimiento</label>
-        <input id="anio" type="text" formControlName="anio" />
+  <div class="register-form-container">
+    <div class="register-message">
+      <h2>Registro de Usuario</h2>
+      <p>Registra a los usuarios del club</p>
+    </div>
 
-        <label for="rol">Rol</label>
-        <select id="rol" formControlName="Rol">
-          <option value="usuario">Usuario</option>
-          <option value="jugador">Jugador</option>
-          <option value="entrenador">Entrenador</option>
-        </select>
-  
-        <button type="submit">Registrar</button>
-      </form>
-    
-      <hr />
+    <form [formGroup]="RegisterForm" (ngSubmit)="onSubmit()" class="register-form">
+      <label for="dni">DNI</label>
+      <input id="dni" type="text" formControlName="DNI" />
+      @if (DNI?.invalid && (DNI?.dirty || DNI?.touched)) {
+        <div class="alert alert-danger">
+          @if (DNI?.hasError('required')) {
+            <div>El DNI es obligatorio.</div>
+          }
+        </div>
+      }
+
+      <label for="nombre">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" />
+      @if (nombre?.invalid && (nombre?.dirty || nombre?.touched)) {
+        <div class="alert alert-danger">
+          @if (nombre?.hasError('required')) {
+            <div>El nombre es obligatorio.</div>
+          }
+        </div>
+      }
+
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+      @if (email?.invalid && (email?.dirty || email?.touched)) {
+        <div class="alert alert-danger">
+          @if (email?.hasError('required')) {
+            <div>El email es obligatorio.</div>
+          }
+          @if (email?.hasError('email')) {
+            <div>Introduce un correo válido.</div>
+          }
+        </div>
+      }
+
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" type="text" formControlName="telefono" />
+      @if (telefono?.invalid && (telefono?.dirty || telefono?.touched)) {
+        <div class="alert alert-danger">
+          @if (telefono?.hasError('required')) {
+            <div>El teléfono es obligatorio.</div>
+          }
+        </div>
+      }
+
+      <label for="rol">Rol</label>
+      <select id="rol" formControlName="Rol">
+        <option value="usuario">Usuario</option>
+        <option value="jugador">Jugador</option>
+        <option value="entrenador">Entrenador</option>
+      </select>
+
+      @if (errorMessage) {
+        <div class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+      }
+
+      @if (successMessage) {
+        <div class="alert alert-success">
+          {{ successMessage }}
+        </div>
+      }
+
+      <button type="submit">Registrar</button>
+    </form>
+
+    <hr />
 
     <div class="register-massive-container">
       <h3>Registro Masivo (CSV)</h3>
       <label for="csvFile">Selecciona archivo CSV</label>
       <input id="csvFile" type="file" (change)="onFileSelected($event)" accept=".csv" />
+
+      @if (csvErrorMessage) {
+        <div class="alert alert-danger">
+          {{ csvErrorMessage }}
+        </div>
+      }
+
+      @if (csvSuccessMessage) {
+        <div class="alert alert-success">
+          {{ csvSuccessMessage }}
+        </div>
+      }
+
       <button type="button" (click)="uploadCSV()">Subir CSV</button>
     </div>
   </div>
 </div>
-  

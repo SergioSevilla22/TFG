@@ -59,7 +59,7 @@ export const getDependents = (req, res) => {
   if (!idTutor) return res.status(400).json({ message: "idTutor obligatorio" });
 
   db.query(
-    "SELECT DNI, nombre, email, telefono, foto FROM usuarios WHERE idTutor = ?",
+    "SELECT DNI, nombre, email, telefono, foto, equipo_id FROM usuarios WHERE idTutor = ?",
     [idTutor],
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });

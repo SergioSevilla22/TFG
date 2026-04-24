@@ -28,6 +28,7 @@ export class AddPlayersClubModalComponent implements OnInit {
   searchResults: any[] = [];
   searchQuery = '';
   selection = new Set<string>();
+  errorMessage: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<AddPlayersClubModalComponent>,
@@ -47,6 +48,7 @@ export class AddPlayersClubModalComponent implements OnInit {
   }
 
   search() {
+    this.errorMessage = '';
     if (!this.searchQuery.trim()) {
       this.searchResults = [];
       return;
@@ -62,17 +64,19 @@ export class AddPlayersClubModalComponent implements OnInit {
   }
 
   handlePlayerAction(player: any) {
+    this.errorMessage = '';
+
     if (player.club_id === this.data.clubId) {
       this.clubService.removeClubPlayer(this.data.clubId, player.DNI).subscribe({
         next: () => this.search(),
-        error: () => alert('Error quitando jugador del club'),
+        error: () => (this.errorMessage = 'Error quitando jugador del club.'),
       });
       return;
     }
 
     this.clubService.addClubPlayers(this.data.clubId, [player.DNI]).subscribe({
       next: () => this.search(),
-      error: () => alert('Error añadiendo jugador al club'),
+      error: () => (this.errorMessage = 'Error añadiendo jugador al club.'),
     });
   }
 

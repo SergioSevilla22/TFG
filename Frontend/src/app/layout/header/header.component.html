@@ -28,11 +28,6 @@
        routerLinkActive="active">
       Registrar     ESTO ES EL REGISTER, VA UN POCO MAL Y NO SE SIQUIERA SI EL ENTRENADOR DEBERIA DE PODER REGISTRAR USUARIOS.
     </a> -->
-
-    <!-- TUTOR -->
-    <a *ngIf="authService.hasRole('tutor')" routerLink="/tutor-panel" routerLinkActive="active">
-      Mis jugadores
-    </a>
   </nav>
 
   <a class="profile" [routerLink]="['/perfil']">

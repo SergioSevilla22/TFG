@@ -26,6 +26,7 @@ import { TeamService } from '../../../../../services/team/team.service';
 export class AssignCoachTeamModalComponent implements OnInit {
   clubCoaches: any[] = [];
   searchQuery = '';
+  errorMessage: string = '';
 
   constructor(
     private dialogRef: MatDialogRef<AssignCoachTeamModalComponent>,
@@ -53,9 +54,10 @@ export class AssignCoachTeamModalComponent implements OnInit {
   }
 
   assign(dni: string) {
+    this.errorMessage = '';
     this.teamService.assignCoach(this.data.equipoId, dni).subscribe({
       next: () => this.dialogRef.close(true),
-      error: (err) => alert(err.error?.message || 'Error asignando entrenador'),
+      error: (err) => (this.errorMessage = err.error?.message || 'Error asignando entrenador.'),
     });
   }
 

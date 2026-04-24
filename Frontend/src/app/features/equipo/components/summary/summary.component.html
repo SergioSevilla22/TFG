@@ -1,5 +1,12 @@
 <div class="equipo-layout" *ngIf="!noTeam">
   <main class="equipo-content">
+    @if (errorMessage) {
+      <div class="alert alert-danger">{{ errorMessage }}</div>
+    }
+    @if (successMessage) {
+      <div class="alert alert-success">{{ successMessage }}</div>
+    }
+
     <section class="resumen-grid" *ngIf="!loading && team">
       <div
         class="resumen-card clickable highlight-card"

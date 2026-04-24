@@ -267,7 +267,7 @@ export const updateUser = (req, res) => {
               fs.unlink(oldPath, (unlinkErr) => {
                 if (unlinkErr)
                   console.log(
-                    "⚠️ Error al eliminar la foto anterior:",
+                    " Error al eliminar la foto anterior:",
                     unlinkErr.message
                   );
               });

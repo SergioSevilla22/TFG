@@ -62,21 +62,90 @@
       </button>
     </div>
 
+    <!-- ========================= ELIMINAR USUARIO ========================= -->
+    <!-- ========================= ELIMINAR USUARIO ========================= -->
     <div class="tab-content" *ngIf="activeTab === 'eliminar'">
-      <h3>Eliminar Usuario</h3>
-      <p class="tab-description">
-        Introduce el DNI del usuario que deseas dar de baja del sistema.
-      </p>
+      <div class="register-header">
+        <h3>Eliminar Usuario</h3>
+        <p>Busca al usuario por DNI para darlo de baja del sistema.</p>
+      </div>
+
+      @if (deleteUserSuccess) {
+        <div class="msg-success">{{ deleteUserSuccess }}</div>
+      }
+      @if (deleteUserError) {
+        <div class="msg-error">{{ deleteUserError }}</div>
+      }
 
       <div class="action-bar">
-        <input type="text" [(ngModel)]="dniToDelete" placeholder="Ej: 12345678A" />
-        <button type="button" class="btn-rojo" (click)="deleteUser()">
-          Eliminar permanentemente
+        <input
+          type="text"
+          [(ngModel)]="dniToDelete"
+          placeholder="Ej: 12345678A"
+          [disabled]="!!foundUserToDelete"
+        />
+        <button type="button" (click)="deleteUser()" [disabled]="!!foundUserToDelete">
+          Buscar
         </button>
+        @if (foundUserToDelete) {
+          <button type="button" class="btn-secondary" (click)="clearDeleteSearch()">Limpiar</button>
+        }
       </div>
-      <p class="resultado" *ngIf="result">{{ result }}</p>
+
+      @if (foundUserToDelete) {
+        <div class="user-card" style="margin-top: 20px">
+          <div class="card-inner">
+            <div class="user-header">
+              <div class="avatar-placeholder">{{ foundUserToDelete.nombre.charAt(0) }}</div>
+              <div>
+                <h4>{{ foundUserToDelete.nombre }}</h4>
+                <span class="role-badge">{{ foundUserToDelete.Rol }}</span>
+              </div>
+            </div>
+
+            <div class="user-data-grid">
+              <p><strong>DNI:</strong> {{ foundUserToDelete.DNI }}</p>
+              <p><strong>Email:</strong> {{ foundUserToDelete.email }}</p>
+              <p><strong>Teléfono:</strong> {{ foundUserToDelete.telefono }}</p>
+            </div>
+
+            @if (confirmingDeleteUserId === foundUserToDelete.DNI) {
+              <div class="confirm-box">
+                <p class="confirm-text">
+                  ¿Seguro que quieres eliminar a
+                  <strong>{{ foundUserToDelete.nombre }}</strong
+                  >? Esta acción no se puede deshacer.
+                </p>
+                <div class="confirm-actions">
+                  <button
+                    type="button"
+                    class="btn-rojo"
+                    (click)="confirmDeleteUser(foundUserToDelete.DNI)"
+                  >
+                    Sí, eliminar
+                  </button>
+                  <button type="button" class="btn-secondary" (click)="cancelDeleteUser()">
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <div class="card-actions-footer">
+                <button
+                  type="button"
+                  class="btn-rojo"
+                  (click)="deleteUserById(foundUserToDelete.DNI)"
+                >
+                  Eliminar permanentemente
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
 
+    <!-- ========================= GESTIÓN DE ROLES ========================= -->
     <div class="tab-content" *ngIf="activeTab === 'roles'">
       <h3>Buscar Usuario</h3>
       <p class="tab-description">
@@ -94,7 +163,9 @@
         <button type="button" (click)="searchUser()">Buscar</button>
       </div>
 
-      <p class="resultado" *ngIf="searchResult">{{ searchResult }}</p>
+      @if (searchResult) {
+        <div class="msg-error">{{ searchResult }}</div>
+      }
 
       <div *ngIf="foundUser" class="user-card">
         <div *ngIf="!editUserMode" class="card-inner">
@@ -125,15 +196,42 @@
             </div>
           </div>
 
-          <div class="card-actions-footer">
-            <button type="button" class="btn-secondary" (click)="enableUserEdit()">
-              Editar perfil
-            </button>
-            <button type="button" class="btn-rojo" (click)="deleteUserById(foundUser.DNI)">
-              Eliminar
-            </button>
-          </div>
-          <p class="resultado" *ngIf="roleResult">{{ roleResult }}</p>
+          @if (roleResult) {
+            <div class="msg-success">{{ roleResult }}</div>
+          }
+
+          @if (deleteUserSuccess) {
+            <div class="msg-success">{{ deleteUserSuccess }}</div>
+          }
+          @if (deleteUserError) {
+            <div class="msg-error">{{ deleteUserError }}</div>
+          }
+
+          @if (confirmingDeleteUserId === foundUser.DNI) {
+            <div class="confirm-box">
+              <p class="confirm-text">
+                ¿Seguro que quieres eliminar a <strong>{{ foundUser.nombre }}</strong
+                >? Esta acción no se puede deshacer.
+              </p>
+              <div class="confirm-actions">
+                <button type="button" class="btn-rojo" (click)="confirmDeleteUser(foundUser.DNI)">
+                  Sí, eliminar
+                </button>
+                <button type="button" class="btn-secondary" (click)="cancelDeleteUser()">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="card-actions-footer">
+              <button type="button" class="btn-secondary" (click)="enableUserEdit()">
+                Editar perfil
+              </button>
+              <button type="button" class="btn-rojo" (click)="deleteUserById(foundUser.DNI)">
+                Eliminar
+              </button>
+            </div>
+          }
         </div>
 
         <div *ngIf="editUserMode" class="register-form">
@@ -168,21 +266,32 @@
             </div>
           </div>
 
+          @if (editResult) {
+            <div class="msg-success">{{ editResult }}</div>
+          }
+
           <div class="card-actions-footer">
             <button type="button" (click)="saveUserEdit()">Guardar cambios</button>
             <button type="button" class="btn-secondary" (click)="cancelUserEdit()">Cancelar</button>
           </div>
-          <p class="resultado" *ngIf="editResult">{{ editResult }}</p>
         </div>
       </div>
     </div>
 
+    <!-- ========================= REGISTRAR USUARIOS ========================= -->
     <div class="tab-content" *ngIf="activeTab === 'registrar'">
       <div class="register-form-container">
         <div class="register-header">
           <h3>Registro de Usuario</h3>
           <p>Da de alta a jugadores, entrenadores y usuarios.</p>
         </div>
+
+        @if (registerResult) {
+          <div class="msg-success">{{ registerResult }}</div>
+        }
+        @if (registerError) {
+          <div class="msg-error">{{ registerError }}</div>
+        }
 
         <form [formGroup]="RegisterForm" (ngSubmit)="onSubmit()" class="register-form">
           <div class="form-row">
@@ -203,15 +312,15 @@
             </div>
 
             <div class="form-group">
-              <label for="nombre">Nombre<span class="required-asterisk">*</span></label>
+              <label for="nombre">Nombre <span class="required-asterisk">*</span></label>
               <input id="nombre" type="text" formControlName="nombre" />
               <div
                 class="error"
                 *ngIf="RegisterForm.get('nombre')?.invalid && RegisterForm.get('nombre')?.touched"
               >
-                <small *ngIf="RegisterForm.get('nombre')?.errors?.['required']">
-                  El nombre es obligatorio.
-                </small>
+                <small *ngIf="RegisterForm.get('nombre')?.errors?.['required']"
+                  >El nombre es obligatorio.</small
+                >
               </div>
             </div>
           </div>
@@ -224,12 +333,12 @@
                 class="error"
                 *ngIf="RegisterForm.get('email')?.invalid && RegisterForm.get('email')?.touched"
               >
-                <small *ngIf="RegisterForm.get('email')?.errors?.['required']">
-                  El email es obligatorio.
-                </small>
-                <small *ngIf="RegisterForm.get('email')?.errors?.['email']">
-                  Introduce un email válido.
-                </small>
+                <small *ngIf="RegisterForm.get('email')?.errors?.['required']"
+                  >El email es obligatorio.</small
+                >
+                <small *ngIf="RegisterForm.get('email')?.errors?.['email']"
+                  >Introduce un email válido.</small
+                >
               </div>
             </div>
 
@@ -270,15 +379,15 @@
                   RegisterForm.get('anioNacimiento')?.touched
                 "
               >
-                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['required']">
-                  El año de nacimiento es obligatorio.
-                </small>
-                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['min']">
-                  El año debe ser mayor o igual que 1800.
-                </small>
-                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['max']">
-                  El año no puede ser mayor que el actual.
-                </small>
+                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['required']"
+                  >El año de nacimiento es obligatorio.</small
+                >
+                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['min']"
+                  >El año debe ser mayor o igual que 1800.</small
+                >
+                <small *ngIf="RegisterForm.get('anioNacimiento')?.errors?.['max']"
+                  >El año no puede ser mayor que el actual.</small
+                >
               </div>
             </div>
             <div class="form-group">
@@ -295,9 +404,9 @@
                 class="error"
                 *ngIf="RegisterForm.get('Rol')?.invalid && RegisterForm.get('Rol')?.touched"
               >
-                <small *ngIf="RegisterForm.get('Rol')?.errors?.['required']">
-                  Debes seleccionar un rol.
-                </small>
+                <small *ngIf="RegisterForm.get('Rol')?.errors?.['required']"
+                  >Debes seleccionar un rol.</small
+                >
               </div>
             </div>
           </div>
@@ -325,6 +434,14 @@
               Sube un archivo CSV para registrar varios miembros del club de una sola vez.
             </p>
           </div>
+
+          @if (csvResult) {
+            <div class="msg-success">{{ csvResult }}</div>
+          }
+          @if (csvError) {
+            <div class="msg-error">{{ csvError }}</div>
+          }
+
           <div class="action-bar">
             <input
               id="csvFile"
@@ -339,11 +456,19 @@
       </div>
     </div>
 
+    <!-- ========================= GESTIÓN DE CLUBES ========================= -->
     <div class="tab-content" *ngIf="activeTab === 'clubes'">
       <div class="register-header">
         <h3>Gestión de Clubes</h3>
         <p>Añade nuevos clubes o edita la información de los existentes.</p>
       </div>
+
+      @if (clubResult) {
+        <div class="msg-success">{{ clubResult }}</div>
+      }
+      @if (clubError) {
+        <div class="msg-error">{{ clubError }}</div>
+      }
 
       <form [formGroup]="ClubForm" (ngSubmit)="saveClub()" class="register-form club-form-bg">
         <div class="form-row">
@@ -354,12 +479,11 @@
               class="error"
               *ngIf="ClubForm.get('nombre')?.invalid && ClubForm.get('nombre')?.touched"
             >
-              <small *ngIf="ClubForm.get('nombre')?.errors?.['required']">
-                El nombre del club es obligatorio.
-              </small>
+              <small *ngIf="ClubForm.get('nombre')?.errors?.['required']"
+                >El nombre del club es obligatorio.</small
+              >
             </div>
           </div>
-
           <div class="form-group">
             <label>Teléfono <span class="required-asterisk">*</span></label>
             <input type="text" formControlName="telefono" />
@@ -385,12 +509,12 @@
               class="error"
               *ngIf="ClubForm.get('email')?.invalid && ClubForm.get('email')?.touched"
             >
-              <small *ngIf="ClubForm.get('email')?.errors?.['required']">
-                El email es obligatorio.
-              </small>
-              <small *ngIf="ClubForm.get('email')?.errors?.['email']">
-                Introduce un email válido.
-              </small>
+              <small *ngIf="ClubForm.get('email')?.errors?.['required']"
+                >El email es obligatorio.</small
+              >
+              <small *ngIf="ClubForm.get('email')?.errors?.['email']"
+                >Introduce un email válido.</small
+              >
             </div>
           </div>
           <div class="form-group">
@@ -429,7 +553,6 @@
       </form>
 
       <div class="section-divider"></div>
-
       <h4>Directorio de Clubes</h4>
       <input
         type="text"
@@ -468,11 +591,19 @@
       </div>
     </div>
 
+    <!-- ========================= CATEGORÍAS ========================= -->
     <div class="tab-content" *ngIf="activeTab === 'categorias'">
       <div class="register-header">
         <h3>Categorías Base</h3>
         <p>Configura las edades para agrupar a los jugadores (Alevín, Benjamín, etc.)</p>
       </div>
+
+      @if (categoryResult) {
+        <div class="msg-success">{{ categoryResult }}</div>
+      }
+      @if (categoryError) {
+        <div class="msg-error">{{ categoryError }}</div>
+      }
 
       <form
         [formGroup]="CategoryForm"
@@ -487,9 +618,9 @@
               class="error"
               *ngIf="CategoryForm.get('nombre')?.invalid && CategoryForm.get('nombre')?.touched"
             >
-              <small *ngIf="CategoryForm.get('nombre')?.errors?.['required']">
-                El nombre de la categoría es obligatorio.
-              </small>
+              <small *ngIf="CategoryForm.get('nombre')?.errors?.['required']"
+                >El nombre de la categoría es obligatorio.</small
+              >
             </div>
           </div>
           <div class="form-group">
@@ -499,9 +630,9 @@
               class="error"
               *ngIf="CategoryForm.get('edad_min')?.invalid && CategoryForm.get('edad_min')?.touched"
             >
-              <small *ngIf="CategoryForm.get('edad_min')?.errors?.['required']">
-                La edad mínima de la categoría es obligatoria.
-              </small>
+              <small *ngIf="CategoryForm.get('edad_min')?.errors?.['required']"
+                >La edad mínima es obligatoria.</small
+              >
             </div>
           </div>
         </div>
@@ -514,9 +645,9 @@
               class="error"
               *ngIf="CategoryForm.get('edad_max')?.invalid && CategoryForm.get('edad_max')?.touched"
             >
-              <small *ngIf="CategoryForm.get('edad_max')?.errors?.['required']">
-                La edad máxima de la categoría es obligatoria.
-              </small>
+              <small *ngIf="CategoryForm.get('edad_max')?.errors?.['required']"
+                >La edad máxima es obligatoria.</small
+              >
             </div>
           </div>
           <div class="btn-container-right">
@@ -532,29 +663,56 @@
 
       <div class="catalog-list">
         <div class="catalog-card" *ngFor="let cat of categories">
-          <div class="catalog-info">
-            <h4>{{ cat.nombre }}</h4>
-            <p *ngIf="cat.edad_min || cat.edad_max">
-              <span class="age-badge"
-                >{{ cat.edad_min || '?' }} a {{ cat.edad_max || '?' }} años</span
-              >
-            </p>
-          </div>
-          <div class="catalog-actions">
-            <button type="button" class="btn-secondary" (click)="editCategory(cat)">Editar</button>
-            <button type="button" class="btn-rojo" (click)="deleteCategory(cat.id)">
-              Eliminar
-            </button>
-          </div>
+          @if (confirmingDeleteCategoryId === cat.id) {
+            <div class="confirm-box inline">
+              <p class="confirm-text">
+                ¿Eliminar la categoría <strong>{{ cat.nombre }}</strong
+                >?
+              </p>
+              <div class="confirm-actions">
+                <button type="button" class="btn-rojo" (click)="deleteCategory(cat.id)">
+                  Sí, eliminar
+                </button>
+                <button type="button" class="btn-secondary" (click)="cancelDeleteCategory()">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="catalog-info">
+              <h4>{{ cat.nombre }}</h4>
+              <p *ngIf="cat.edad_min || cat.edad_max">
+                <span class="age-badge"
+                  >{{ cat.edad_min || '?' }} a {{ cat.edad_max || '?' }} años</span
+                >
+              </p>
+            </div>
+            <div class="catalog-actions">
+              <button type="button" class="btn-secondary" (click)="editCategory(cat)">
+                Editar
+              </button>
+              <button type="button" class="btn-rojo" (click)="askDeleteCategory(cat.id)">
+                Eliminar
+              </button>
+            </div>
+          }
         </div>
       </div>
     </div>
 
+    <!-- ========================= TEMPORADAS ========================= -->
     <div class="tab-content" *ngIf="activeTab === 'temporadas'">
       <div class="register-header">
         <h3>Temporadas</h3>
         <p>Gestiona los ciclos anuales de la plataforma.</p>
       </div>
+
+      @if (seasonResult) {
+        <div class="msg-success">{{ seasonResult }}</div>
+      }
+      @if (seasonError) {
+        <div class="msg-error">{{ seasonError }}</div>
+      }
 
       <form
         [formGroup]="SeasonForm"
@@ -569,9 +727,9 @@
               class="error"
               *ngIf="SeasonForm.get('nombre')?.invalid && SeasonForm.get('nombre')?.touched"
             >
-              <small *ngIf="SeasonForm.get('nombre')?.errors?.['required']">
-                El nombre de la temporada es obligatorio.
-              </small>
+              <small *ngIf="SeasonForm.get('nombre')?.errors?.['required']"
+                >El nombre de la temporada es obligatorio.</small
+              >
             </div>
           </div>
           <button type="submit" [disabled]="SeasonForm.invalid">Crear Temporada</button>
@@ -583,23 +741,42 @@
 
       <div class="catalog-list">
         <div class="catalog-card" *ngFor="let temp of seasons" [class.is-active-card]="temp.activa">
-          <div class="catalog-info">
-            <h4>
-              {{ temp.nombre }}
-              <span *ngIf="temp.activa" class="badge-activa">Temporada Activa</span>
-            </h4>
-          </div>
-          <div class="catalog-actions">
-            <button
-              type="button"
-              class="btn-secondary"
-              (click)="activateSeason(temp.id)"
-              *ngIf="!temp.activa"
-            >
-              Activar
-            </button>
-            <button type="button" class="btn-rojo" (click)="deleteSeason(temp.id)">Eliminar</button>
-          </div>
+          @if (confirmingDeleteSeasonId === temp.id) {
+            <div class="confirm-box inline">
+              <p class="confirm-text">
+                ¿Eliminar la temporada <strong>{{ temp.nombre }}</strong
+                >?
+              </p>
+              <div class="confirm-actions">
+                <button type="button" class="btn-rojo" (click)="deleteSeason(temp.id)">
+                  Sí, eliminar
+                </button>
+                <button type="button" class="btn-secondary" (click)="cancelDeleteSeason()">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="catalog-info">
+              <h4>
+                {{ temp.nombre }}
+                <span *ngIf="temp.activa" class="badge-activa">Temporada Activa</span>
+              </h4>
+            </div>
+            <div class="catalog-actions">
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="activateSeason(temp.id)"
+                *ngIf="!temp.activa"
+              >
+                Activar
+              </button>
+              <button type="button" class="btn-rojo" (click)="askDeleteSeason(temp.id)">
+                Eliminar
+              </button>
+            </div>
+          }
         </div>
       </div>
     </div>
