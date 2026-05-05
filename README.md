@@ -1,66 +1,115 @@
- Instalación y ejecución del proyecto
- 1. Clonar el proyecto
-  git clone https://github.com/SergioSevilla22/TFG.git
+# Instalación y Ejecución del Proyecto
 
-3. Acceder al directorio del proyecto
-  cd TFG
+## 1. Clonar el repositorio
 
-4. Abrir el proyecto en Visual Studio Code
-   code .
-   
-5. Crear e importar la base de datos
-   El proyecto utiliza MySQL. Primero se debe crear la base de datos:
+```bash
+git clone https://github.com/SergioSevilla22/TFG.git
+```
 
-    CREATE DATABASE tfg;
-    USE tfg;
+## 2. Acceder al directorio del proyecto
 
-  Después, importar en MySQL Workbench el script SQL incluido en el repositorio:
-    database/tfg.sql
+```bash
+cd TFG
+```
 
-  Este script contiene la estructura de tablas, relaciones y datos iniciales.
-  Los usuarios incluidos en la base de datos tienen la contraseña cifrada. Para acceder con cualquiera de ellos, la contraseña es:
-    1234
+## 3. Abrir en Visual Studio Code
 
-5. Instalar y ejecutar el backend
-  Acceder a la carpeta del backend:
-    cd Backend
-  Instalar dependencias:
-    npm install
-  Crear un archivo .env a partir del archivo .env.example y configurar los datos de conexión a MySQL.
-  Ejecutar el backend:
-    npm run dev
-  El backend se ejecutará en:
-    http://localhost:3000
-   
-7. Instalar y ejecutar el frontend
-  Abrir una nueva terminal y acceder a la carpeta del frontend:
-    cd Frontend
-  Instalar dependencias:
-    npm install
-  Ejecutar la aplicación:
-    ng serve
-  La aplicación se ejecutará en:
-    http://localhost:4200
+```bash
+code .
+```
 
-7. Instalar y ejecutar el microservicio de Inteligencia Artificial
-  Abrir una nueva terminal y acceder a la carpeta del servicio de IA:
-    cd ai-service
-  Crear un entorno virtual:
-    python -m venv venv
-  Activar el entorno virtual.
-  En Windows:
-    venv\Scripts\activate
-  En Linux/macOS:
-    source venv/bin/activate
-  Instalar dependencias:
-    pip install -r requirements.txt
-  Ejecutar el servicio:
-    uvicorn main:app --reload
-  El microservicio se ejecutará en:
-    http://127.0.0.1:8000
-   
-9. Entrenar los modelos de Inteligencia Artificial
-  Si los modelos no están incluidos en el proyecto, se pueden generar ejecutando:
-    python ml/train_model.py
-    python ml/train_attendance_model.py
-    python ml/train_clustering_model.py
+---
+
+## 4. Crear e importar la base de datos
+
+El proyecto utiliza **MySQL**. Primero, crea la base de datos:
+
+```sql
+CREATE DATABASE tfg;
+USE tfg;
+```
+
+Después, importa en **MySQL Workbench** el script SQL incluido en el repositorio:
+
+```
+database/tfg.sql
+```
+
+> Este script contiene la estructura de tablas, relaciones y datos iniciales.
+
+> ⚠️ Los usuarios incluidos tienen la contraseña cifrada. Para acceder con cualquiera de ellos, usa la contraseña: `1234`
+
+---
+
+## 5. Instalar y ejecutar el Backend
+
+```bash
+cd Backend
+npm install
+```
+
+Crea un archivo `.env` a partir de `.env.example` y configura los datos de conexión a MySQL.
+
+```bash
+npm run dev
+```
+
+> El backend se ejecutará en: `http://localhost:3000`
+
+---
+
+## 6. Instalar y ejecutar el Frontend
+
+Abre una nueva terminal:
+
+```bash
+cd Frontend
+npm install
+ng serve
+```
+
+> La aplicación se ejecutará en: `http://localhost:4200`
+
+---
+
+## 7. Instalar y ejecutar el Microservicio de IA
+
+Abre una nueva terminal:
+
+```bash
+cd ai-service
+```
+
+### Crear y activar el entorno virtual
+
+```bash
+python -m venv venv
+```
+
+**Windows:**
+```bash
+venv\Scripts\activate
+```
+
+**Linux / macOS:**
+```bash
+source venv/bin/activate
+```
+
+### Instalar dependencias y ejecutar
+
+```bash
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+> El microservicio se ejecutará en: `http://127.0.0.1:8000`
+
+---
+
+## 8. Entrenar los modelos de Inteligencia Artificial
+Si los modelos no están incluidos en el proyecto, se pueden generar ejecutando:
+```bash
+python ml/train_model.py
+python ml/train_attendance_model.py
+python ml/train_clustering_model.py
